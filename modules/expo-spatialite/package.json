@@ -1,0 +1,35 @@
+{
+  "name": "expo-spatialite",
+  "version": "1.0.0",
+  "description": "A powerful geospatial database module for Expo applications that extends SQLite with Spatialite capabilities",
+  "main": "index.ts",
+  "types": "index.ts",
+  "files": [
+    "src",
+    "android",
+    "ios",
+    "plugin",
+    "expo-module.config.json",
+    "index.ts",
+    "README.md"
+  ],
+  "keywords": [
+    "expo",
+    "spatialite",
+    "geospatial",
+    "sqlite",
+    "location",
+    "android"
+  ],
+  "author": "Expo Spatialite Team",
+  "license": "MIT",
+  "peerDependencies": {
+    "expo": "*",
+    "expo-asset": "*",
+    "expo-file-system": "*"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.0",
+    "expo-module-scripts": "^3.5.2"
+  }
+}

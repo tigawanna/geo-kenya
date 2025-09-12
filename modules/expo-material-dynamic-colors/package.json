@@ -1,0 +1,70 @@
+{
+  "name": "expo-material-dynamic-colors",
+  "version": "1.0.0",
+  "description": "Expo module for Material 3 dynamic colors on Android 12+ with fallback theme support",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/ --ext .ts,.tsx",
+    "test": "jest"
+  },
+  "keywords": [
+    "expo",
+    "react-native",
+    "material-design",
+    "material-3",
+    "dynamic-colors",
+    "android",
+    "theme",
+    "colors"
+  ],
+  "author": {
+    "name": "Your Name",
+    "email": "your.email@example.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourusername/expo-material-dynamic-colors.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/expo-material-dynamic-colors/issues"
+  },
+  "homepage": "https://github.com/yourusername/expo-material-dynamic-colors#readme",
+  "peerDependencies": {
+    "expo": ">=50.0.0",
+    "react": ">=16.8.0",
+    "react-native": ">=0.60.0"
+  },
+  "dependencies": {
+    "@material/material-color-utilities": "^0.3.0",
+    "color": "^4.2.0"
+  },
+  "devDependencies": {
+    "@types/color": "^3.0.0",
+    "@types/react": "^18.0.0",
+    "@types/react-native": "^0.72.0",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/parser": "^5.0.0",
+    "eslint": "^8.0.0",
+    "jest": "^29.0.0",
+    "typescript": "^4.9.0"
+  },
+  "files": [
+    "src/",
+    "android/",
+    "ios/",
+    "expo-module.config.json",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "expo": {
+    "name": "expo-material-dynamic-colors",
+    "slug": "expo-material-dynamic-colors"
+  }
+}
