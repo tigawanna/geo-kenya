@@ -8,7 +8,7 @@ export function ExpoSpatialiteWrapper({ children }: { children: React.ReactNode 
       <ExpoSpatialiteProvider
         databaseName="lokeshen.db"
         // databaseName="tpp.db"
-        // assetSource={{ assetId: require("@/assets/kenya_wards.db"), forceOverwrite: true }}
+        assetSource={{ assetId: require("@/assets/kenya_wards.db"), forceOverwrite: true }}
         // location="test"
 
         onInit={async ({ executeStatement, executeQuery, executePragmaQuery }) => {

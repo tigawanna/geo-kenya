@@ -1,6 +1,7 @@
 import { Asset } from "expo-asset";
 import * as FileSystem from "expo-file-system";
 import ExpoSpatialiteModule from "./ExpoSpatialiteModule";
+import { File, Directory, Paths } from "expo-file-system";
 
 
 
@@ -37,27 +38,35 @@ export function getSpatialiteVersion(): string {
 /**
  * Creates a database path in the document directory
  */
+
 export function createDatabasePath(databaseName: string, directory?: string): string {
-  const documentsDirectory = FileSystem.documentDirectory;
-  if (!documentsDirectory) {
-    throw new Error("Document directory is not available");
+  try {
+    let targetDir: Directory;
+
+    // If directory is provided and absolute, create Directory from absolute path
+    if (directory && (directory.startsWith("/") || directory.startsWith("file://"))) {
+      const cleanPath = directory.replace("file://", "");
+      targetDir = new Directory(cleanPath);
+    } else {
+      // If directory is relative or undefined, use default structure
+      const dirPath = directory ? `Spatialite/${directory}` : "Spatialite";
+      targetDir = new Directory(Paths.document, dirPath);
+    }
+
+    // Create the directory if it doesn't exist
+    if (!targetDir.exists) {
+      targetDir.create({ intermediates: true });
+    }
+
+    // Create a File instance for the database
+    const databaseFile = new File(targetDir, databaseName);
+
+    return databaseFile.uri;
+  } catch (error) {
+    console.error("Error creating database path:", error);
+    throw new Error(`Failed to create database path: ${error instanceof Error ? error.message : String(error)}`);
   }
-
-  // If directory is provided and absolute, use it directly
-  if (directory && (directory.startsWith("/") || directory.startsWith("file://"))) {
-    const baseDir = directory.replace("file://", "");
-    return `${baseDir.replace(/\/$/, "")}/${databaseName}`.replace("file://", "");
-  }
-
-  // If directory is relative or undefined, use default structure
-  const baseDir = directory
-    ? `${documentsDirectory}${directory}/`
-    : `${documentsDirectory}Spatialite/`;
-  const fullPath = `${baseDir}${databaseName}`;
-
-  return fullPath.replace("file://", "");
 }
-
 /**
  * Imports an asset database into the SQLite database directory.
  *

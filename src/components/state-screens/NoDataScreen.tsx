@@ -10,7 +10,19 @@ import Animated, {
 } from "react-native-reanimated";
 import { RestingIcon } from "@/components/shared/svg/Resting";
 
-export function NoDataScreen() {
+interface NoDataScreenProps {
+  listName?: string;
+  message?: string;
+  hint?: string;
+  icon?: React.ReactNode;
+}
+
+export function NoDataScreen({ 
+  listName = "data", 
+  message = "No data available at the moment",
+  hint = "Try refreshing or check back later",
+  icon = <RestingIcon />
+}: NoDataScreenProps) {
   const { colors } = useTheme();
   const fadeValue = useSharedValue(0.7);
   const scaleValue = useSharedValue(1);
@@ -49,7 +61,7 @@ export function NoDataScreen() {
     <Surface style={[styles.container, { backgroundColor: colors.surface }]}>
       <View style={styles.content}>
         <Animated.View style={[styles.iconContainer, animatedIconStyle]}>
-          <RestingIcon />
+          {icon}
         </Animated.View>
         
         <View style={styles.textContainer}>
@@ -57,7 +69,7 @@ export function NoDataScreen() {
             variant="headlineSmall" 
             style={[styles.titleText, { color: colors.onSurface }]}
           >
-            Nothing on my end
+            No {listName} found
           </Text>
           
           <Animated.View style={animatedTextStyle}>
@@ -65,7 +77,7 @@ export function NoDataScreen() {
               variant="bodyLarge" 
               style={[styles.subtitleText, { color: colors.onSurfaceVariant }]}
             >
-              No data available at the moment
+              {message}
             </Text>
           </Animated.View>
           
@@ -73,7 +85,7 @@ export function NoDataScreen() {
             variant="bodyMedium" 
             style={[styles.hintText, { color: colors.outline }]}
           >
-            Try refreshing or check back later
+            {hint}
           </Text>
         </View>
       </View>
