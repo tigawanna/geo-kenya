@@ -51,6 +51,26 @@ export function SingleWard({ ward }: { ward: Partial<KenyaWardsSelect> }) {
             </View>
           </View>
 
+          {ward.subCounty && (
+            <View style={styles.infoRow}>
+              <View style={styles.iconContainer}>
+                <MaterialIcon name="location-city" size={24} color={theme.colors.primary} />
+              </View>
+              <View style={styles.infoContent}>
+                <Text
+                  variant="labelLarge"
+                  style={[styles.infoLabel, { color: theme.colors.onSurfaceVariant }]}>
+                  SUB-COUNTY
+                </Text>
+                <Text
+                  variant="titleMedium"
+                  style={[styles.infoValue, { color: theme.colors.onSurface }]}>
+                  {ward.subCounty}
+                </Text>
+              </View>
+            </View>
+          )}
+
           {ward.constituency && (
             <View style={styles.infoRow}>
               <View style={styles.iconContainer}>
@@ -71,21 +91,31 @@ export function SingleWard({ ward }: { ward: Partial<KenyaWardsSelect> }) {
             </View>
           )}
 
-          <View style={styles.infoRow}>
-            <View style={styles.iconContainer}>
-              <MaterialIcon name="code" size={24} color={theme.colors.primary} />
-            </View>
-            <View style={styles.infoContent}>
-              <Text
-                variant="labelLarge"
-                style={[styles.infoLabel, { color: theme.colors.onSurfaceVariant }]}>
-                WARD CODE
-              </Text>
-              <Text
-                variant="titleMedium"
-                style={[styles.infoValue, { color: theme.colors.onSurface }]}>
-                {ward.wardCode}
-              </Text>
+          <View style={styles.codesSection}>
+            <Text
+              variant="labelLarge"
+              style={[styles.sectionTitle, { color: theme.colors.onSurfaceVariant }]}>
+              ADMINISTRATIVE CODES
+            </Text>
+            <View style={styles.codesGrid}>
+              {ward.wardCode && (
+                <View style={[styles.codeCard, { backgroundColor: theme.colors.surfaceVariant }]}>
+                  <Text style={[styles.codeLabel, { color: theme.colors.onSurfaceVariant }]}>Ward</Text>
+                  <Text style={[styles.codeValue, { color: theme.colors.onSurfaceVariant }]}>{ward.wardCode}</Text>
+                </View>
+              )}
+              {ward.countyCode && (
+                <View style={[styles.codeCard, { backgroundColor: theme.colors.surfaceVariant }]}>
+                  <Text style={[styles.codeLabel, { color: theme.colors.onSurfaceVariant }]}>County</Text>
+                  <Text style={[styles.codeValue, { color: theme.colors.onSurfaceVariant }]}>{ward.countyCode}</Text>
+                </View>
+              )}
+              {ward.constituencyCode && (
+                <View style={[styles.codeCard, { backgroundColor: theme.colors.surfaceVariant }]}>
+                  <Text style={[styles.codeLabel, { color: theme.colors.onSurfaceVariant }]}>Constituency</Text>
+                  <Text style={[styles.codeValue, { color: theme.colors.onSurfaceVariant }]}>{ward.constituencyCode}</Text>
+                </View>
+              )}
             </View>
           </View>
         </View>
@@ -156,6 +186,35 @@ const styles = StyleSheet.create({
   },
   infoValue: {
     fontWeight: "500",
+  },
+  codesSection: {
+    marginTop: 8,
+  },
+  sectionTitle: {
+    marginBottom: 12,
+    letterSpacing: 1.5,
+  },
+  codesGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+  },
+  codeCard: {
+    borderRadius: 8,
+    padding: 12,
+    minWidth: 80,
+    alignItems: "center",
+  },
+  codeLabel: {
+    fontSize: 12,
+    fontWeight: "600",
+    textTransform: "uppercase",
+    marginBottom: 4,
+  },
+  codeValue: {
+    fontSize: 16,
+    fontWeight: "700",
+    fontFamily: "monospace",
   },
   errorContainer: {
     flex: 1,
