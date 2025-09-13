@@ -1,6 +1,5 @@
 import { db } from "@/lib/drizzle/client";
 import { useQuery } from "@tanstack/react-query";
-import { useDebounce } from "@uidotdev/usehooks";
 import { useState } from "react";
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, View } from "react-native";
 import { Button, Card, Searchbar, Text, useTheme } from "react-native-paper";
@@ -11,7 +10,7 @@ import { NoDataScreen } from "../state-screens/NoDataScreen";
 export function KenyaWards() {
   const theme = useTheme();
   const [searchQuery, setSearchQuery] = useState("");
-    // const searchQuery = useDebounce(topSearchQuery, 500);
+  // const searchQuery = useDebounce(topSearchQuery, 500);
   const { data, isPending, refetch, isRefetching } = useQuery({
     queryKey: ["wards", searchQuery],
     placeholderData: (previousData) => previousData,
@@ -53,38 +52,6 @@ export function KenyaWards() {
     return <LoadingFallback />;
   }
 
-  // if (data?.error) {
-  //   return (
-  //     <View style={{ ...styles.container }}>
-  //       {isRefetching ? (
-  //         <ActivityIndicator
-  //           style={{
-  //             position: "absolute",
-  //             top: "50%",
-  //             left: "50%",
-  //             zIndex: 1000,
-  //             transform: [{ translateX: -20 }, { translateY: -20 }],
-  //           }}
-  //         />
-  //       ):null}
-  //       <KenyaWardsHeader total={0} searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-  //       <View style={[styles.errorContainer, { backgroundColor: theme.colors.surface, gap: 16 }]}>
-  //         <MaterialIcon name="error" size={48} color={theme.colors.error} />
-  //         <Text style={[styles.errorText, { color: theme.colors.onSurface }]}>{data.error}</Text>
-  //         <Button
-  //           disabled={isRefetching}
-  //           icon="reload"
-  //           mode="contained"
-  //           onPress={() => {
-  //             setSearchQuery("");
-  //             refetch();
-  //           }}>
-  //           Reload
-  //         </Button>
-  //       </View>
-  //     </View>
-  //   );
-  // }
 
   if (!data?.result || data.result.length === 0) {
     return (
@@ -99,26 +66,26 @@ export function KenyaWards() {
               transform: [{ translateX: -20 }, { translateY: -20 }],
             }}
           />
-        ):null}
-        <View style={{height:"80%" }}>
-        <KenyaWardsHeader total={0} searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-        <NoDataScreen
-          listName="Wards"
-          hint="No wards found"
-          icon={<MaterialIcon color={theme.colors.primary} name="location-city" size={64} />}
-        />
+        ) : null}
+        <View style={{ height: "80%" }}>
+          <KenyaWardsHeader total={0} searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+          <NoDataScreen
+            listName="Wards"
+            hint="No wards found"
+            icon={<MaterialIcon color={theme.colors.primary} name="location-city" size={64} />}
+          />
 
-        <Button
-         style={{marginHorizontal:"20%"}}
-          disabled={isRefetching}
-          icon="reload"
-          mode="contained"
-          onPress={() => {
-            setSearchQuery("");
-            refetch();
-          }}>
-          Reload
-        </Button>
+          <Button
+            style={{ marginHorizontal: "20%" }}
+            disabled={isRefetching}
+            icon="reload"
+            mode="contained"
+            onPress={() => {
+              setSearchQuery("");
+              refetch();
+            }}>
+            Reload
+          </Button>
         </View>
       </View>
     );

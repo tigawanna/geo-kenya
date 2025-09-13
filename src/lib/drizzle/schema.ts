@@ -1,6 +1,6 @@
 import { sqliteTable, integer, text,blob } from "drizzle-orm/sqlite-core";
 import { geometry } from "./drizzlespatialite-types";
-import { sql } from "drizzle-orm";
+import { InferSelectModel, sql } from "drizzle-orm";
 
 export const kenyaWards = sqliteTable("kenya_wards", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -41,3 +41,7 @@ export const notes = sqliteTable('notes', {
   // Spatial column (will be populated by Spatialite)
   locationPoint: text('location_point'), // Added by AddGeometryColumn
 });
+
+
+// Infer the select type for the users table
+export type KenyaWardsSelect = InferSelectModel<typeof kenyaWards>;
