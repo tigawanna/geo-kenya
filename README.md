@@ -13,6 +13,10 @@ GeoKenya is a React Native mobile application built with Expo that provides geog
 - Offline data storage using SQLite with Spatialite extension
 - Responsive UI optimized for mobile devices
 
+## Dataset
+
+The geographic data used in this application is available in a separate repository: [kenya_wards_geojson_data](https://github.com/tigawanna/kenya_wards_geojson_data). This dataset contains GeoJSON files for Kenya's administrative boundaries that can be used in your own projects.
+
 ## Prerequisites
 
 - Node.js (LTS version recommended)
@@ -91,3 +95,6 @@ We're grateful to the maintainers of these projects for their excellent work tha
 
 This is currently an Android-only project. While the codebase uses cross-platform technologies, it has only been tested and optimized for Android devices. iOS support is not yet implemented and may require additional work to function properly.
 
+## License
+
+[Add your license information here]
