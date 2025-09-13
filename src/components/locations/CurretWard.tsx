@@ -9,15 +9,6 @@ import { NoDataScreen } from "../state-screens/NoDataScreen";
 import { SingleWard } from "./SingleWard";
 import { sql } from "drizzle-orm";
 
-    // SELECT 
-    //   id, ward_code as wardCode, ward, county, county_code as countyCode, 
-    //   sub_county as subCounty, constituency, constituency_code as constituencyCode
-    // FROM kenya_wards
-    // WHERE Within(GeomFromText('POINT(' || ? || ' ' || ? || ')', 4326), geom)
-    // LIMIT 1
-    // `,
-    //       [36.817223, -1.286389]
-    //     );
 
 export function CurretWard() {
   const theme = useTheme();
@@ -105,6 +96,19 @@ export function CurretWard() {
   }
   return (
     <View style={{ ...styles.container }}>
+      {lat && lng && (
+        <View style={[styles.banner, { backgroundColor: theme.colors.surfaceVariant }]}>
+          <View style={styles.bannerContent}>
+            <MaterialIcon name="my-location" size={20} color={theme.colors.primary} />
+            <View style={styles.coordinatesContainer}>
+              <Text style={[styles.bannerTitle, { color: theme.colors.onSurfaceVariant }]}>Current Location</Text>
+              <Text style={[styles.coordinatesText, { color: theme.colors.onSurfaceVariant }]}>
+                {lat.toFixed(4)}°, {lng.toFixed(4)}°
+              </Text>
+            </View>
+          </View>
+        </View>
+      )}
       <SingleWard ward={data.result} />
     </View>
   );
@@ -127,5 +131,37 @@ const styles = StyleSheet.create({
     marginTop: 16,
     textAlign: "center",
     // Color applied dynamically
+  },
+  banner: {
+    marginHorizontal: 16,
+    marginTop: 16,
+    marginBottom: 8,
+    borderRadius: 12,
+    elevation: 2,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+  },
+  bannerContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 16,
+    gap: 12,
+  },
+  coordinatesContainer: {
+    flex: 1,
+  },
+  bannerTitle: {
+    fontSize: 12,
+    fontWeight: "600",
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+    opacity: 0.8,
+  },
+  coordinatesText: {
+    fontSize: 16,
+    fontWeight: "500",
+    marginTop: 2,
+    fontFamily: "monospace",
   },
 });
