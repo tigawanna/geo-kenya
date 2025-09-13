@@ -94,7 +94,3 @@ We're grateful to the maintainers of these projects for their excellent work tha
 ## Disclaimer
 
 This is currently an Android-only project. While the codebase uses cross-platform technologies, it has only been tested and optimized for Android devices. iOS support is not yet implemented and may require additional work to function properly.
-
-## License
-
-[Add your license information here]
