@@ -25,13 +25,7 @@ export type {
   StatementResult
 } from "./ExpoSpatialiteModule";
 
-/**
- * Get the Spatialite version
- * @returns The Spatialite version string
- */
-export function getSpatialiteVersion(): string {
-  return ExpoSpatialiteModule.getSpatialiteVersion();
-}
+
 
 /**
  * Creates a database path in the document directory
@@ -65,78 +59,8 @@ export function createDatabasePath(databaseName: string, directory?: string): st
     throw new Error(`Failed to create database path: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
-/**
- * Imports an asset database into the SQLite database directory.
- *
- * @param databaseName The name of the database file
- * @param assetId The asset ID from require() or Asset.fromModule()
- * @param forceOverwrite Whether to overwrite existing database
- * @param directory Optional subdirectory within the documents directory
- */
-export async function importDatabaseFromAssetAsync(
-  databaseName: string,
-  assetId: number,
-  forceOverwrite: boolean = false,
-  directory?: string
-) {
-  // Download the asset first to ensure it's available
-  const asset = await Asset.fromModule(assetId).downloadAsync();
-  if (!asset.localUri) {
-    throw new Error(`Unable to get the localUri from asset ${assetId}`);
-  }
 
-  // Use the correct path format for the native module
-  const databasePath = createDatabasePath(databaseName, directory);
 
-  // Pass the asset path without file:// prefix to match native module expectations
-  const assetPath = asset.localUri.replace("file://", "");
-
-  return await ExpoSpatialiteModule.importAssetDatabaseAsync(
-    databasePath,
-    assetPath,
-    forceOverwrite
-  );
-}
-
-/**
- * Import a database from app assets to a specified path
- * @param databasePath The path where the database should be imported
- * @param assetDatabasePath The path to the database asset in the app bundle
- * @param forceOverwrite Whether to overwrite existing database
- * @returns Import result with success status and path
- */
-export async function importAssetDatabaseAsync(
-  databasePath: string,
-  assetDatabasePath: string,
-  forceOverwrite: boolean = false
-): Promise<ImportAssetDatabaseResult> {
-  const result = await ExpoSpatialiteModule.importAssetDatabaseAsync(
-    databasePath,
-    assetDatabasePath,
-    forceOverwrite
-  );
-
-  return {
-    success: result.success,
-    message: result.message,
-    path: result.path,
-  };
-}
-
-/**
- * Initialize a Spatialite database from a file path
- * @param databasePath The path to the database file
- * @returns Initialization result with success status and version info
- */
-export async function initDatabase(databasePath: string): Promise<InitDatabaseResult> {
-  const result = await ExpoSpatialiteModule.initDatabase(databasePath);
-
-  return {
-    success: result.success,
-    path: result.path || "",
-    spatialiteVersion: result.spatialiteVersion,
-  };
-}
 
 /**
  * Execute a SQL query and return results with generic type support

@@ -10,7 +10,7 @@ export function SpatialiteVersion() {
       // Simulate an async operation, e.g., fetching data from an API
       return new Promise<string>((resolve) => {
         setTimeout(() => {
-          const version = getSpatialiteVersion();
+          const version = ExpoSpatialiteModule.getSpatialiteVersion();
           resolve(version);
         }, 1000);
       });

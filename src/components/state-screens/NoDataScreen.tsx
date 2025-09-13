@@ -58,7 +58,7 @@ export function NoDataScreen({
   }));
 
   return (
-    <Surface style={[styles.container, { backgroundColor: colors.surface }]}>
+    <View style={[styles.container]}>
       <View style={styles.content}>
         <Animated.View style={[styles.iconContainer, animatedIconStyle]}>
           {icon}
@@ -89,7 +89,7 @@ export function NoDataScreen({
           </Text>
         </View>
       </View>
-    </Surface>
+    </View>
   );
 }
 
