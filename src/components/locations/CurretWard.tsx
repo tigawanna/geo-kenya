@@ -7,6 +7,17 @@ import { MaterialIcon } from "../default/ui/icon-symbol";
 import { LoadingFallback } from "../state-screens/LoadingFallback";
 import { NoDataScreen } from "../state-screens/NoDataScreen";
 import { SingleWard } from "./SingleWard";
+import { sql } from "drizzle-orm";
+
+    // SELECT 
+    //   id, ward_code as wardCode, ward, county, county_code as countyCode, 
+    //   sub_county as subCounty, constituency, constituency_code as constituencyCode
+    // FROM kenya_wards
+    // WHERE Within(GeomFromText('POINT(' || ? || ' ' || ? || ')', 4326), geom)
+    // LIMIT 1
+    // `,
+    //       [36.817223, -1.286389]
+    //     );
 
 export function CurretWard() {
   const theme = useTheme();
@@ -15,11 +26,17 @@ export function CurretWard() {
   const lng = location?.coords.longitude;
   const wardId = 1;
   const { data, isPending, refetch, isRefetching } = useQuery({
-    queryKey: ["current-ward", wardId],
+    queryKey: ["current-ward", wardId, lat, lng],
     queryFn: async () => {
       try {
         const result = await db.query.kenyaWards.findFirst({
-          where: (fields, { eq }) => eq(fields.id, wardId),
+          where: (fields, { eq, or }) =>
+            or(
+              sql`
+                Within(GeomFromText('POINT(' || ${lng} || ' ' || ${lat} || ')', 4326), geom)
+            `,
+              eq(fields.id, wardId)
+            ),
         });
 
         if (!result) {
