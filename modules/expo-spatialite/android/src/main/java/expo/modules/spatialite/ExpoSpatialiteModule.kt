@@ -65,89 +65,8 @@ class ExpoSpatialiteModule : Module() {
 
                 var isNewDatabase = false // Declare the variable here
 
-                // Handle special :memory: case
-                if (dbPath == ":memory:") {
-                    Log.d(TAG, "Creating in-memory database")
-                    databasePath = dbPath
-                    database = SQLiteDatabase.openOrCreateDatabase(":memory:", null)
-                    isNewDatabase = true // Set to true for in-memory databases
-                } else {
-                    // Use Expo's pattern: resolve relative paths against app's files directory
-                    val baseDir = context.filesDir
-                    val dbFile = if (File(dbPath).isAbsolute) {
-                        File(dbPath)
-                    } else {
-                        File(baseDir, "Spatialite" + File.separator + dbPath)
-                    }
-
-                    // Create parent directories if they don't exist
-                    val parentDir = dbFile.parentFile
-                    if (parentDir != null) {
-                        if (!parentDir.exists()) {
-                            Log.d(TAG, "Parent directory does not exist, attempting to create: ${parentDir.absolutePath}")
-                            val dirsCreated = parentDir.mkdirs()
-                            if (dirsCreated) {
-                                Log.d(TAG, "Successfully created parent directories")
-                            } else {
-                                Log.w(TAG, "Failed to create parent directories, checking if they exist now...")
-                                if (!parentDir.exists()) {
-                                    Log.e(TAG, "Parent directories could not be created: ${parentDir.absolutePath}")
-                                    throw IllegalStateException("Could not create parent directories for database path: ${dbFile.absolutePath}")
-                                }
-                            }
-                        }
-                    }
-
-                    // Check if database file exists
-                    if (!dbFile.exists()) {
-                        Log.d(TAG, "Database file does not exist, will be created at: ${dbFile.absolutePath}")
-                        isNewDatabase = true
-                    } else {
-                        Log.d(TAG, "Database file exists, size: ${dbFile.length()} bytes")
-                        // Check for locale issues and attempt recovery if needed
-                        isNewDatabase = handleLocaleConflict(dbFile)
-                    }
-
-                    // Open the database with flags that avoid locale issues
-                    val openFlags = SQLiteDatabase.OPEN_READWRITE or
-                            SQLiteDatabase.CREATE_IF_NECESSARY or
-                            SQLiteDatabase.NO_LOCALIZED_COLLATORS
-
-                    database = SQLiteDatabase.openDatabase(
-                        dbFile.absolutePath,
-                        null,
-                        openFlags
-                    )
-
-                    // If it's a new database, initialize Spatialite metadata
-                    if (isNewDatabase) {
-                        try {
-                            database?.execSQL("SELECT InitSpatialMetaData();")
-                            Log.d(TAG, "Spatialite metadata initialized successfully for new database")
-                        } catch (e: Exception) {
-                            Log.d(TAG, "Spatialite metadata may already exist or failed to initialize", e)
-                        }
-                    }
-
-                    databasePath = dbFile.absolutePath
-                }
-
-                // Verify Spatialite is working
-                val cursor = database?.rawQuery("SELECT spatialite_version();", null)
-                var version = "unknown"
-                if (cursor != null && cursor.moveToFirst()) {
-                    version = cursor.getString(0)
-                    cursor.close()
-                }
-
-                Log.d(TAG, "Spatialite version: $version")
-
-                mapOf(
-                    "success" to true,
-                    "path" to databasePath,
-                    "spatialiteVersion" to version,
-                    "isNewDatabase" to isNewDatabase
-                )
+                val result = initializeDatabaseInternal(dbPath)
+                result
             } catch (e: Exception) {
                 Log.e(TAG, "Error initializing database from path: $dbPath", e)
                 throw e
@@ -486,6 +405,145 @@ class ExpoSpatialiteModule : Module() {
             }
         }
 
+        // Smart database initialization - only imports if database doesn't exist or lacks specified table
+        AsyncFunction("smartInitDatabase") { databasePath: String, assetDatabasePath: String?, checkTableName: String?, forceOverwrite: Boolean? ->
+            try {
+                val context = appContext.reactContext ?: throw IllegalStateException("React context not available")
+                val shouldForceOverwrite = forceOverwrite ?: false
+                
+                Log.d(TAG, "Smart initializing database: $databasePath")
+                
+                var shouldImport = false
+                var tableExists = false
+                var imported = false
+                
+                // Use Expo's pattern: resolve relative paths against app's files directory
+                val baseDir = context.filesDir
+                val dbFile = if (File(databasePath).isAbsolute) {
+                    File(databasePath)
+                } else {
+                    File(baseDir, "Spatialite" + File.separator + databasePath)
+                }
+                
+                // Check if database exists
+                if (!dbFile.exists() || shouldForceOverwrite) {
+                    shouldImport = true
+                    Log.d(TAG, "Database doesn't exist or force overwrite requested")
+                } else {
+                    // Database exists, check if table exists (if specified)
+                    if (checkTableName != null) {
+                        try {
+                            val testDb = SQLiteDatabase.openDatabase(
+                                dbFile.absolutePath,
+                                null,
+                                SQLiteDatabase.OPEN_READONLY or SQLiteDatabase.NO_LOCALIZED_COLLATORS
+                            )
+                            val cursor = testDb.rawQuery(
+                                "SELECT name FROM sqlite_master WHERE type='table' AND name=?;",
+                                arrayOf(checkTableName)
+                            )
+                            tableExists = cursor.moveToFirst()
+                            cursor.close()
+                            testDb.close()
+                            
+                            if (!tableExists) {
+                                shouldImport = true
+                                Log.d(TAG, "Table '$checkTableName' doesn't exist, will import")
+                            }
+                        } catch (e: Exception) {
+                            Log.w(TAG, "Error checking table existence, will import", e)
+                            shouldImport = true
+                        }
+                    }
+                }
+                
+                // Import asset database if needed and available
+                if (shouldImport && assetDatabasePath != null) {
+                    try {
+                        importAssetDatabase(context, databasePath, assetDatabasePath, true)
+                        imported = true
+                        Log.d(TAG, "Asset database imported successfully")
+                    } catch (e: Exception) {
+                        Log.w(TAG, "Failed to import asset database, will create blank", e)
+                    }
+                }
+                
+                // Initialize the database
+                val initResult = initializeDatabaseInternal(databasePath)
+                
+                mapOf(
+                    "success" to initResult["success"],
+                    "path" to initResult["path"],
+                    "spatialiteVersion" to initResult["spatialiteVersion"],
+                    "imported" to imported,
+                    "tableExists" to tableExists
+                )
+            } catch (e: Exception) {
+                Log.e(TAG, "Error in smart database initialization", e)
+                throw e
+            }
+        }
+        
+        // Reset database - deletes current database and imports from asset if available
+        AsyncFunction("resetDatabase") { databasePath: String, assetDatabasePath: String? ->
+            try {
+                val context = appContext.reactContext ?: throw IllegalStateException("React context not available")
+                
+                Log.d(TAG, "Resetting database: $databasePath")
+                
+                // Close current database if open
+                database?.close()
+                database = null
+                
+                // Use Expo's pattern: resolve relative paths against app's files directory
+                val baseDir = context.filesDir
+                val dbFile = if (File(databasePath).isAbsolute) {
+                    File(databasePath)
+                } else {
+                    File(baseDir, "Spatialite" + File.separator + databasePath)
+                }
+                
+                // Delete existing database
+                var deleted = false
+                if (dbFile.exists()) {
+                    deleted = dbFile.delete()
+                    Log.d(TAG, "Existing database deleted: $deleted")
+                }
+                
+                var imported = false
+                var message = "Database reset successfully"
+                
+                // Import asset database if available
+                if (assetDatabasePath != null) {
+                    try {
+                        importAssetDatabase(context, databasePath, assetDatabasePath, true)
+                        imported = true
+                        message = "Database reset and imported from asset"
+                        Log.d(TAG, "Asset database imported after reset")
+                    } catch (e: Exception) {
+                        Log.w(TAG, "Failed to import asset database after reset", e)
+                        message = "Database reset, but asset import failed - blank database created"
+                    }
+                } else {
+                    message = "Database reset - blank database will be created"
+                }
+                
+                // Initialize the database
+                val initResult = initializeDatabaseInternal(databasePath)
+                
+                mapOf(
+                    "success" to initResult["success"],
+                    "path" to initResult["path"],
+                    "spatialiteVersion" to initResult["spatialiteVersion"],
+                    "imported" to imported,
+                    "message" to message
+                )
+            } catch (e: Exception) {
+                Log.e(TAG, "Error resetting database", e)
+                throw e
+            }
+        }
+
         // Closes the database
         AsyncFunction("closeDatabase") {
             try {
@@ -504,6 +562,117 @@ class ExpoSpatialiteModule : Module() {
             }
         }
 
+    }
+    
+    // Helper method to initialize database (extracted from initDatabase for reuse)
+    private fun initializeDatabaseInternal(dbPath: String): Map<String, Any> {
+        val context = appContext.reactContext ?: throw IllegalStateException("React context not available")
+        
+        var isNewDatabase = false
+        
+        // Handle special :memory: case
+        if (dbPath == ":memory:") {
+            Log.d(TAG, "Creating in-memory database")
+            databasePath = dbPath
+            database = SQLiteDatabase.openOrCreateDatabase(":memory:", null)
+            isNewDatabase = true
+        } else {
+            // Use Expo's pattern: resolve relative paths against app's files directory
+            val baseDir = context.filesDir
+            val dbFile = if (File(dbPath).isAbsolute) {
+                File(dbPath)
+            } else {
+                File(baseDir, "Spatialite" + File.separator + dbPath)
+            }
+            
+            // Create parent directories if they don't exist
+            val parentDir = dbFile.parentFile
+            if (parentDir != null && !parentDir.exists()) {
+                parentDir.mkdirs()
+            }
+            
+            // Check if database file exists
+            if (!dbFile.exists()) {
+                isNewDatabase = true
+            } else {
+                isNewDatabase = handleLocaleConflict(dbFile)
+            }
+            
+            // Open the database
+            val openFlags = SQLiteDatabase.OPEN_READWRITE or
+                    SQLiteDatabase.CREATE_IF_NECESSARY or
+                    SQLiteDatabase.NO_LOCALIZED_COLLATORS
+            
+            database = SQLiteDatabase.openDatabase(
+                dbFile.absolutePath,
+                null,
+                openFlags
+            )
+            
+            // Initialize Spatialite metadata for new databases
+            if (isNewDatabase) {
+                try {
+                    database?.execSQL("SELECT InitSpatialMetaData();")
+                } catch (e: Exception) {
+                    Log.d(TAG, "Spatialite metadata initialization skipped", e)
+                }
+            }
+            
+            databasePath = dbFile.absolutePath
+        }
+        
+        // Get Spatialite version
+        val cursor = database?.rawQuery("SELECT spatialite_version();", null)
+        var version = "unknown"
+        if (cursor != null && cursor.moveToFirst()) {
+            version = cursor.getString(0)
+            cursor.close()
+        }
+        
+        return mapOf(
+            "success" to true,
+            "path" to databasePath,
+            "spatialiteVersion" to version,
+            "isNewDatabase" to isNewDatabase
+        ) as Map<String, Any>
+    }
+    
+    // Helper method to import asset database
+    private fun importAssetDatabase(context: Context, databasePath: String, assetDatabasePath: String, forceOverwrite: Boolean) {
+        // Use Expo's pattern: resolve relative paths against app's files directory
+        val baseDir = context.filesDir
+        val dbFile = if (File(databasePath).isAbsolute) {
+            File(databasePath)
+        } else {
+            File(baseDir, "Spatialite" + File.separator + databasePath)
+        }
+        
+        // Create parent directories if they don't exist
+        val parentDir = dbFile.parentFile
+        if (parentDir != null && !parentDir.exists()) {
+            parentDir.mkdirs()
+        }
+        
+        // Check if database already exists and forceOverwrite is false
+        if (dbFile.exists() && !forceOverwrite) {
+            return
+        }
+        
+        // Try to copy the file
+        val sourceFile = File(assetDatabasePath)
+        if (sourceFile.exists()) {
+            FileInputStream(sourceFile).use { input ->
+                FileOutputStream(dbFile).use { output ->
+                    input.copyTo(output)
+                }
+            }
+        } else {
+            // Fallback to asset manager
+            val assetStream = context.assets.open(assetDatabasePath)
+            FileOutputStream(dbFile).use { output ->
+                assetStream.copyTo(output)
+            }
+        }
     }
 
     // Helper method to handle locale conflicts by backing up and recreating the database
@@ -616,7 +785,6 @@ class ExpoSpatialiteModule : Module() {
     }
 
     // Helper function to convert Cursor to List of Maps
-    @RequiresApi(Build.VERSION_CODES.HONEYCOMB)
     private fun cursorToList(cursor: Cursor?): List<Map<String, Any?>> {
         val result = mutableListOf<Map<String, Any?>>()
 

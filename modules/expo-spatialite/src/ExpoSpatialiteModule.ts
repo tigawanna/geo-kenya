@@ -60,6 +60,22 @@ export type TransactionResult = {
   results?: TransactionResult[];
 };
 
+export type SmartInitDatabaseResult = {
+  success: boolean;
+  path: string | null;
+  spatialiteVersion: string;
+  imported: boolean;
+  tableExists: boolean;
+};
+
+export type ResetDatabaseResult = {
+  success: boolean;
+  path: string | null;
+  spatialiteVersion: string;
+  imported: boolean;
+  message: string;
+};
+
 
 
 declare class ExpoSpatialiteModule extends NativeModule {
@@ -94,6 +110,18 @@ declare class ExpoSpatialiteModule extends NativeModule {
   testFileHandling(filePath: string): Promise<TestFileHandlingResult>;
 
   executeTransaction(statements: TransactionStatement[], useTransaction?: boolean): Promise<TransactionResult[]>;
+
+  smartInitDatabase(
+    databasePath: string,
+    assetDatabasePath?: string,
+    checkTableName?: string,
+    forceOverwrite?: boolean
+  ): Promise<SmartInitDatabaseResult>;
+
+  resetDatabase(
+    databasePath: string,
+    assetDatabasePath?: string
+  ): Promise<ResetDatabaseResult>;
 }
 
 // This call loads the native module object from the JSI.

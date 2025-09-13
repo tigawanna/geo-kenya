@@ -1,12 +1,12 @@
 import React, { createContext, memo, useContext, useEffect, useRef, useState } from "react";
+import { Asset } from "expo-asset";
 import {
-  initDatabase,
+  smartInitDatabase,
+  resetDatabase,
   executeQuery,
   executeStatement,
   executePragmaQuery,
-  importDatabaseFromAssetAsync,
   closeDatabase,
-  createDatabasePath,
 } from "@/modules/expo-spatialite";
 
 export interface ExpoSpatialiteProviderAssetSource {
@@ -73,11 +73,15 @@ export interface ExpoSpatialiteProviderProps {
   children: React.ReactNode;
 
   /**
+   * Table name to check for existence during smart initialization
+   */
+  checkTableName?: string;
+
+  /**
    * A custom initialization handler to run before rendering the children.
    * You can use this to run database migrations or other setup tasks.
    */
   onInit?: (context: {
-    initDatabase: typeof initDatabase;
     executeQuery: typeof executeQuery;
     executePragmaQuery: typeof executePragmaQuery;
     executeStatement: typeof executeStatement;
@@ -103,7 +107,7 @@ const ExpoSpatialiteContext = createContext<{
   executeQuery: typeof executeQuery;
   executeStatement: typeof executeStatement;
   executePragmaQuery: typeof executePragmaQuery;
-  initDatabase: typeof initDatabase;
+  resetDatabase: (assetSource?: ExpoSpatialiteProviderAssetSource) => Promise<void>;
 } | null>(null);
 
 /**
@@ -138,7 +142,8 @@ export const ExpoSpatialiteProvider = memo(
     prevProps.forceOverwrite === nextProps.forceOverwrite &&
     prevProps.onInit === nextProps.onInit &&
     prevProps.onError === nextProps.onError &&
-    prevProps.useSuspense === nextProps.useSuspense
+    prevProps.useSuspense === nextProps.useSuspense &&
+    prevProps.checkTableName === nextProps.checkTableName
 );
 
 /**
@@ -176,6 +181,7 @@ function ExpoSpatialiteProviderSuspense({
   location,
   assetSource,
   forceOverwrite,
+  checkTableName,
   children,
   onInit,
 }: Omit<ExpoSpatialiteProviderProps, "onError" | "useSuspense">) {
@@ -183,7 +189,7 @@ function ExpoSpatialiteProviderSuspense({
   // This is a simplified version - you might want to implement proper Suspense logic
   return (
     <ExpoSpatialiteContext.Provider
-      value={{ executeQuery, executeStatement, initDatabase, executePragmaQuery }}>
+      value={{ executeQuery, executeStatement, executePragmaQuery, resetDatabase: () => Promise.resolve() }}>
       {children}
     </ExpoSpatialiteContext.Provider>
   );
@@ -194,6 +200,7 @@ function ExpoSpatialiteProviderNonSuspense({
   location,
   assetSource,
   forceOverwrite = false,
+  checkTableName,
   children,
   onInit,
   onError,
@@ -210,6 +217,7 @@ function ExpoSpatialiteProviderNonSuspense({
           location,
           assetSource,
           forceOverwrite,
+          checkTableName,
           onInit,
         });
         databaseRef.current = dbPath;
@@ -234,7 +242,7 @@ function ExpoSpatialiteProviderNonSuspense({
       databaseRef.current = null;
       setLoading(true);
     };
-  }, [databaseName, location, assetSource, forceOverwrite, onInit]);
+  }, [databaseName, location, assetSource, forceOverwrite, onInit, checkTableName]);
 
   if (error != null) {
     const handler =
@@ -249,9 +257,19 @@ function ExpoSpatialiteProviderNonSuspense({
     return null;
   }
 
+  const handleResetDatabase = async (newAssetSource?: ExpoSpatialiteProviderAssetSource) => {
+    const assetPath = newAssetSource?.assetId ? 
+      (await Asset.fromModule(newAssetSource.assetId).downloadAsync()).localUri?.replace("file://", "") : 
+      (assetSource?.assetId ? 
+        (await Asset.fromModule(assetSource.assetId).downloadAsync()).localUri?.replace("file://", "") : 
+        undefined);
+    
+    await resetDatabase(databaseName, assetPath);
+  };
+
   return (
     <ExpoSpatialiteContext.Provider
-      value={{ executeQuery, executeStatement, initDatabase, executePragmaQuery }}>
+      value={{ executeQuery, executeStatement, executePragmaQuery, resetDatabase: handleResetDatabase }}>
       {children}
     </ExpoSpatialiteContext.Provider>
   );
@@ -262,69 +280,49 @@ async function setupDatabaseAsync({
   location,
   assetSource,
   forceOverwrite = false,
+  checkTableName,
   onInit,
-}: Pick<ExpoSpatialiteProviderProps, "databaseName" | "location" | "assetSource" | "onInit"> & {
+}: Pick<ExpoSpatialiteProviderProps, "databaseName" | "location" | "assetSource" | "onInit" | "checkTableName"> & {
   forceOverwrite?: boolean;
 }): Promise<string> {
-  let dbPath: string;
-
-  // Handle in-memory database (simplest case)
+  // Handle in-memory database
   if (location === ":memory:") {
     if (assetSource != null) {
       console.warn("Cannot use :memory: with assetSource. Using file-based database instead.");
-      // Fall through to file-based logic
     } else {
-      dbPath = ":memory:";
-      await initDatabase(dbPath);
+      const result = await smartInitDatabase(":memory:");
       if (onInit != null) {
-        await onInit({ initDatabase, executeQuery, executeStatement, executePragmaQuery });
+        await onInit({ executeQuery, executeStatement, executePragmaQuery });
       }
-      return dbPath;
+      return result.path || ":memory:";
     }
   }
 
-  // Handle file-based databases
+  // Get asset path if available
+  let assetPath: string | undefined;
   if (assetSource != null) {
-    // Import asset database first - ensure asset is downloaded and pass correct path
-    try {
-      await importDatabaseFromAssetAsync(
-        databaseName,
-        assetSource.assetId,
-        assetSource.forceOverwrite ?? false,
-        location // Pass location as directory parameter
-      );
-    } catch (error) {
-      console.error("Failed to import database from asset:", error);
-      throw error;
-    }
-
-    // Construct the correct path that matches what importDatabaseFromAssetAsync created
-    dbPath = createDatabasePath(databaseName, location);
-  } else {
-    // No asset import - just create/open database at specified location
-    dbPath = createDatabasePath(databaseName, location);
-
-    // If forceOverwrite is true, we might want to handle database recreation
-    if (forceOverwrite) {
-      console.log("Force overwrite requested for database:", dbPath);
-      // You could implement database recreation logic here if needed
-    }
+    const asset = await Asset.fromModule(assetSource.assetId).downloadAsync();
+    assetPath = asset.localUri?.replace("file://", "");
   }
 
-  // Initialize the Spatialite database
-  try {
-    await initDatabase(dbPath);
-  } catch (error) {
-    console.error("Failed to initialize database at path:", dbPath, error);
-    throw error;
+  // Use smart initialization
+  const result = await smartInitDatabase(
+    databaseName,
+    assetPath,
+    checkTableName,
+    forceOverwrite
+  );
+
+  if (!result.success) {
+    throw new Error("Failed to initialize database");
   }
 
   // Run initialization hook if provided
   if (onInit != null) {
-    await onInit({ initDatabase, executeQuery, executeStatement, executePragmaQuery });
+    await onInit({ executeQuery, executeStatement, executePragmaQuery });
   }
 
-  return dbPath;
+  return result.path || databaseName;
 }
 
 /**

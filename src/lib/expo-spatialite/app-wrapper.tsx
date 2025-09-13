@@ -8,6 +8,7 @@ export function ExpoSpatialiteWrapper({ children }: { children: React.ReactNode 
       <ExpoSpatialiteProvider
         databaseName="lokeshen.db"
         // databaseName="tpp.db"
+        checkTableName="kenya_wards"
         assetSource={{ assetId: require("@/assets/kenya_wards.db"), forceOverwrite: true }}
         // location="test"
 

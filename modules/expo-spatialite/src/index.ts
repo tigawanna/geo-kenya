@@ -1,7 +1,6 @@
 import { Asset } from "expo-asset";
-import * as FileSystem from "expo-file-system";
+import { Directory, File, Paths } from "expo-file-system";
 import ExpoSpatialiteModule from "./ExpoSpatialiteModule";
-import { File, Directory, Paths } from "expo-file-system";
 
 
 
@@ -10,21 +9,20 @@ import type {
   CloseDatabaseResult,
   ImportAssetDatabaseResult,
   InitDatabaseResult,
+  PragmaQueryResult,
   QueryResult,
+  ResetDatabaseResult,
+  SmartInitDatabaseResult,
   SpatialiteParam,
   StatementResult,
-  PragmaQueryResult,
 } from "./ExpoSpatialiteModule";
 
 // Re-export core types
 export type {
   CloseDatabaseResult,
   ImportAssetDatabaseResult,
-  InitDatabaseResult,
-  QueryResult,
-  SpatialiteParam,
-  StatementResult,
-  PragmaQueryResult,
+  InitDatabaseResult, PragmaQueryResult, QueryResult, ResetDatabaseResult, SmartInitDatabaseResult, SpatialiteParam,
+  StatementResult
 } from "./ExpoSpatialiteModule";
 
 /**
@@ -210,6 +208,60 @@ export async function executeRawQuery<T extends Record<string, any> = Record<str
     success: result.success,
     rowCount: result.rowCount,
     data: result.data as T[],
+  };
+}
+
+/**
+ * Smart database initialization - only imports if database doesn't exist or lacks specified table
+ * @param databasePath The path to the database file
+ * @param assetDatabasePath Optional path to asset database to import
+ * @param checkTableName Optional table name to check for existence
+ * @param forceOverwrite Whether to force overwrite existing database
+ * @returns Smart initialization result
+ */
+export async function smartInitDatabase(
+  databasePath: string,
+  assetDatabasePath?: string,
+  checkTableName?: string,
+  forceOverwrite: boolean = false
+): Promise<SmartInitDatabaseResult> {
+  const result = await ExpoSpatialiteModule.smartInitDatabase(
+    databasePath,
+    assetDatabasePath,
+    checkTableName,
+    forceOverwrite
+  );
+
+  return {
+    success: result.success,
+    path: result.path || "",
+    spatialiteVersion: result.spatialiteVersion,
+    imported: result.imported,
+    tableExists: result.tableExists,
+  };
+}
+
+/**
+ * Reset database - deletes current database and imports from asset if available
+ * @param databasePath The path to the database file
+ * @param assetDatabasePath Optional path to asset database to import
+ * @returns Reset result
+ */
+export async function resetDatabase(
+  databasePath: string,
+  assetDatabasePath?: string
+): Promise<ResetDatabaseResult> {
+  const result = await ExpoSpatialiteModule.resetDatabase(
+    databasePath,
+    assetDatabasePath
+  );
+
+  return {
+    success: result.success,
+    path: result.path || "",
+    spatialiteVersion: result.spatialiteVersion,
+    imported: result.imported,
+    message: result.message,
   };
 }
 
