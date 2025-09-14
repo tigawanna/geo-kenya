@@ -8,40 +8,58 @@ import { MaterialIcon } from "../default/ui/icon-symbol";
 import { LoadingFallback } from "../state-screens/LoadingFallback";
 import { NoDataScreen } from "../state-screens/NoDataScreen";
 import { SingleWard } from "./SingleWard";
+import { kenyaWards } from "@/lib/drizzle/schema";
+import { WardListItem } from "./WardListItem";
 
-interface CurretWardProps {
+interface ClosestWardsProps {
   location: LocationObject;
 }
 
-export function CurretWard({ location }: CurretWardProps) {
+export function ClosestWards({ location }: ClosestWardsProps) {
   const theme = useTheme();
 
   const lat = location?.coords.latitude;
   const lng = location?.coords.longitude;
+
   const { data, isPending, refetch, isRefetching } = useQuery({
-    queryKey: ["current-ward", lat, lng],
+    queryKey: ["closest-ward", lat, lng],
     queryFn: async () => {
       try {
-        const result = await db.query.kenyaWards.findFirst({
-          where: (fields, { eq, or }) =>
-            or(
-              sql`
-                Within(GeomFromText('POINT(' || ${lng} || ' ' || ${lat} || ')', 4326), geom)
-            `
-            ),
-        });
+        const results = await db
+          .select({
+            id: kenyaWards.id,
+            wardCode: kenyaWards.wardCode,
+            ward: kenyaWards.ward,
+            county: kenyaWards.county,
+            countyCode: kenyaWards.countyCode,
+            subCounty: kenyaWards.subCounty,
+            constituency: kenyaWards.constituency,
+            constituencyCode: kenyaWards.constituencyCode,
+            geometry: sql<string>`AsGeoJSON(${kenyaWards.geom})`.as("geometry"),
+            distance:
+              sql<number>`ST_Distance(${kenyaWards.geom}, MakePoint(${lng}, ${lat}, 4326), 1)`.as(
+                "distance"
+              ),
+          })
+          .from(kenyaWards)
+          .where(sql`ST_Distance(${kenyaWards.geom}, MakePoint(${lng}, ${lat}, 4326), 1) < 5000`)
+          .orderBy(sql`ST_Distance(${kenyaWards.geom}, MakePoint(${lng}, ${lat}, 4326), 1)`)
+          .limit(10);
 
-        if (!result) {
-          throw new Error("Ward not found");
+        // console.log("results ==== ",JSON.stringify(results, null, 2))
+
+        if (!results.length) {
+          throw new Error("No nearby wards found");
         }
 
         return {
-          result,
+          results: results,
           error: null,
         };
       } catch (e) {
+        console.log("error getting closest wards", e);
         return {
-          result: null,
+          results: null,
           error: e instanceof Error ? e.message : JSON.stringify(e),
         };
       }
@@ -51,7 +69,8 @@ export function CurretWard({ location }: CurretWardProps) {
   if (isPending) {
     return <LoadingFallback />;
   }
-  if (!data?.result) {
+
+  if (!data?.results || data?.results?.length === 0) {
     return (
       <View style={styles.container}>
         {isRefetching ? (
@@ -68,7 +87,7 @@ export function CurretWard({ location }: CurretWardProps) {
         <View style={{ height: "80%" }}>
           <NoDataScreen
             listName="Wards"
-            hint="No wards found"
+            hint="No nearby wards found"
             icon={<MaterialIcon color={theme.colors.primary} name="location-city" size={64} />}
           />
 
@@ -77,39 +96,49 @@ export function CurretWard({ location }: CurretWardProps) {
             disabled={isRefetching}
             icon="reload"
             mode="contained"
-            onPress={() => {
-              refetch();
-            }}>
+            onPress={() => refetch()}>
             Reload
           </Button>
         </View>
       </View>
     );
   }
+  console.log(
+    "results == ",
+    data.results.map((t) => ({ ward: t.ward, county: t.county }))
+  );
   return (
-    <View style={{ ...styles.container }}>
+    <View style={styles.container}>
       <Card style={styles.labelCard} mode="contained">
         <Card.Content style={styles.labelContent}>
           <MaterialIcon name="my-location" color={theme.colors.primary} size={20} />
-          <Text variant="titleMedium" style={{ color: theme.colors.primary }}>Current Closest Ward</Text>
+          <Text variant="titleMedium" style={{ color: theme.colors.primary }}>
+            Nearby Wards
+          </Text>
         </Card.Content>
       </Card>
-      <SingleWard ward={data.result} />
+
+      {data.results.map((ward: any) => (
+        <WardListItem key={ward.id} item={ward} theme={theme} />
+      ))}
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     width: "100%",
+    height: "100%",
+    flex: 1,
   },
   labelCard: {
     margin: 16,
     marginBottom: 1,
   },
   labelContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     gap: 8,
   },
 });

@@ -4,6 +4,7 @@ import { Button, useTheme } from "react-native-paper";
 import { NoDataScreen } from "../state-screens/NoDataScreen";
 import { MaterialIcon } from "../default/ui/icon-symbol";
 import { CurretWard } from "./CurretWard";
+import { ClosestWards } from "./ClosestWards";
 
 export function CurrentLocation() {
   const theme = useTheme();
@@ -72,12 +73,12 @@ export function CurrentLocation() {
   const lng = location?.coords.longitude;
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
+    <ScrollView style={styles.container}>
       {lat && lng && (
         <View style={[styles.banner, { backgroundColor: theme.colors.surfaceVariant }]}>
           <View style={styles.bannerContent}>
             <MaterialIcon name="my-location" size={20} color={theme.colors.primary} />
-            <View style={styles.coordinatesContainer}>
+            <View>
               <Text style={[styles.bannerTitle, { color: theme.colors.onSurfaceVariant }]}>
                 Current Location
               </Text>
@@ -85,18 +86,26 @@ export function CurrentLocation() {
                 {lat.toFixed(4)}°, {lng.toFixed(4)}°
               </Text>
             </View>
+            <Button
+              onPress={() => refetch()}
+              style={{ width: "auto"}}>
+              <MaterialIcon name="refresh" size={20} color={theme.colors.primary} />
+            </Button>
           </View>
         </View>
       )}
+      <ClosestWards location={location} />
       <CurretWard location={location} />
+      {/* <CurretWard location={location} /> */}
     </ScrollView>
   );
 }
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    // flex: 1,
     height: "100%",
     width: "100%",
+        // flexGrow: 1,
     // justifyContent: "center",
     // alignItems: "center",
   },
@@ -124,11 +133,12 @@ const styles = StyleSheet.create({
   bannerContent: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
     padding: 16,
     gap: 12,
   },
   coordinatesContainer: {
-    flex: 1,
+    // flex: 1,
   },
   bannerTitle: {
     fontSize: 12,
@@ -144,6 +154,8 @@ const styles = StyleSheet.create({
     fontFamily: "monospace",
   },
   scrollContent: {
-    flexGrow: 1,
+    flex: 1,
+    height: "100%",
+    // flexGrow: 1,
   },
 });
