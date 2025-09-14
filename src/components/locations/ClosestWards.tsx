@@ -1,18 +1,13 @@
-import { db } from "@/lib/drizzle/client";
+import { KenyaWardsSelect } from "@/lib/drizzle/schema";
+import { useExpoSpatialiteContext } from "@/lib/expo-spatialite/ExpoSpatialiteProvider";
 import { useQuery } from "@tanstack/react-query";
-import { sql } from "drizzle-orm";
 import { LocationObject } from "expo-location/build/Location.types";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
-import { Button, useTheme, Text, Card } from "react-native-paper";
+import { Button, Card, Text, useTheme } from "react-native-paper";
 import { MaterialIcon } from "../default/ui/icon-symbol";
-import { LoadingFallback } from "../state-screens/LoadingFallback";
-import { NoDataScreen } from "../state-screens/NoDataScreen";
-import { SingleWard } from "./SingleWard";
-import { kenyaWards, KenyaWardsSelect } from "@/lib/drizzle/schema";
-import { WardListItem } from "./WardListItem";
-import { useExpoSpatialiteContext } from "@/lib/expo-spatialite/ExpoSpatialiteProvider";
-import { logger } from "@/utils/logger";
 import { LoadingIndicatorDots } from "../state-screens/LoadingIndicatorDots";
+import { NoDataScreen } from "../state-screens/NoDataScreen";
+import { WardListItem } from "./WardListItem";
 
 interface ClosestWardsProps {
   location: LocationObject;
@@ -92,7 +87,7 @@ export function ClosestWards({ location }: ClosestWardsProps) {
 
   if (isPending) {
     return (
-      <View style={{}}>
+      <View style={{paddingVertical:14}}>
         <LoadingIndicatorDots />
       </View>
     );
