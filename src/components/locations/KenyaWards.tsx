@@ -6,6 +6,7 @@ import { Button, Card, Searchbar, Text, useTheme } from "react-native-paper";
 import { MaterialIcon } from "../default/ui/icon-symbol";
 import { LoadingFallback } from "../state-screens/LoadingFallback";
 import { NoDataScreen } from "../state-screens/NoDataScreen";
+import { WardListItem } from "./WardListItem";
 
 export function KenyaWards() {
   const theme = useTheme();
@@ -52,7 +53,6 @@ export function KenyaWards() {
     return <LoadingFallback />;
   }
 
-
   if (!data?.result || data.result.length === 0) {
     return (
       <View style={styles.container}>
@@ -97,71 +97,7 @@ export function KenyaWards() {
         data={data.result}
         keyExtractor={(item) => item.id.toString()}
         stickyHeaderIndices={[0]}
-        renderItem={({ item }) => (
-          <Card style={[styles.card, { backgroundColor: theme.colors.surface }]} elevation={1}>
-            <Card.Content style={styles.cardContent}>
-              <View style={styles.mainContent}>
-                <View style={styles.titleContainer}>
-                  <Text
-                    variant="titleLarge"
-                    style={[styles.wardName, { color: theme.colors.onSurface }]}>
-                    {item.ward}
-                  </Text>
-                  <MaterialIcon
-                    name="location-on"
-                    size={18}
-                    color={theme.colors.primary}
-                    style={styles.locationIcon}
-                  />
-                </View>
-                <View style={styles.detailsContainer}>
-                  <View style={styles.detailRow}>
-                    <MaterialIcon
-                      name="map"
-                      size={16}
-                      color={theme.colors.onSurfaceVariant}
-                      style={styles.detailIcon}
-                    />
-                    <Text
-                      variant="bodyMedium"
-                      style={[styles.detailText, { color: theme.colors.onSurfaceVariant }]}>
-                      {item.county} County
-                    </Text>
-                  </View>
-                  {item.constituency && (
-                    <View style={styles.detailRow}>
-                      <MaterialIcon
-                        name="account-balance"
-                        size={16}
-                        color={theme.colors.onSurfaceVariant}
-                        style={styles.detailIcon}
-                      />
-                      <Text
-                        variant="bodyMedium"
-                        style={[styles.detailText, { color: theme.colors.onSurfaceVariant }]}>
-                        {item.constituency} Constituency
-                      </Text>
-                    </View>
-                  )}
-                </View>
-              </View>
-              <View style={styles.idContainer}>
-                <View style={[styles.idBadge, { backgroundColor: theme.colors.surfaceVariant }]}>
-                  <Text
-                    variant="titleMedium"
-                    style={[styles.idText, { color: theme.colors.onSurfaceVariant }]}>
-                    {item.id}
-                  </Text>
-                </View>
-                <Text
-                  variant="labelSmall"
-                  style={[styles.wardCode, { color: theme.colors.onSurfaceDisabled }]}>
-                  {item.wardCode}
-                </Text>
-              </View>
-            </Card.Content>
-          </Card>
-        )}
+        renderItem={({ item }) => <WardListItem key={item.id} item={item} theme={theme}  />}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.listContent}
         viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}

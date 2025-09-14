@@ -6,6 +6,7 @@ export const queryKeyPrefixes = {
   spatialite: "spatialite-version", 
   wards: "wards", 
   currentWard:"current-ward",
+  closestWard:"closest-ward",
   deviceLocation:"device-location"
 } as const;
 

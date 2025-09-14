@@ -16,7 +16,6 @@ export function useDeviceLocation() {
     queryKey: ["device-location"],
     queryFn: getCurrentLocation,
     retry: false,
-    staleTime:Infinity
   });
 
   const { mutate: requestLocationAgain, isPending: isRefreshing } = useMutation({
