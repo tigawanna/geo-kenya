@@ -1,6 +1,6 @@
 import { useDeviceLocation } from "@/hooks/use-device-location";
 import { View, Text, StyleSheet, ActivityIndicator, ScrollView } from "react-native";
-import { Button, useTheme } from "react-native-paper";
+import { Button, Card, IconButton, useTheme } from "react-native-paper";
 import { NoDataScreen } from "../state-screens/NoDataScreen";
 import { MaterialIcon } from "../default/ui/icon-symbol";
 import { CurretWard } from "./CurretWard";
@@ -75,43 +75,44 @@ export function CurrentLocation() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
       {lat && lng && (
-        <View style={[styles.banner, { backgroundColor: theme.colors.surfaceVariant }]}>
-          <View style={styles.bannerContent}>
-            <MaterialIcon name="my-location" size={20} color={theme.colors.primary} />
-            <View>
+        <Card style={styles.banner} elevation={4}>
+          <Card.Content style={styles.bannerContent}>
+            {/* Left Side: Icon + Title */}
+            <View style={{gap:6}}>
+            <View style={styles.leftSide}>
+              <MaterialIcon name="my-location" size={20} color={theme.colors.primary} />
               <Text style={[styles.bannerTitle, { color: theme.colors.onSurfaceVariant }]}>
-                Current Location
-              </Text>
-              <Text style={[styles.coordinatesText, { color: theme.colors.onSurfaceVariant }]}>
-                {lat.toFixed(4)}°, {lng.toFixed(4)}°
+                CURRENT LOCATION
               </Text>
             </View>
-            <Button
-              onPress={() => refetch()}
-              style={{ width: "auto"}}>
-              <MaterialIcon name="refresh" size={20} color={theme.colors.primary} />
-            </Button>
+            {/* Center: Coordinates */}
+            <Text style={[styles.coordinatesText, { color: theme.colors.onSurface,paddingLeft:6 }]}>
+              {lat.toFixed(4)}°, {lng.toFixed(4)}°
+            </Text>
           </View>
-        </View>
+
+            {/* Right Side: Refresh Button */}
+            <IconButton
+              icon="refresh"
+              onPress={() => refetch()}
+              style={{ padding: 0 }}
+            />
+          </Card.Content>
+        </Card>
       )}
       <CurretWard location={location} />
       <ClosestWards location={location} />
-      {/* <CurretWard location={location} /> */}
     </ScrollView>
   );
 }
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
     height: "100%",
     width: "100%",
-    // flexGrow: 1,
-    // justifyContent: "center",
-    // alignItems: "center",
   },
   scrollContent: {
-    gap: 6,
-    paddingBottom: 20,
+    gap: 16,
+    paddingBottom: 16,
   },
   errorContainer: {
     flex: 1,
@@ -122,26 +123,24 @@ const styles = StyleSheet.create({
   errorText: {
     marginTop: 16,
     textAlign: "center",
-    // Color applied dynamically
   },
   banner: {
     marginHorizontal: 16,
     marginBottom: 8,
     borderRadius: 12,
-    elevation: 2,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
   },
   bannerContent: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     gap: 12,
   },
-  coordinatesContainer: {
-    // flex: 1,
+  leftSide: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
   },
   bannerTitle: {
     fontSize: 12,
@@ -153,7 +152,8 @@ const styles = StyleSheet.create({
   coordinatesText: {
     fontSize: 16,
     fontWeight: "500",
-    marginTop: 2,
     fontFamily: "monospace",
+    flex: 1,
+    textAlign: "center",
   },
 });

@@ -12,6 +12,7 @@ import { kenyaWards, KenyaWardsSelect } from "@/lib/drizzle/schema";
 import { WardListItem } from "./WardListItem";
 import { useExpoSpatialiteContext } from "@/lib/expo-spatialite/ExpoSpatialiteProvider";
 import { logger } from "@/utils/logger";
+import { LoadingIndicatorDots } from "../state-screens/LoadingIndicatorDots";
 
 interface ClosestWardsProps {
   location: LocationObject;
@@ -69,7 +70,7 @@ export function ClosestWards({ location }: ClosestWardsProps) {
             LIMIT 10
           `
         );
-        logger.log(" plain strin closest location results ", query);
+        // logger.log(" plain strin closest location results ", query);
         const results = query.data.slice(1);
         if (!results.length) {
           throw new Error("No nearby wards found");
@@ -90,7 +91,11 @@ export function ClosestWards({ location }: ClosestWardsProps) {
   });
 
   if (isPending) {
-    return <LoadingFallback />;
+    return (
+      <View style={{}}>
+        <LoadingIndicatorDots />
+      </View>
+    );
   }
 
   if (!data?.results || data?.results?.length === 0) {
@@ -129,7 +134,7 @@ export function ClosestWards({ location }: ClosestWardsProps) {
 
   return (
     <View style={styles.container}>
-      <Card style={styles.labelCard} mode="contained">
+      <Card style={styles.labelCard}>
         <Card.Content style={styles.labelContent}>
           <MaterialIcon name="my-location" color={theme.colors.primary} size={20} />
           <Text variant="titleMedium" style={{ color: theme.colors.primary }}>
@@ -137,10 +142,11 @@ export function ClosestWards({ location }: ClosestWardsProps) {
           </Text>
         </Card.Content>
       </Card>
-
-      {data.results.map((ward: any) => (
-        <WardListItem key={ward.id} item={ward} theme={theme} />
-      ))}
+      <View style={{paddingHorizontal:8}}>
+        {data.results.map((ward: any) => (
+          <WardListItem key={ward.id} item={ward} theme={theme} />
+        ))}
+      </View>
     </View>
   );
 }
@@ -149,11 +155,11 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     height: "100%",
-    flex: 1,
-    gap: 16,paddingHorizontal:6
+    gap: 6,
+    paddingHorizontal: 6,
   },
   labelCard: {
-    margin: 16,
+    margin: 6,
     marginBottom: 1,
   },
   labelContent: {

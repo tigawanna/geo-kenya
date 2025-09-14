@@ -12,6 +12,7 @@ interface WardListItemProps {
     wardCode: string | null;
     countyCode: number | null;
     constituencyCode: number | null;
+    distance?: number;
   };
 }
 export function WardListItem({theme,item}:WardListItemProps){
@@ -56,6 +57,21 @@ return (
                 variant="bodyMedium"
                 style={[styles.detailText, { color: theme.colors.onSurfaceVariant }]}>
                 {item.constituency} Constituency
+              </Text>
+            </View>
+          )}
+          {item.distance !== undefined && (
+            <View style={styles.detailRow}>
+              <MaterialIcon
+                name="near-me"
+                size={16}
+                color={theme.colors.primary}
+                style={styles.detailIcon}
+              />
+              <Text
+                variant="bodyMedium"
+                style={[styles.detailText, { color: theme.colors.primary }]}>
+                ~ {(item.distance/1000).toFixed(2)} km away
               </Text>
             </View>
           )}
