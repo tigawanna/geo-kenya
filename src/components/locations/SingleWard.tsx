@@ -91,33 +91,6 @@ export function SingleWard({ ward }: { ward: Partial<KenyaWardsSelect> }) {
             </View>
           )}
 
-          <View style={styles.codesSection}>
-            <Text
-              variant="labelLarge"
-              style={[styles.sectionTitle, { color: theme.colors.onSurfaceVariant }]}>
-              ADMINISTRATIVE CODES
-            </Text>
-            <View style={styles.codesGrid}>
-              {ward.wardCode && (
-                <View style={[styles.codeCard, { backgroundColor: theme.colors.surfaceVariant }]}>
-                  <Text style={[styles.codeLabel, { color: theme.colors.onSurfaceVariant }]}>Ward</Text>
-                  <Text style={[styles.codeValue, { color: theme.colors.onSurfaceVariant }]}>{ward.wardCode}</Text>
-                </View>
-              )}
-              {ward.countyCode && (
-                <View style={[styles.codeCard, { backgroundColor: theme.colors.surfaceVariant }]}>
-                  <Text style={[styles.codeLabel, { color: theme.colors.onSurfaceVariant }]}>County</Text>
-                  <Text style={[styles.codeValue, { color: theme.colors.onSurfaceVariant }]}>{ward.countyCode}</Text>
-                </View>
-              )}
-              {ward.constituencyCode && (
-                <View style={[styles.codeCard, { backgroundColor: theme.colors.surfaceVariant }]}>
-                  <Text style={[styles.codeLabel, { color: theme.colors.onSurfaceVariant }]}>Constituency</Text>
-                  <Text style={[styles.codeValue, { color: theme.colors.onSurfaceVariant }]}>{ward.constituencyCode}</Text>
-                </View>
-              )}
-            </View>
-          </View>
         </View>
       </View>
     </ScrollView>
