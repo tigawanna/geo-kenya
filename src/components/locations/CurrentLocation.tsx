@@ -73,7 +73,7 @@ export function CurrentLocation() {
   const lng = location?.coords.longitude;
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
       {lat && lng && (
         <View style={[styles.banner, { backgroundColor: theme.colors.surfaceVariant }]}>
           <View style={styles.bannerContent}>
@@ -94,8 +94,8 @@ export function CurrentLocation() {
           </View>
         </View>
       )}
-      <ClosestWards location={location} />
       <CurretWard location={location} />
+      <ClosestWards location={location} />
       {/* <CurretWard location={location} /> */}
     </ScrollView>
   );
@@ -105,9 +105,13 @@ const styles = StyleSheet.create({
     // flex: 1,
     height: "100%",
     width: "100%",
-        // flexGrow: 1,
+    // flexGrow: 1,
     // justifyContent: "center",
     // alignItems: "center",
+  },
+  scrollContent: {
+    gap: 6,
+    paddingBottom: 20,
   },
   errorContainer: {
     flex: 1,
@@ -122,7 +126,6 @@ const styles = StyleSheet.create({
   },
   banner: {
     marginHorizontal: 16,
-    marginTop: 16,
     marginBottom: 8,
     borderRadius: 12,
     elevation: 2,
@@ -152,10 +155,5 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     marginTop: 2,
     fontFamily: "monospace",
-  },
-  scrollContent: {
-    flex: 1,
-    height: "100%",
-    // flexGrow: 1,
   },
 });
