@@ -101,6 +101,7 @@ export function CurretWard({ location }: CurretWardProps) {
 const styles = StyleSheet.create({
   container: {
     width: "100%",
+    height:"auto"
   },
   labelCard: {
     margin: 16,

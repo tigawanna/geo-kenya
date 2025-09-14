@@ -8,8 +8,10 @@ import { MaterialIcon } from "../default/ui/icon-symbol";
 import { LoadingFallback } from "../state-screens/LoadingFallback";
 import { NoDataScreen } from "../state-screens/NoDataScreen";
 import { SingleWard } from "./SingleWard";
-import { kenyaWards } from "@/lib/drizzle/schema";
+import { kenyaWards, KenyaWardsSelect } from "@/lib/drizzle/schema";
 import { WardListItem } from "./WardListItem";
+import { useExpoSpatialiteContext } from "@/lib/expo-spatialite/ExpoSpatialiteProvider";
+import { logger } from "@/utils/logger";
 
 interface ClosestWardsProps {
   location: LocationObject;
@@ -17,6 +19,7 @@ interface ClosestWardsProps {
 
 export function ClosestWards({ location }: ClosestWardsProps) {
   const theme = useTheme();
+  const { executeQuery } = useExpoSpatialiteContext();
 
   const lat = location?.coords.latitude;
   const lng = location?.coords.longitude;
@@ -25,29 +28,49 @@ export function ClosestWards({ location }: ClosestWardsProps) {
     queryKey: ["closest-ward", lat, lng],
     queryFn: async () => {
       try {
-        const results = await db
-          .select({
-            id: kenyaWards.id,
-            wardCode: kenyaWards.wardCode,
-            ward: kenyaWards.ward,
-            county: kenyaWards.county,
-            countyCode: kenyaWards.countyCode,
-            subCounty: kenyaWards.subCounty,
-            constituency: kenyaWards.constituency,
-            constituencyCode: kenyaWards.constituencyCode,
-            geometry: sql<string>`AsGeoJSON(${kenyaWards.geom})`.as("geometry"),
-            distance:
-              sql<number>`ST_Distance(${kenyaWards.geom}, MakePoint(${lng}, ${lat}, 4326), 1)`.as(
-                "distance"
-              ),
-          })
-          .from(kenyaWards)
-          .where(sql`ST_Distance(${kenyaWards.geom}, MakePoint(${lng}, ${lat}, 4326), 1) < 5000`)
-          .orderBy(sql`ST_Distance(${kenyaWards.geom}, MakePoint(${lng}, ${lat}, 4326), 1)`)
-          .limit(10);
+        // const results = await db
+        //   .select({
+        //     id: kenyaWards.id,
+        //     wardCode: kenyaWards.wardCode,
+        //     ward: kenyaWards.ward,
+        //     county: kenyaWards.county,
+        //     countyCode: kenyaWards.countyCode,
+        //     subCounty: kenyaWards.subCounty,
+        //     constituency: kenyaWards.constituency,
+        //     constituencyCode: kenyaWards.constituencyCode,
+        //     geometry: sql<string>`AsGeoJSON(${kenyaWards.geom})`.as("geometry"),
+        //     distance:
+        //       sql<number>`ST_Distance(${kenyaWards.geom}, MakePoint(${lng}, ${lat}, 4326), 1)`.as(
+        //         "distance"
+        //       ),
+        //   })
+        //   .from(kenyaWards)
+        //   .where(sql`ST_Distance(${kenyaWards.geom}, MakePoint(${lng}, ${lat}, 4326), 1) < ${5000}`)
+        //   .orderBy(sql`ST_Distance(${kenyaWards.geom}, MakePoint(${lng}, ${lat}, 4326), 1)`)
+        //   .limit(10);
 
-        // console.log("results ==== ",JSON.stringify(results, null, 2))
-
+        // console.log("results ==== ", logger.log("drizzle closest location results ", results));
+        const query = await executeQuery<KenyaWardsSelect>(
+          `
+            SELECT 
+              id,
+              ward_code AS "wardCode",
+              ward,
+              county,
+              county_code AS "countyCode",
+              sub_county AS "subCounty",
+              constituency,
+              constituency_code AS "constituencyCode",
+              AsGeoJSON(geom) AS geometry,
+              ST_Distance(geom, MakePoint(${lng}, ${lat}, 4326), 1) AS distance
+            FROM kenya_wards
+            WHERE ST_Distance(geom, MakePoint(${lng}, ${lat}, 4326), 1) < 5000
+            ORDER BY distance
+            LIMIT 10
+          `
+        );
+        logger.log(" plain strin closest location results ", query);
+        const results = query.data.slice(1);
         if (!results.length) {
           throw new Error("No nearby wards found");
         }
@@ -103,10 +126,7 @@ export function ClosestWards({ location }: ClosestWardsProps) {
       </View>
     );
   }
-  console.log(
-    "results == ",
-    data.results.map((t) => ({ ward: t.ward, county: t.county }))
-  );
+
   return (
     <View style={styles.container}>
       <Card style={styles.labelCard} mode="contained">
@@ -130,6 +150,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     flex: 1,
+    gap: 16,paddingHorizontal:6
   },
   labelCard: {
     margin: 16,

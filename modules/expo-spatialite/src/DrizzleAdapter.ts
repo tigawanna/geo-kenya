@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import type { SpatialiteParam, TransactionStatement } from "./ExpoSpatialiteModule";
 import ExpoSpatialiteModule from "./ExpoSpatialiteModule";
 
@@ -14,8 +15,8 @@ export class ExpoSpatialiteDrizzle {
     params: SpatialiteParam[] = [],
     method: Sqlite3Method = "all"
   ): Promise<RawResultData> {
-    // console.log("exec called with sql:", sql);
-    // console.log("exec called with params:", JSON.stringify(params, null, 2));
+    // logger.sql("exec called with sql:", sql);
+    // logger.log("exec called with params:", params);
     // console.log("exec called with method:", method);
 
     switch (method) {
@@ -52,10 +53,7 @@ export class ExpoSpatialiteDrizzle {
     const results = await ExpoSpatialiteModule.executeTransaction(statements, false);
     return results.map((result) => {
       const rows = result.data ? (Array.isArray(result.data) ? result.data : [result.data]) : [];
-      const columns =
-        rows.length > 0 && typeof rows[0] === "object"
-          ? Object.keys(rows[0])
-          : [];
+      const columns = rows.length > 0 && typeof rows[0] === "object" ? Object.keys(rows[0]) : [];
       return { rows, columns };
     });
   }
