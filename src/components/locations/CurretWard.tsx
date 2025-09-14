@@ -88,12 +88,6 @@ export function CurretWard({ location }: CurretWardProps) {
   }
   return (
     <View style={{ ...styles.container }}>
-      <Card style={styles.labelCard} mode="contained">
-        <Card.Content style={styles.labelContent}>
-          <MaterialIcon name="my-location" color={theme.colors.primary} size={20} />
-          <Text variant="titleMedium" style={{ color: theme.colors.primary }}>Current Closest Ward</Text>
-        </Card.Content>
-      </Card>
       <SingleWard ward={data.result} />
     </View>
   );
@@ -101,16 +95,39 @@ export function CurretWard({ location }: CurretWardProps) {
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    height:"auto"
+  },
+  banner: {
+    marginHorizontal: 16,
+    marginBottom: 8,
+    borderRadius: 12,
+  },
+  bannerContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 16,
+    gap: 12,
+  },
+  bannerTitle: {
+    fontSize: 12,
+    fontWeight: "600",
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+    opacity: 0.8,
+  },
+  coordinatesText: {
+    fontSize: 16,
+    fontWeight: "500",
+    marginTop: 2,
+    fontFamily: "monospace",
   },
   labelCard: {
-    margin: 16,
     marginBottom: 1,
   },
   labelContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     gap: 8,
   },
 });

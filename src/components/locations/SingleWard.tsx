@@ -1,114 +1,108 @@
 import { KenyaWardsSelect } from "@/lib/drizzle/schema";
-import { ScrollView, StyleSheet, View } from "react-native";
-import { Text, useTheme } from "react-native-paper";
+import { StyleSheet, View } from "react-native";
+import { Card, Text, useTheme } from "react-native-paper";
 import { MaterialIcon } from "../default/ui/icon-symbol";
 
-export function SingleWard({ ward }: { ward: Partial<KenyaWardsSelect> }) {
+interface SingleWardProps {
+  ward: Partial<KenyaWardsSelect>;
+  loc?: { lat: number; lng: number };
+}
+
+export function SingleWard({ ward,loc }: SingleWardProps) {
   const theme = useTheme();
 
   return (
-    <ScrollView style={[styles.container]} contentContainerStyle={styles.contentContainer}>
-      <View style={[styles.card]}>
-        <View style={styles.header}>
-          <View style={styles.titleContainer}>
-            <Text
-              variant="headlineLarge"
-              style={[styles.wardName, { color: theme.colors.onSurface }]}>
-              {ward.ward}
-            </Text>
-            <MaterialIcon
-              name="location-on"
-              size={32}
-              color={theme.colors.primary}
-              style={styles.locationIcon}
-            />
+    <Card style={styles.card}>
+      <View style={styles.header}>
+        <View style={styles.titleContainer}>
+          <Text
+            variant="headlineLarge"
+            style={[styles.wardName, { color: theme.colors.onSurface }]}>
+            {ward.ward}
+          </Text>
+          <MaterialIcon
+            name="location-on"
+            size={32}
+            color={theme.colors.primary}
+            style={styles.locationIcon}
+          />
+        </View>
+        <View style={[styles.idBadge, { backgroundColor: theme.colors.primaryContainer }]}>
+          <Text
+            variant="headlineSmall"
+            style={[styles.idText, { color: theme.colors.onPrimaryContainer }]}>
+            #{ward.id}
+          </Text>
+        </View>
+      </View>
+
+      <View style={styles.infoSection}>
+        <View style={styles.infoRow}>
+          <View style={styles.iconContainer}>
+            <MaterialIcon name="map" size={24} color={theme.colors.primary} />
           </View>
-          <View style={[styles.idBadge, { backgroundColor: theme.colors.primaryContainer }]}>
+          <View style={styles.infoContent}>
             <Text
-              variant="headlineSmall"
-              style={[styles.idText, { color: theme.colors.onPrimaryContainer }]}>
-              #{ward.id}
+              variant="labelLarge"
+              style={[styles.infoLabel, { color: theme.colors.onSurfaceVariant }]}>
+              COUNTY
+            </Text>
+            <Text
+              variant="titleMedium"
+              style={[styles.infoValue, { color: theme.colors.onSurface }]}>
+              {ward.county}
             </Text>
           </View>
         </View>
 
-        <View style={styles.infoSection}>
+        {ward.subCounty && (
           <View style={styles.infoRow}>
             <View style={styles.iconContainer}>
-              <MaterialIcon name="map" size={24} color={theme.colors.primary} />
+              <MaterialIcon name="location-city" size={24} color={theme.colors.primary} />
             </View>
             <View style={styles.infoContent}>
               <Text
                 variant="labelLarge"
                 style={[styles.infoLabel, { color: theme.colors.onSurfaceVariant }]}>
-                COUNTY
+                SUB-COUNTY
               </Text>
               <Text
                 variant="titleMedium"
                 style={[styles.infoValue, { color: theme.colors.onSurface }]}>
-                {ward.county}
+                {ward.subCounty}
               </Text>
             </View>
           </View>
+        )}
 
-          {ward.subCounty && (
-            <View style={styles.infoRow}>
-              <View style={styles.iconContainer}>
-                <MaterialIcon name="location-city" size={24} color={theme.colors.primary} />
-              </View>
-              <View style={styles.infoContent}>
-                <Text
-                  variant="labelLarge"
-                  style={[styles.infoLabel, { color: theme.colors.onSurfaceVariant }]}>
-                  SUB-COUNTY
-                </Text>
-                <Text
-                  variant="titleMedium"
-                  style={[styles.infoValue, { color: theme.colors.onSurface }]}>
-                  {ward.subCounty}
-                </Text>
-              </View>
+        {ward.constituency && (
+          <View style={styles.infoRow}>
+            <View style={styles.iconContainer}>
+              <MaterialIcon name="account-balance" size={24} color={theme.colors.primary} />
             </View>
-          )}
-
-          {ward.constituency && (
-            <View style={styles.infoRow}>
-              <View style={styles.iconContainer}>
-                <MaterialIcon name="account-balance" size={24} color={theme.colors.primary} />
-              </View>
-              <View style={styles.infoContent}>
-                <Text
-                  variant="labelLarge"
-                  style={[styles.infoLabel, { color: theme.colors.onSurfaceVariant }]}>
-                  CONSTITUENCY
-                </Text>
-                <Text
-                  variant="titleMedium"
-                  style={[styles.infoValue, { color: theme.colors.onSurface }]}>
-                  {ward.constituency}
-                </Text>
-              </View>
+            <View style={styles.infoContent}>
+              <Text
+                variant="labelLarge"
+                style={[styles.infoLabel, { color: theme.colors.onSurfaceVariant }]}>
+                CONSTITUENCY
+              </Text>
+              <Text
+                variant="titleMedium"
+                style={[styles.infoValue, { color: theme.colors.onSurface }]}>
+                {ward.constituency}
+              </Text>
             </View>
-          )}
-
-        </View>
+          </View>
+        )}
       </View>
-    </ScrollView>
+    </Card>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-  },
-  contentContainer: {
-    padding: 16,
-    flexGrow: 1,
-  },
   card: {
     flex: 1,
-    borderRadius: 16,
-    padding: 24,
+    padding: 26,
   },
   header: {
     flexDirection: "row",
@@ -158,45 +152,5 @@ const styles = StyleSheet.create({
   },
   infoValue: {
     fontWeight: "500",
-  },
-  codesSection: {
-    marginTop: 8,
-  },
-  sectionTitle: {
-    marginBottom: 12,
-    letterSpacing: 1.5,
-  },
-  codesGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  codeCard: {
-    borderRadius: 8,
-    padding: 12,
-    minWidth: 80,
-    alignItems: "center",
-  },
-  codeLabel: {
-    fontSize: 12,
-    fontWeight: "600",
-    textTransform: "uppercase",
-    marginBottom: 4,
-  },
-  codeValue: {
-    fontSize: 16,
-    fontWeight: "700",
-    fontFamily: "monospace",
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 32,
-  },
-  errorText: {
-    marginTop: 16,
-    textAlign: "center",
-    fontSize: 16,
   },
 });
