@@ -110,7 +110,7 @@ export function ClosestWards({ location }: ClosestWardsProps) {
         <View style={{ height: "80%" }}>
           <NoDataScreen
             listName="Wards"
-            hint="No nearby wards found"
+            hint="No wards found in a 5km radius"
             icon={<MaterialIcon color={theme.colors.primary} name="location-city" size={64} />}
           />
 

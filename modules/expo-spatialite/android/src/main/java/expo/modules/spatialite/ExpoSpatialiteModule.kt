@@ -52,7 +52,7 @@ class ExpoSpatialiteModule : Module() {
                 version
             } catch (e: Exception) {
                 Log.e(TAG, "Error getting Spatialite version", e)
-                "unknown"
+                throw Exception("Failed to get Spatialite version: ${e.message}", e)
             }
         }
 
@@ -67,9 +67,15 @@ class ExpoSpatialiteModule : Module() {
 
                 val result = initializeDatabaseInternal(dbPath)
                 result
+            } catch (e: SQLiteException) {
+                Log.e(TAG, "SQLite error initializing database from path: $dbPath", e)
+                throw Exception("SQLite error: ${e.message} (Code: ${e.message})", e)
+            } catch (e: IOException) {
+                Log.e(TAG, "IO error initializing database from path: $dbPath", e)
+                throw Exception("File access error: ${e.message}", e)
             } catch (e: Exception) {
                 Log.e(TAG, "Error initializing database from path: $dbPath", e)
-                throw e
+                throw Exception("Database initialization failed: ${e.message}", e)
             }
         }
 
@@ -149,9 +155,15 @@ class ExpoSpatialiteModule : Module() {
                     "message" to "Database imported successfully",
                     "path" to dbFile.absolutePath
                 )
+            } catch (e: IOException) {
+                Log.e(TAG, "IO error importing asset database from: $assetDatabasePath to: $databasePath", e)
+                throw Exception("File copy failed: ${e.message}", e)
+            } catch (e: SecurityException) {
+                Log.e(TAG, "Permission error importing asset database from: $assetDatabasePath to: $databasePath", e)
+                throw Exception("Permission denied: ${e.message}", e)
             } catch (e: Exception) {
                 Log.e(TAG, "Error importing asset database from: $assetDatabasePath to: $databasePath", e)
-                throw e
+                throw Exception("Asset import failed: ${e.message}", e)
             }
         }
 
@@ -184,9 +196,15 @@ class ExpoSpatialiteModule : Module() {
                     "rowCount" to results.size,
                     "data" to results
                 )
+            } catch (e: SQLiteException) {
+                Log.e(TAG, "SQLite error executing query: $query with params: $params", e)
+                throw Exception("SQL query failed: ${e.message}", e)
+            } catch (e: IllegalArgumentException) {
+                Log.e(TAG, "Invalid argument for query: $query with params: $params", e)
+                throw Exception("Invalid query parameters: ${e.message}", e)
             } catch (e: Exception) {
                 Log.e(TAG, "Error executing query: $query with params: $params", e)
-                throw e
+                throw Exception("Query execution failed: ${e.message}", e)
             }
         }
 
@@ -240,9 +258,15 @@ class ExpoSpatialiteModule : Module() {
                     "success" to true,
                     "rowsAffected" to rowsAffected
                 )
+            } catch (e: SQLiteException) {
+                Log.e(TAG, "SQLite error executing statement: $statement with params: $params", e)
+                throw Exception("SQL statement failed: ${extractDetailedError(e)}", e)
+            } catch (e: IllegalArgumentException) {
+                Log.e(TAG, "Invalid argument for statement: $statement with params: $params", e)
+                throw Exception("Invalid statement parameters: ${e.message}", e)
             } catch (e: Exception) {
                 Log.e(TAG, "Error executing statement: $statement with params: $params", e)
-                throw e
+                throw Exception("Statement execution failed: ${extractDetailedError(e)}", e)
             }
         }
 
@@ -264,9 +288,12 @@ class ExpoSpatialiteModule : Module() {
                     "success" to true,
                     "data" to results
                 )
+            } catch (e: SQLiteException) {
+                Log.e(TAG, "SQLite error executing PRAGMA query: $pragma", e)
+                throw Exception("PRAGMA query failed: ${extractDetailedError(e)}", e)
             } catch (e: Exception) {
                 Log.e(TAG, "Error executing PRAGMA query: $pragma", e)
-                throw e
+                throw Exception("PRAGMA execution failed: ${extractDetailedError(e)}", e)
             }
         }
 
@@ -294,9 +321,12 @@ class ExpoSpatialiteModule : Module() {
                     "rowCount" to results.size,
                     "data" to results
                 )
+            } catch (e: SQLiteException) {
+                Log.e(TAG, "SQLite error executing RAW query: $query with params: $params", e)
+                throw Exception("Raw query failed: ${extractDetailedError(e)}", e)
             } catch (e: Exception) {
                 Log.e(TAG, "Error executing RAW query: $query with params: $params", e)
-                throw e
+                throw Exception("Raw query execution failed: ${extractDetailedError(e)}", e)
             }
         }
 
@@ -399,9 +429,12 @@ class ExpoSpatialiteModule : Module() {
                 }
 
                 results
+            } catch (e: SQLiteException) {
+                Log.e(TAG, "SQLite error executing transaction", e)
+                throw Exception("Transaction failed: ${extractDetailedError(e)}", e)
             } catch (e: Exception) {
                 Log.e(TAG, "Error executing transaction", e)
-                throw e
+                throw Exception("Transaction execution failed: ${extractDetailedError(e)}", e)
             }
         }
 
@@ -478,9 +511,12 @@ class ExpoSpatialiteModule : Module() {
                     "imported" to imported,
                     "tableExists" to tableExists
                 )
+            } catch (e: SQLiteException) {
+                Log.e(TAG, "SQLite error in smart database initialization", e)
+                throw Exception("Smart init failed: ${extractDetailedError(e)}", e)
             } catch (e: Exception) {
                 Log.e(TAG, "Error in smart database initialization", e)
-                throw e
+                throw Exception("Smart initialization failed: ${extractDetailedError(e)}", e)
             }
         }
         
@@ -538,9 +574,12 @@ class ExpoSpatialiteModule : Module() {
                     "imported" to imported,
                     "message" to message
                 )
+            } catch (e: SQLiteException) {
+                Log.e(TAG, "SQLite error resetting database", e)
+                throw Exception("Database reset failed: ${extractDetailedError(e)}", e)
             } catch (e: Exception) {
                 Log.e(TAG, "Error resetting database", e)
-                throw e
+                throw Exception("Reset operation failed: ${extractDetailedError(e)}", e)
             }
         }
 
@@ -558,7 +597,7 @@ class ExpoSpatialiteModule : Module() {
                 )
             } catch (e: Exception) {
                 Log.e(TAG, "Error closing database", e)
-                throw e
+                throw Exception("Failed to close database: ${extractDetailedError(e)}", e)
             }
         }
 
@@ -807,5 +846,48 @@ class ExpoSpatialiteModule : Module() {
         }
 
         return result
+    }
+
+    // Helper function to extract detailed error information from exceptions
+    private fun extractDetailedError(e: Throwable): String {
+        val errorDetails = mutableListOf<String>()
+        
+        // Add the main error message
+        e.message?.let { errorDetails.add(it) }
+        
+        // Add SQLite-specific error information
+        if (e is SQLiteException) {
+            val message = e.message ?: ""
+            
+            // Common SQLite error patterns
+            when {
+                message.contains("no such table") -> errorDetails.add("Table does not exist")
+                message.contains("no such column") -> errorDetails.add("Column does not exist")
+                message.contains("syntax error") -> errorDetails.add("SQL syntax error")
+                message.contains("constraint") -> errorDetails.add("Database constraint violation")
+                message.contains("locked") -> errorDetails.add("Database is locked")
+                message.contains("corrupt") -> errorDetails.add("Database corruption detected")
+                message.contains("permission") -> errorDetails.add("Permission denied")
+                message.contains("disk") -> errorDetails.add("Disk I/O error")
+            }
+        }
+        
+        // Add cause chain information
+        var cause = e.cause
+        var depth = 0
+        while (cause != null && depth < 3) {
+            cause.message?.let { 
+                if (!errorDetails.contains(it)) {
+                    errorDetails.add("Caused by: $it")
+                }
+            }
+            cause = cause.cause
+            depth++
+        }
+        
+        // Add exception class name for debugging
+        errorDetails.add("Exception type: ${e.javaClass.simpleName}")
+        
+        return errorDetails.joinToString("; ")
     }
 }
