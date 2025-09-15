@@ -1,6 +1,6 @@
-import { ComponentProps } from "react"
-import { useTheme } from "react-native-paper"
-import Svg, { ClipPath, Defs, G, Line, Path } from "react-native-svg"
+import { ComponentProps } from "react";
+import { useTheme } from "react-native-paper";
+import Svg, { ClipPath, Defs, G, Path } from "react-native-svg";
 
 export function AppLogoSvg(props:ComponentProps<typeof Svg>) {
   const {colors} = useTheme()
@@ -11,6 +11,8 @@ export function AppLogoSvg(props:ComponentProps<typeof Svg>) {
       fill="none"
       stroke={colors.primary}
       strokeWidth={2}
+      width={100}
+      height={100}
       {...props}>
       <Defs>
         <ClipPath id="a">

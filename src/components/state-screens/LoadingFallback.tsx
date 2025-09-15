@@ -13,8 +13,9 @@ import { LoadingIndicatorDots } from "./LoadingIndicatorDots";
 import { AppLogoSvg } from "@/components/shared/svg/AppLogoSvg";
 interface LoadingFallbackProps {
   initialScreen?: boolean;
+  logoSize?:number
 }
-export function LoadingFallback({ initialScreen }: LoadingFallbackProps) {
+export function LoadingFallback({ initialScreen,logoSize=250 }: LoadingFallbackProps) {
   const { colors } = useTheme();
   const pulseValue = useSharedValue(1);
   const fadeValue = useSharedValue(0.6);
@@ -47,7 +48,7 @@ export function LoadingFallback({ initialScreen }: LoadingFallbackProps) {
     <Surface style={[styles.container, { backgroundColor: colors.surface }]}>
       <View style={styles.content}>
         <Animated.View style={[styles.logoContainer, animatedLogoStyle]}>
-          <AppLogoSvg />
+          <AppLogoSvg width={logoSize} height={logoSize}/>
         </Animated.View>
 
         <View style={styles.loadingContainer}>
