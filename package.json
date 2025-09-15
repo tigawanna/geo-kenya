@@ -4,11 +4,13 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
+    "dev": "APP_VARIANT=development npx expo start",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo run:android",
     "prebuild:android": " expo prebuild -p android --clean",
     "build:android": "expo run:android",
     "build-apk": "eas build --platform android --profile preview --local",
+    "build-apk-arm": "eas build --platform android --profile preview-arm64 --local",
     "ios": "expo run:ios",
     "web": "expo start --web",
     "lint": "expo lint"
