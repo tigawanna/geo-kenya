@@ -4,6 +4,9 @@ GeoKenya is a React Native mobile application built with Expo that provides geog
 
 **Note:** This is currently an Android-only project. iOS support is not yet implemented.
 
+
+![Roysambu ward screenshot](https://github.com/tigawanna/geo-kenya/blob/4bab15a993660254634b55b58a34fd6e71a08072/docs/soy-ward.jpg)
+
 ## Features
 
 - View comprehensive information about Kenya's wards, counties, and constituencies
