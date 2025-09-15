@@ -4,8 +4,7 @@ GeoKenya is a React Native mobile application built with Expo that provides geog
 
 **Note:** This is currently an Android-only project. iOS support is not yet implemented.
 
-
-![Roysambu ward screenshot](https://github.com/tigawanna/geo-kenya/blob/4bab15a993660254634b55b58a34fd6e71a08072/docs/soy-ward.jpg)
+![Soy ward screenshot](https://github.com/tigawanna/geo-kenya/raw/4bab15a993660254634b55b58a34fd6e71a08072/docs/soy-ward.jpg)
 
 ## Features
 
@@ -20,6 +19,25 @@ GeoKenya is a React Native mobile application built with Expo that provides geog
 
 The geographic data used in this application is available in a separate repository: [kenya_wards_geojson_data](https://github.com/tigawanna/kenya_wards_geojson_data). This dataset contains GeoJSON files for Kenya's administrative boundaries that can be used in your own projects.
 
+## Images
+
+- Wards closest to the coordinates and their adjascent wards
+![Wagalla ward](https://github.com/tigawanna/geo-kenya/raw/4bab15a993660254634b55b58a34fd6e71a08072/docs/wagalla-ward.jpg)
+
+![Lokachar ward](https://github.com/tigawanna/geo-kenya/raw/4bab15a993660254634b55b58a34fd6e71a08072/docs/lokchar-ward.jpg)
+
+- Loading screen
+  ![Loading screen](https://github.com/tigawanna/geo-kenya/raw/4bab15a993660254634b55b58a34fd6e71a08072/docs/loading-screen.jpg)
+- list all view  
+  ![list-all-view](https://github.com/tigawanna/geo-kenya/raw/master/docs/list-all-view.jpg)
+- Dynamically Themed views
+  
+  ![Grenish theme](https://github.com/tigawanna/geo-kenya/raw/4bab15a993660254634b55b58a34fd6e71a08072/docs/greenish-theme.jpg)
+
+  ![Redish theme](https://github.com/tigawanna/geo-kenya/raw/4bab15a993660254634b55b58a34fd6e71a08072/docs/red-theme.jpg)
+
+  ![Purpleish theme](https://github.com/tigawanna/geo-kenya/raw/master/docs/blueish-theme.jpg)
+
 ## Prerequisites
 
 - Node.js (LTS version recommended)
@@ -30,22 +48,26 @@ The geographic data used in this application is available in a separate reposito
 ## Getting Started
 
 1. **Clone the repository:**
+
    ```bash
    git clone <repository-url>
    cd geo-kenya
    ```
 
 2. **Install dependencies:**
+
    ```bash
    pnpm install
    ```
 
 3. **Start the development server:**
+
    ```bash
    pnpm start
    ```
 
 4. **Run on Android:**
+
    ```bash
    pnpm android
    ```
@@ -97,9 +119,3 @@ We're grateful to the maintainers of these projects for their excellent work tha
 ## Disclaimer
 
 This is currently an Android-only project. While the codebase uses cross-platform technologies, it has only been tested and optimized for Android devices. iOS support is not yet implemented and may require additional work to function properly.
-
-
-
-
-
-
