@@ -16,11 +16,11 @@ const getUniqueIdentifier = () => {
 
 const getAppName = () => {
   if (IS_DEV) {
-    return { name: "GeoKenya (Dev)", slug: "geo-kenya-dev" };
+    return { name: "GeoKenya (Dev)", slug: "geo-kenya" };
   }
 
   if (IS_PREVIEW) {
-    return { name: "GeoKenya (Preview)", slug: "geo-kenya-preview" };
+    return { name: "GeoKenya (Preview)", slug: "geo-kenya" };
   }
 
   return { name: "GeoKenya", slug: "geo-kenya" };
@@ -28,6 +28,8 @@ const getAppName = () => {
 
 export default ({ config }: ConfigContext): ExpoConfig => {
   const { name, slug } = getAppName();
+  console.log("APP NAME :: ",name)
+  console.log("APP SLUG :: ", slug)
   return {
     ...config,
     name: name,

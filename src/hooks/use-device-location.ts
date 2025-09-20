@@ -49,6 +49,7 @@ export function useDeviceLocation() {
         longitude: lng,
       },
     });
+    
   }
 
   return {

@@ -14,15 +14,16 @@ import { useCustomBottomSheetModal } from "@/lib/react-native-bottom-sheet/use-b
 import { BottomSheetModal, BottomSheetModalProvider, BottomSheetView } from "@gorhom/bottom-sheet";
 
 interface CurretWardProps {
-  location: LocationObject;
+  lat:number;
+  lng:number
 }
 
-export function CurretWard({ location }: CurretWardProps) {
+export function CurretWard({ lat,lng }: CurretWardProps) {
   const theme = useTheme();
 
   const latlongBottomSheetref = useCustomBottomSheetModal();
-  const lat = location?.coords.latitude;
-  const lng = location?.coords.longitude;
+  // const lat = location?.coords.latitude;
+  // const lng = location?.coords.longitude;
   const { data, isPending, refetch, isRefetching } = useQuery({
     queryKey: ["current-ward", lat, lng],
     queryFn: async () => {

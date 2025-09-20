@@ -9,15 +9,16 @@ import { LoadingIndicatorDots } from "../state-screens/LoadingIndicatorDots";
 import { WardListItem } from "./WardListItem";
 
 interface ClosestWardsProps {
-  location: LocationObject;
+  lat: number;
+  lng: number;
 }
 
-export function ClosestWards({ location }: ClosestWardsProps) {
+export function ClosestWards({ lat,lng }: ClosestWardsProps) {
   const theme = useTheme();
   const { executeQuery } = useExpoSpatialiteContext();
 
-  const lat = location?.coords.latitude;
-  const lng = location?.coords.longitude;
+  // const lat = location?.coords.latitude;
+  // const lng = location?.coords.longitude;
 
   const { data, isPending} = useQuery({
     queryKey: ["closest-ward", lat, lng],

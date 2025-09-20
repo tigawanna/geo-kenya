@@ -5,6 +5,7 @@ import { NoDataScreen } from "../state-screens/NoDataScreen";
 import { MaterialIcon } from "../default/ui/icon-symbol";
 import { CurretWard } from "./CurretWard";
 import { ClosestWards } from "./ClosestWards";
+import { LatLongForm } from "./form/LatLongForm";
 
 export function CurrentLocation() {
   const theme = useTheme();
@@ -23,103 +24,123 @@ export function CurrentLocation() {
       </View>
     );
   }
-  if (errorMsg) {
-    return (
-      <View style={{ ...styles.container }}>
-        <View style={[styles.errorContainer, { backgroundColor: theme.colors.surface, gap: 16 }]}>
-          <MaterialIcon name="error" size={48} color={theme.colors.error} />
-          <Text style={[styles.errorText, { color: theme.colors.onSurface }]}>{errorMsg}</Text>
-          <Text style={[styles.hintText, { color: theme.colors.onSurfaceVariant }]}>
-            For better location accuracy, enable network/WiFi alongside location services
-          </Text>
+  // if (errorMsg) {
+  //   return (
+  //     <View style={{ ...styles.container }}>
+  //       <View style={[styles.errorContainer, { backgroundColor: theme.colors.surface, gap: 16 }]}>
+  //         <MaterialIcon name="error" size={48} color={theme.colors.error} />
+  //         <Text style={[styles.errorText, { color: theme.colors.onSurface }]}>{errorMsg}</Text>
+  //         <Text style={[styles.hintText, { color: theme.colors.onSurfaceVariant }]}>
+  //           For better location accuracy, enable network/WiFi alongside location services
+  //         </Text>
 
-          <Button
-            style={{ marginHorizontal: "20%" }}
-            disabled={isRefreshing}
-            loading={isRefreshing}
-            icon="reload"
-            mode="contained-tonal"
-            onPress={() => {
-              refetch();
-            }}>
-            Check again
-          </Button>
-        </View>
-      </View>
-    );
-  }
-  if (!location) {
-    return (
-      <View style={styles.container}>
-        {isRefreshing ? (
-          <ActivityIndicator
-            style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              zIndex: 1000,
-              transform: [{ translateX: -20 }, { translateY: -20 }],
-            }}
-          />
-        ) : null}
-        <View style={{ height: "80%" }}>
-          <NoDataScreen
-            listName="Current location"
-            hint="Location data not found"
-            icon={<MaterialIcon color={theme.colors.primary} name="location-city" size={64} />}
-          />
+  //         <Button
+  //           style={{ marginHorizontal: "20%" }}
+  //           disabled={isRefreshing}
+  //           loading={isRefreshing}
+  //           icon="reload"
+  //           mode="contained-tonal"
+  //           onPress={() => {
+  //             refetch();
+  //           }}>
+  //           Check again
+  //         </Button>
+  //       </View>
+  //     </View>
+  //   );
+  // }
+  // if (!location) {
+  //   return (
+  //     <View style={styles.container}>
+  //       {isRefreshing ? (
+  //         <ActivityIndicator
+  //           style={{
+  //             position: "absolute",
+  //             top: "50%",
+  //             left: "50%",
+  //             zIndex: 1000,
+  //             transform: [{ translateX: -20 }, { translateY: -20 }],
+  //           }}
+  //         />
+  //       ) : null}
+  //       <View style={{ height: "80%" }}>
+  //         <NoDataScreen
+  //           listName="Current location"
+  //           hint="Location data not found"
+  //           icon={<MaterialIcon color={theme.colors.primary} name="location-city" size={64} />}
+  //         />
 
-          <Button
-            style={{ marginHorizontal: "20%" }}
-            disabled={isRefreshing}
-            loading={isRefreshing}
-            icon="reload"
-            mode="contained"
-            onPress={() => {
-              refetch();
-            }}>
-            Check again
-          </Button>
-        </View>
-      </View>
-    );
-  }
+  //         <Button
+  //           style={{ marginHorizontal: "20%" }}
+  //           disabled={isRefreshing}
+  //           loading={isRefreshing}
+  //           icon="reload"
+  //           mode="contained"
+  //           onPress={() => {
+  //             refetch();
+  //           }}>
+  //           Check again
+  //         </Button>
+  //       </View>
+  //     </View>
+  //   );
+  // }
 
-  const lat = location?.coords.latitude;
-  const lng = location?.coords.longitude;
+  const lat = location?.coords.latitude??0;
+  const lng = location?.coords.longitude??0;
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
-      {lat && lng && (
-        <Card style={styles.banner} elevation={4}>
-          <Card.Content style={styles.bannerContent}>
+      <Card style={styles.banner} elevation={4}>
+        <Card.Content
+          style={{
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 4,
+          }}>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}>
             {/* Left Side: Icon + Title */}
-            <View style={{ gap: 6 }}>
-              <View style={styles.leftSide}>
-                <MaterialIcon name="my-location" size={20} color={theme.colors.primary} />
-                <Text style={[styles.bannerTitle, { color: theme.colors.onSurfaceVariant }]}>
-                  CURRENT LOCATION
-                </Text>
+            <View style={{ gap: 0, width: "100%" }}>
+              <View
+                style={{
+                  width: "100%",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  flexDirection: "row",
+                  gap: 8,
+                }}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    gap: 8,
+                  }}>
+                  <MaterialIcon name="my-location" size={20} color={theme.colors.primary} />
+                  <Text style={[styles.bannerTitle, { color: theme.colors.onSurfaceVariant }]}>
+                    CURRENT LOCATION
+                  </Text>
+                </View>
+                <IconButton
+                  icon="refresh"
+                  onPress={() => refetch()}
+                  loading={isRefreshing}
+                  style={{ padding: 0 }}
+                />
+                {/* Center: Coordinates */}
               </View>
-              {/* Center: Coordinates */}
-              <Text
-                style={[styles.coordinatesText, { color: theme.colors.onSurface, paddingLeft: 6 }]}>
-                {lat.toFixed(4)}°, {lng.toFixed(4)}°
-              </Text>
+              <LatLongForm initLat={lat} initLng={lng} />
             </View>
 
             {/* Right Side: Refresh Button */}
-            <IconButton
-              icon="refresh"
-              onPress={() => refetch()}
-              loading={isRefreshing}
-              style={{ padding: 0 }}
-            />
-          </Card.Content>
-        </Card>
-      )}
-      <CurretWard location={location} />
-      <ClosestWards location={location} />
+          </View>
+        </Card.Content>
+      </Card>
+      <CurretWard lat={lat} lng={lng} />
+      <ClosestWards lat={lat} lng={lng} />
     </ScrollView>
   );
 }
@@ -130,7 +151,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     gap: 16,
-    paddingBottom: 16,
+    // paddingBottom: 16,
   },
   errorContainer: {
     flex: 1,
@@ -162,7 +183,7 @@ const styles = StyleSheet.create({
   },
   leftSide: {
     flexDirection: "row",
-    alignItems: "center",
+    // alignItems: "center",
     gap: 8,
   },
   bannerTitle: {
