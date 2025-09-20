@@ -94,37 +94,31 @@ export function ClosestWards({ location }: ClosestWardsProps) {
   }
 
   if (!data?.results || data?.results?.length === 0) {
-    return (
-      <View style={styles.container}>
-        {isRefetching ? (
-          <ActivityIndicator
-            style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              zIndex: 1000,
-              transform: [{ translateX: -20 }, { translateY: -20 }],
-            }}
-          />
-        ) : null}
-        <View style={{ height: "80%" }}>
-          <NoDataScreen
-            listName="Wards"
-            hint="No wards found in a 5km radius"
-            icon={<MaterialIcon color={theme.colors.primary} name="location-city" size={64} />}
-          />
+    return
+    // return (
+    //   <View
+    //     style={{
+    //       width: "100%",
+    //       gap: 6,
+    //     }}>
+    //     <View style={{ height: "80%" }}>
+    //       <NoDataScreen
+    //         listName="Wards"
+    //         hint="No wards found in a 5km radius"
+    //         icon={<MaterialIcon color={theme.colors.primary} name="location-city" size={64} />}
+    //       />
 
-          <Button
-            style={{ marginHorizontal: "20%" }}
-            disabled={isRefetching}
-            icon="reload"
-            mode="contained"
-            onPress={() => refetch()}>
-            Reload
-          </Button>
-        </View>
-      </View>
-    );
+    //       <Button
+    //         style={{ marginHorizontal: "20%" }}
+    //         disabled={isRefetching}
+    //         icon="reload"
+    //         mode="contained"
+    //         onPress={() => refetch()}>
+    //         Reload
+    //       </Button>
+    //     </View>
+    //   </View>
+    // );
   }
 
   return (

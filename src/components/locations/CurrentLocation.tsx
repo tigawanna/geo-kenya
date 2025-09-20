@@ -29,6 +29,21 @@ export function CurrentLocation() {
         <View style={[styles.errorContainer, { backgroundColor: theme.colors.surface, gap: 16 }]}>
           <MaterialIcon name="error" size={48} color={theme.colors.error} />
           <Text style={[styles.errorText, { color: theme.colors.onSurface }]}>{errorMsg}</Text>
+          <Text style={[styles.hintText, { color: theme.colors.onSurfaceVariant }]}>
+            For better location accuracy, enable network/WiFi alongside location services
+          </Text>
+
+          <Button
+            style={{ marginHorizontal: "20%" }}
+            disabled={isRefreshing}
+            loading={isRefreshing}
+            icon="reload"
+            mode="contained-tonal"
+            onPress={() => {
+              refetch();
+            }}>
+            Check again
+          </Button>
         </View>
       </View>
     );
@@ -57,6 +72,7 @@ export function CurrentLocation() {
           <Button
             style={{ marginHorizontal: "20%" }}
             disabled={isRefreshing}
+            loading={isRefreshing}
             icon="reload"
             mode="contained"
             onPress={() => {
@@ -78,23 +94,25 @@ export function CurrentLocation() {
         <Card style={styles.banner} elevation={4}>
           <Card.Content style={styles.bannerContent}>
             {/* Left Side: Icon + Title */}
-            <View style={{gap:6}}>
-            <View style={styles.leftSide}>
-              <MaterialIcon name="my-location" size={20} color={theme.colors.primary} />
-              <Text style={[styles.bannerTitle, { color: theme.colors.onSurfaceVariant }]}>
-                CURRENT LOCATION
+            <View style={{ gap: 6 }}>
+              <View style={styles.leftSide}>
+                <MaterialIcon name="my-location" size={20} color={theme.colors.primary} />
+                <Text style={[styles.bannerTitle, { color: theme.colors.onSurfaceVariant }]}>
+                  CURRENT LOCATION
+                </Text>
+              </View>
+              {/* Center: Coordinates */}
+              <Text
+                style={[styles.coordinatesText, { color: theme.colors.onSurface, paddingLeft: 6 }]}>
+                {lat.toFixed(4)}°, {lng.toFixed(4)}°
               </Text>
             </View>
-            {/* Center: Coordinates */}
-            <Text style={[styles.coordinatesText, { color: theme.colors.onSurface,paddingLeft:6 }]}>
-              {lat.toFixed(4)}°, {lng.toFixed(4)}°
-            </Text>
-          </View>
 
             {/* Right Side: Refresh Button */}
             <IconButton
               icon="refresh"
               onPress={() => refetch()}
+              loading={isRefreshing}
               style={{ padding: 0 }}
             />
           </Card.Content>
@@ -123,6 +141,11 @@ const styles = StyleSheet.create({
   errorText: {
     marginTop: 16,
     textAlign: "center",
+  },
+  hintText: {
+    fontSize: 12,
+    textAlign: "center",
+    opacity: 0.7,
   },
   banner: {
     marginHorizontal: 16,
