@@ -58,84 +58,83 @@ export function CurretWard({ location }: CurretWardProps) {
   }
   if (!data?.result) {
     return (
-        <BottomSheetModalProvider>
-          {isRefetching ? (
-            <ActivityIndicator
-              style={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                zIndex: 1000,
-                transform: [{ translateX: -20 }, { translateY: -20 }],
-              }}
-            />
-          ) : null}
-          <View style={{ height: "70%" }}>
-            <NoDataScreen
-              listName="Wards"
-              hint="No wards found"
-              icon={<MaterialIcon color={theme.colors.primary} name="location-city" size={64} />}
-            />
+      <BottomSheetModalProvider>
+        {isRefetching ? (
+          <ActivityIndicator
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              zIndex: 1000,
+              transform: [{ translateX: -20 }, { translateY: -20 }],
+            }}
+          />
+        ) : null}
+        <View style={{ height: "70%" }}>
+          <NoDataScreen
+            listName="Wards"
+            hint="No wards found"
+            icon={<MaterialIcon color={theme.colors.primary} name="location-city" size={64} />}
+          />
 
-            <View
-              style={{
-                flexDirection: "row",
-                gap: 2,
-                justifyContent: "center",
-                alignItems: "center",
+          <View
+            style={{
+              flexDirection: "row",
+              gap: 2,
+              justifyContent: "center",
+              alignItems: "center",
+            }}>
+            <Button
+              style={{}}
+              disabled={isRefetching}
+              loading={isRefetching}
+              icon="reload"
+              mode="contained-tonal"
+              onPress={() => {
+                refetch();
               }}>
-              <Button
-                style={{}}
-                disabled={isRefetching}
-                loading={isRefetching}
-                icon="reload"
-                mode="contained-tonal"
-                onPress={() => {
-                  refetch();
-                }}>
-                Reload
-              </Button>
+              Reload
+            </Button>
 
-              <Button
-                style={{}}
-                disabled={isRefetching}
-                loading={isRefetching}
-                icon="map-marker"
-                mode="contained-tonal"
-                onPress={() => {
-                  latlongBottomSheetref.handleSnapPress(3);
-                }}>
-                Change location
-              </Button>
-            </View>
+            <Button
+              style={{}}
+              disabled={isRefetching}
+              loading={isRefetching}
+              icon="map-marker"
+              mode="contained-tonal"
+              onPress={() => {
+                latlongBottomSheetref.handleSnapPress(3);
+              }}>
+              Change location
+            </Button>
           </View>
-          <BottomSheetModal
-            ref={latlongBottomSheetref.sheetRef}
-            onChange={latlongBottomSheetref.handleSheetChange}
-            style={{ height: "auto", width: "100%" }}
-            backgroundStyle={{ backgroundColor: theme.colors.surface }}
-            handleStyle={{ backgroundColor: theme.colors.elevation.level4 }}
-            handleIndicatorStyle={{ backgroundColor: theme.colors.primary }}>
-            <BottomSheetView
-              style={{
-                flex: 1,
-                alignItems: "center",
-                width: "100%",
-                backgroundColor: theme.colors.background,
-              }}>
-              <LatLongForm
-                action={
-                  <IconButton
-                    mode="contained"
-                    icon={getMaterialIconName("close")}
-                    onPress={() => latlongBottomSheetref.handleClosePress()}
-                  />
-                }
-              />
-            </BottomSheetView>
-          </BottomSheetModal>
-        </BottomSheetModalProvider>
-
+        </View>
+        <BottomSheetModal
+          ref={latlongBottomSheetref.sheetRef}
+          onChange={latlongBottomSheetref.handleSheetChange}
+          style={{ height: "auto", width: "100%" }}
+          backgroundStyle={{ backgroundColor: theme.colors.surface }}
+          handleStyle={{ backgroundColor: theme.colors.elevation.level4 }}
+          handleIndicatorStyle={{ backgroundColor: theme.colors.primary }}>
+          <BottomSheetView
+            style={{
+              flex: 1,
+              alignItems: "center",
+              width: "100%",
+              backgroundColor: theme.colors.background,
+            }}>
+            <LatLongForm
+              action={
+                <IconButton
+                  mode="contained"
+                  icon={getMaterialIconName("close")}
+                  onPress={() => latlongBottomSheetref.handleClosePress()}
+                />
+              }
+            />
+          </BottomSheetView>
+        </BottomSheetModal>
+      </BottomSheetModalProvider>
     );
   }
   return (
@@ -149,39 +148,5 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "auto",
     // backgroundColor:"green"
-  },
-  banner: {
-    marginHorizontal: 16,
-    marginBottom: 8,
-    borderRadius: 12,
-  },
-  bannerContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: 16,
-    gap: 12,
-  },
-  bannerTitle: {
-    fontSize: 12,
-    fontWeight: "600",
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-    opacity: 0.8,
-  },
-  coordinatesText: {
-    fontSize: 16,
-    fontWeight: "500",
-    marginTop: 2,
-    fontFamily: "monospace",
-  },
-  labelCard: {
-    marginBottom: 1,
-  },
-  labelContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
   },
 });

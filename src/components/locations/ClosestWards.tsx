@@ -2,11 +2,10 @@ import { KenyaWardsSelect } from "@/lib/drizzle/schema";
 import { useExpoSpatialiteContext } from "@/lib/expo-spatialite/ExpoSpatialiteProvider";
 import { useQuery } from "@tanstack/react-query";
 import { LocationObject } from "expo-location/build/Location.types";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
-import { Button, Card, Text, useTheme } from "react-native-paper";
+import { StyleSheet, View } from "react-native";
+import { Card, Text, useTheme } from "react-native-paper";
 import { MaterialIcon } from "../default/ui/icon-symbol";
 import { LoadingIndicatorDots } from "../state-screens/LoadingIndicatorDots";
-import { NoDataScreen } from "../state-screens/NoDataScreen";
 import { WardListItem } from "./WardListItem";
 
 interface ClosestWardsProps {
@@ -20,7 +19,7 @@ export function ClosestWards({ location }: ClosestWardsProps) {
   const lat = location?.coords.latitude;
   const lng = location?.coords.longitude;
 
-  const { data, isPending, refetch, isRefetching } = useQuery({
+  const { data, isPending} = useQuery({
     queryKey: ["closest-ward", lat, lng],
     queryFn: async () => {
       try {
