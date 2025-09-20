@@ -190,11 +190,10 @@ export function getClosestWardsByGeomQueryOptions({ wardId }: GetClosestWardsByG
               w2.constituency,
               w2.constituency_code AS "constituencyCode",
               AsGeoJSON(w2.geom) AS geometry,
-              ST_Distance(w1.geom, w2.geom, 1) AS distance
-            FROM kenya_wards w1, kenya_wards w2
-            WHERE w1.id = ${wardId} 
-              AND w2.id != ${wardId}
-              AND ST_Distance(w1.geom, w2.geom, 1) < 50000
+              ST_Distance(ST_Centroid(w1.geom), ST_Centroid(w2.geom), 1) AS distance
+            FROM kenya_wards w1
+            JOIN kenya_wards w2 ON w2.id != w1.id
+            WHERE w1.id = ${wardId}
             ORDER BY distance
             LIMIT 10
           `
