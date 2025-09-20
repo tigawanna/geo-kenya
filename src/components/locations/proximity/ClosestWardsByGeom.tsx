@@ -1,5 +1,5 @@
 import { MaterialIcon } from "@/components/default/ui/icon-symbol";
-import { StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { Button, Card, Text, useTheme } from "react-native-paper";
 import { WardListItem } from "../list/WardListItem";
 import { LoadingIndicatorDots } from "@/components/state-screens/LoadingIndicatorDots";
@@ -13,15 +13,15 @@ interface ClosestWardsByGeomProps {
 }
 export function ClosestWardsByGeom({ wardId }: ClosestWardsByGeomProps) {
   const theme = useTheme();
-  const { data, isPending, isRefetching, refetch } = useQuery(
-{...getClosestWardsByGeomQueryOptions({
+  const { data, isPending, isRefetching, refetch } = useQuery({
+    ...getClosestWardsByGeomQueryOptions({
       wardId,
-    })}
-  );
+    }),
+  });
 
   if (isPending) {
     return (
-      <View style={{ paddingVertical: 14, minHeight: "30%" }}>
+      <View style={{ paddingVertical: 14, minHeight:200 }}>
         <LoadingIndicatorDots />
       </View>
     );
@@ -54,7 +54,7 @@ export function ClosestWardsByGeom({ wardId }: ClosestWardsByGeomProps) {
     );
   }
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Card style={styles.labelCard}>
         <Card.Content style={styles.labelContent}>
           <MaterialIcon name="my-location" color={theme.colors.primary} size={20} />
@@ -68,7 +68,7 @@ export function ClosestWardsByGeom({ wardId }: ClosestWardsByGeomProps) {
           <WardListItem key={ward.id} item={ward} theme={theme} />
         ))}
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -78,6 +78,7 @@ const styles = StyleSheet.create({
     height: "100%",
     gap: 6,
     paddingHorizontal: 6,
+    marginBottom: 36,
   },
   labelCard: {
     margin: 6,

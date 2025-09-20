@@ -102,6 +102,7 @@ const styles = StyleSheet.create({
   card: {
     // flex: 1,
     paddingHorizontal: 26,
+    paddingBottom:16,
   },
   header: {
     flexDirection: "row",

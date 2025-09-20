@@ -165,8 +165,8 @@ export function getClosestWardsByCorrdsQueryOptions({
         };
       }
     },
-    staleTime: 0,
-    // placeholderData: (prevData) => prevData,
+    // staleTime: 0,
+    placeholderData: (prevData) => prevData,
   });
 }
 
