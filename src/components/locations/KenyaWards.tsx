@@ -2,7 +2,7 @@ import { db } from "@/lib/drizzle/client";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, View } from "react-native";
-import { Button, Card, Searchbar, Text, useTheme } from "react-native-paper";
+import { Button, Searchbar, Text, useTheme } from "react-native-paper";
 import { MaterialIcon } from "../default/ui/icon-symbol";
 import { LoadingFallback } from "../state-screens/LoadingFallback";
 import { NoDataScreen } from "../state-screens/NoDataScreen";
@@ -97,7 +97,7 @@ export function KenyaWards() {
         data={data.result}
         keyExtractor={(item) => item.id.toString()}
         stickyHeaderIndices={[0]}
-        renderItem={({ item }) => <WardListItem key={item.id} item={item} theme={theme}  />}
+        renderItem={({ item }) => <WardListItem key={item.id} item={item} theme={theme} />}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.listContent}
         viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
@@ -206,81 +206,7 @@ const styles = StyleSheet.create({
   searchInput: {
     fontSize: 16,
   },
-  searchResults: {
-    marginTop: 4,
-    marginLeft: 12,
-    opacity: 0.7,
-  },
   listContent: {
     padding: 16,
-  },
-  card: {
-    marginBottom: 12,
-    borderRadius: 12,
-    overflow: "hidden",
-  },
-  cardContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 12,
-  },
-  mainContent: {
-    flex: 1,
-    paddingRight: 12,
-  },
-  titleContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 8,
-  },
-  wardName: {
-    fontWeight: "600",
-    marginRight: 8,
-  },
-  locationIcon: {
-    marginTop: 2,
-  },
-  detailsContainer: {
-    marginLeft: 4,
-  },
-  detailRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 4,
-  },
-  detailIcon: {
-    marginRight: 8,
-  },
-  detailText: {
-    // Color applied dynamically
-  },
-  idContainer: {
-    alignItems: "center",
-  },
-  idBadge: {
-    borderRadius: 20,
-    width: 40,
-    height: 40,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 4,
-  },
-  idText: {
-    fontWeight: "700",
-  },
-  wardCode: {
-    fontSize: 12,
-    // Color applied dynamically
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 32,
-  },
-  errorText: {
-    marginTop: 16,
-    textAlign: "center",
-    // Color applied dynamically
   },
 });

@@ -44,7 +44,7 @@ export function TooManyRequestsScreen() {
       -1,
       false
     );
-  }, []);
+  }, [pulseValue, rotateValue, scaleValue]);
 
   const animatedIconStyle = useAnimatedStyle(() => ({
     transform: [

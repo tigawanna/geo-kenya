@@ -1,8 +1,8 @@
 import { useDeviceLocation } from "@/hooks/use-device-location";
 
 import React, { useState } from "react";
-import { StyleSheet, View } from "react-native";
-import { Button, TextInput, Text, useTheme } from "react-native-paper";
+import { View } from "react-native";
+import { Button, Text, TextInput, useTheme } from "react-native-paper";
 
 interface LatLongFormProps {
   action?: React.ReactNode;
@@ -66,10 +66,3 @@ export function LatLongForm({ action }: LatLongFormProps) {
     </View>
   );
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    height: "100%",
-    width: "100%",
-  },
-});
