@@ -1,18 +1,65 @@
 import { getWardById } from "@/data-access-layer/wards-query-options";
 import { useQuery } from "@tanstack/react-query";
 import { StyleSheet, View } from "react-native";
-import { Text } from "react-native-paper";
+import { Button, IconButton, useTheme } from "react-native-paper";
+import { MaterialIcon } from "../../default/ui/icon-symbol";
+import { LoadingFallback } from "../../state-screens/LoadingFallback";
+import { NoDataScreen } from "../../state-screens/NoDataScreen";
 import { SingleWardCard } from "./SingleWardCard";
+import { useRouter } from "expo-router";
 
 interface SingleWardByIdProps {
   wardId: string;
 }
 export function SingleWardById({ wardId }: SingleWardByIdProps) {
-  const {data} = useQuery(getWardById({ id: Number(wardId) }));
-  const ward = data?.result
+  const theme = useTheme();
+  const router = useRouter();
+
+  const { data, isPending, refetch, isRefetching } = useQuery(getWardById({ id: Number(wardId) }));
+
+  if (isPending) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <IconButton icon="arrow-left" onPress={() => router.back()} />
+        </View>
+        <LoadingFallback />
+      </View>
+    );
+  }
+
+  if (!data?.result) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <IconButton icon="arrow-left" onPress={() => router.back()} />
+        </View>
+        <NoDataScreen
+          listName="Ward"
+          message="Ward not found"
+          hint="Please check the ward ID and try again"
+          icon={<MaterialIcon color={theme.colors.primary} name="location-city" size={64} />}
+        />
+        <View style={styles.buttonContainer}>
+          <Button
+            disabled={isRefetching}
+            loading={isRefetching}
+            icon="reload"
+            mode="contained-tonal"
+            onPress={() => refetch()}>
+            Reload
+          </Button>
+        </View>
+      </View>
+    );
+  }
+
   return (
-    <View style={{ ...styles.container }}>
-      <SingleWardCard ward={ward} />
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <IconButton icon="arrow-left" onPress={() => router.back()} />
+      </View>
+      <SingleWardCard ward={data.result} />
     </View>
   );
 }
@@ -21,7 +68,14 @@ const styles = StyleSheet.create({
     flex: 1,
     height: "100%",
     width: "100%",
+  },
+  header: {
+    paddingHorizontal: 8,
+  },
+  buttonContainer: {
+    flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
+    paddingHorizontal: 20,
   },
 });

@@ -5,7 +5,7 @@ import { StyleSheet, View } from "react-native";
 import { Card, Text, useTheme } from "react-native-paper";
 import { MaterialIcon } from "../default/ui/icon-symbol";
 import { LoadingIndicatorDots } from "../state-screens/LoadingIndicatorDots";
-import { WardListItem } from "./WardListItem";
+import { WardListItem } from "./list/WardListItem";
 
 interface ClosestWardsProps {
   lat: number;
