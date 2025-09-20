@@ -7,7 +7,8 @@ export const queryKeyPrefixes = {
   wards: "wards", 
   currentWard:"current-ward",
   closestWard:"closest-ward",
-  deviceLocation:"device-location"
+  deviceLocation:"device-location",
+  closestWardsByNeom:"closest-wards-by-geom"
 } as const;
 
 
