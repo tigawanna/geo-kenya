@@ -26,6 +26,8 @@ The geographic data used in this application is available in a separate reposito
 ### Location-Based Ward Discovery
 Find wards closest to your current location with distance calculations (all computed locally)
 
+**Note:** For improved location accuracy, consider enabling your network/WiFi connection alongside location services, even though the app works completely offline.
+
 ![Wagalla Ward - Location View](https://github.com/tigawanna/geo-kenya/raw/4bab15a993660254634b55b58a34fd6e71a08072/docs/wagalla-ward.jpg)
 
 ![Lokichar Ward - Detailed Information](https://github.com/tigawanna/geo-kenya/raw/4bab15a993660254634b55b58a34fd6e71a08072/docs/lokchar-ward.jpg)

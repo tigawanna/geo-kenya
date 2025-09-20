@@ -69,3 +69,9 @@ export function MaterialCommunityIcon({
 }) {
   return <MaterialCommunityIcons color={color} size={size} name={name} style={style} />;
 }
+
+// for react native paper button and icon button
+export type MaterialIconNameType = React.ComponentProps<typeof MaterialCommunityIcon>["name"];
+export function getMaterialIconName(name: MaterialIconNameType) {
+  return name
+}

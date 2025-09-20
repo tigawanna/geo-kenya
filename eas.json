@@ -1,14 +1,14 @@
 {
   "cli": {
-    "version": ">= 3.8.1"
+    "version": ">= 3.14.0"
   },
   "build": {
     "development": {
       "developmentClient": true,
       "distribution": "internal",
       "env": {
-        "EXPO_NO_CACHE": true,
-        "EXPO_NO_GIT_STATUS": true,
+        "EXPO_NO_CACHE": "true",
+        "EXPO_NO_GIT_STATUS": "true",
         "APP_VARIANT": "development"
       }
     },
@@ -18,8 +18,8 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_NO_CACHE": true,
-        "EXPO_NO_GIT_STATUS": true,
+        "EXPO_NO_CACHE": "true",
+        "EXPO_NO_GIT_STATUS": "true",
         "APP_VARIANT": "preview",
         "GRADLE_OPTS": "-Xmx4g -XX:MaxMetaspaceSize=1g",
         "TMPDIR": "/home/dennis/tmp-build",
@@ -31,8 +31,8 @@
       "android": {
         "buildType": "apk",
         "env": {
-          "EXPO_NO_CACHE": true,
-          "EXPO_NO_GIT_STATUS": true,
+          "EXPO_NO_CACHE": "true",
+          "EXPO_NO_GIT_STATUS": "true",
           "ABI_FILTERS": "arm64-v8a",
           "APP_VARIANT": "preview",
           "GRADLE_OPTS": "-Xmx4g -XX:MaxMetaspaceSize=1g",

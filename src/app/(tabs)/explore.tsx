@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 export default function ExploreScreen() {
   const { top } = useSafeAreaInsets();
   return (
-    <Surface style={{ flex: 1, paddingTop: top, justifyContent: "center" }}>
+    <Surface style={{ flex: 1, paddingTop: top}}>
       <KenyaWards />
     </Surface>
   );

@@ -1,7 +1,8 @@
+import ExpoSpatialiteModule from "@/modules/expo-spatialite/src/ExpoSpatialiteModule";
 import { useQuery } from "@tanstack/react-query";
 import { StyleSheet } from "react-native";
 import { Text, Surface } from "react-native-paper";
-import {getSpatialiteVersion} from "@/modules/expo-spatialite"
+
 
 export function SpatialiteVersion() {
   const { data, isPending } = useQuery({
