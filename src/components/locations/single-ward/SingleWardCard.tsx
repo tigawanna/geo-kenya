@@ -101,7 +101,7 @@ export function SingleWardCard({ ward,loc }: SingleWardCardProps) {
 const styles = StyleSheet.create({
   card: {
     flex: 1,
-    padding: 26,
+    paddingHorizontal: 26,
   },
   header: {
     flexDirection: "row",

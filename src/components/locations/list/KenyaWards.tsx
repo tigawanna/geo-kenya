@@ -1,13 +1,12 @@
-import { db } from "@/lib/drizzle/client";
+import { wardsQueryOptions } from "@/data-access-layer/wards-query-options";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, View } from "react-native";
 import { Button, Searchbar, Text, useTheme } from "react-native-paper";
-import { MaterialIcon } from "../default/ui/icon-symbol";
-import { LoadingFallback } from "../state-screens/LoadingFallback";
-import { NoDataScreen } from "../state-screens/NoDataScreen";
+import { MaterialIcon } from "../../default/ui/icon-symbol";
+import { LoadingFallback } from "../../state-screens/LoadingFallback";
+import { NoDataScreen } from "../../state-screens/NoDataScreen";
 import { WardListItem } from "./WardListItem";
-import { wardsQueryOptions } from "@/data-access-layer/wards-query-options";
 
 export function KenyaWards() {
   const theme = useTheme();

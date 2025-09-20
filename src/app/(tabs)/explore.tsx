@@ -1,4 +1,4 @@
-import { KenyaWards } from "@/components/locations/KenyaWards";
+import { KenyaWards } from "@/components/locations/list/KenyaWards";
 import { Surface } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
