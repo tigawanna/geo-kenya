@@ -7,47 +7,16 @@ import { MaterialIcon } from "../default/ui/icon-symbol";
 import { LoadingFallback } from "../state-screens/LoadingFallback";
 import { NoDataScreen } from "../state-screens/NoDataScreen";
 import { WardListItem } from "./WardListItem";
+import { wardsQueryOptions } from "@/data-access-layer/wards-query-options";
 
 export function KenyaWards() {
   const theme = useTheme();
   const [searchQuery, setSearchQuery] = useState("");
-  // const searchQuery = useDebounce(topSearchQuery, 500);
-  const { data, isPending, refetch, isRefetching } = useQuery({
-    queryKey: ["wards", searchQuery],
-    placeholderData: (previousData) => previousData,
-    queryFn: async () => {
-      try {
-        const result = await db.query.kenyaWards.findMany({
-          columns: {
-            geom: false,
-            subCounty: false,
-          },
-          where(fields, operators) {
-            if (searchQuery && searchQuery.length > 0) {
-              const lowercaseSearch = searchQuery.toLowerCase();
-              return operators.or(
-                operators.like(operators.sql`lower(ward)`, `%${lowercaseSearch}%`),
-                operators.like(operators.sql`lower(${fields.county})`, `%${lowercaseSearch}%`),
-                operators.like(operators.sql`lower(${fields.constituency})`, `%${lowercaseSearch}%`)
-              );
-            }
-            // Return undefined or omit where clause if no searchQuery
-            return undefined;
-          },
-        });
-        return {
-          result,
-          error: null,
-        };
-      } catch (e) {
-        // console.error(e);
-        return {
-          result: null,
-          error: e instanceof Error ? e.message : JSON.stringify(e),
-        };
-      }
-    },
-  });
+  const { data, isPending, refetch, isRefetching } = useQuery(
+    wardsQueryOptions({
+      searchQuery,
+    })
+  );
 
   if (isPending) {
     return <LoadingFallback />;
