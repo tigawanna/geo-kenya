@@ -11,7 +11,7 @@ async function getCurrentLocation() {
   return await Location.getCurrentPositionAsync({
     mayShowUserSettingsDialog: true,
     accuracy: Location.Accuracy.High,
-    timeInterval: 1000 * 1 * 1, // 1 minutes
+    // timeInterval: 1000 * 1 * 1, // 1 minutes
   });
 }
 
@@ -27,7 +27,7 @@ export function useDeviceLocation() {
   } = useQuery({
     queryKey: ["device-location"],
     queryFn: getCurrentLocation,
-    refetchInterval: 1000 * 60 * 1, // 1 minutes
+    // refetchInterval: 1000 * 60 * 1, // 1 minutes
     retry: false,
   });
 

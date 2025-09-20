@@ -1,27 +1,22 @@
 import { db } from "@/lib/drizzle/client";
 import { useQuery } from "@tanstack/react-query";
 import { sql } from "drizzle-orm";
-import { LocationObject } from "expo-location/build/Location.types";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
-import { Button, IconButton, useTheme } from "react-native-paper";
-import { getMaterialIconName, MaterialIcon } from "../default/ui/icon-symbol";
+import { Button, useTheme } from "react-native-paper";
+import { MaterialIcon } from "../default/ui/icon-symbol";
 import { LoadingFallback } from "../state-screens/LoadingFallback";
 import { NoDataScreen } from "../state-screens/NoDataScreen";
 import { SingleWard } from "./SingleWard";
-import { LatLongForm } from "./form/LatLongForm";
-
-import { useCustomBottomSheetModal } from "@/lib/react-native-bottom-sheet/use-bottom-sheet";
-import { BottomSheetModal, BottomSheetModalProvider, BottomSheetView } from "@gorhom/bottom-sheet";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 interface CurretWardProps {
-  lat:number;
-  lng:number
+  lat: number;
+  lng: number;
 }
 
-export function CurretWard({ lat,lng }: CurretWardProps) {
+export function CurretWard({ lat, lng }: CurretWardProps) {
   const theme = useTheme();
 
-  const latlongBottomSheetref = useCustomBottomSheetModal();
   // const lat = location?.coords.latitude;
   // const lng = location?.coords.longitude;
   const { data, isPending, refetch, isRefetching } = useQuery({
@@ -52,6 +47,7 @@ export function CurretWard({ lat,lng }: CurretWardProps) {
         };
       }
     },
+    placeholderData: (prevData) => prevData,
   });
   // console.log(data);
   if (isPending) {
@@ -74,7 +70,8 @@ export function CurretWard({ lat,lng }: CurretWardProps) {
         <View style={{ height: "70%" }}>
           <NoDataScreen
             listName="Wards"
-            hint="No wards found"
+            message="No ward found at that location"
+            hint="Make sure the location is within Kenya"
             icon={<MaterialIcon color={theme.colors.primary} name="location-city" size={64} />}
           />
 
@@ -96,45 +93,8 @@ export function CurretWard({ lat,lng }: CurretWardProps) {
               }}>
               Reload
             </Button>
-
-            <Button
-              style={{}}
-              disabled={isRefetching}
-              loading={isRefetching}
-              icon="map-marker"
-              mode="contained-tonal"
-              onPress={() => {
-                latlongBottomSheetref.handleSnapPress(3);
-              }}>
-              Change location
-            </Button>
           </View>
         </View>
-        <BottomSheetModal
-          ref={latlongBottomSheetref.sheetRef}
-          onChange={latlongBottomSheetref.handleSheetChange}
-          style={{ height: "auto", width: "100%" }}
-          backgroundStyle={{ backgroundColor: theme.colors.surface }}
-          handleStyle={{ backgroundColor: theme.colors.elevation.level4 }}
-          handleIndicatorStyle={{ backgroundColor: theme.colors.primary }}>
-          <BottomSheetView
-            style={{
-              flex: 1,
-              alignItems: "center",
-              width: "100%",
-              backgroundColor: theme.colors.background,
-            }}>
-            <LatLongForm
-              action={
-                <IconButton
-                  mode="contained"
-                  icon={getMaterialIconName("close")}
-                  onPress={() => latlongBottomSheetref.handleClosePress()}
-                />
-              }
-            />
-          </BottomSheetView>
-        </BottomSheetModal>
       </BottomSheetModalProvider>
     );
   }
