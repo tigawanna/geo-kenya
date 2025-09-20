@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     alignItems: "center",
-    gap: 12,
+    gap: 2,
   },
   titleText: {
     fontWeight: "600",

@@ -1,9 +1,12 @@
 import { getMaterialIconName } from "@/components/default/ui/icon-symbol";
 import { useDeviceLocation } from "@/hooks/use-device-location";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 import { IconButton, Searchbar, Text, useTheme } from "react-native-paper";
+import { useDebounce } from "@uidotdev/usehooks";
+import { useDebouncedState } from "@tanstack/react-pacer";
+import { logger } from "@/utils/logger";
 
 interface LatLongFormProps {
   action?: React.ReactNode;
@@ -11,44 +14,60 @@ interface LatLongFormProps {
   initLng?: number;
 }
 export function LatLongForm({ action, initLat, initLng }: LatLongFormProps) {
+  const theme = useTheme();
   const { location, manuallySetLocation, isLoading } = useDeviceLocation();
-  const [latLong, setLatLong] = useState({
-    lat: location?.coords.latitude ?? initLat ?? 0,
-    lng: location?.coords.longitude ?? initLng ?? 0,
-  });
-  const [inputValue, setInputValue] = useState(`${latLong.lat}, ${latLong.lng}`);
+
+  const lat = location?.coords.latitude ?? initLat ?? 0;
+  const lng = location?.coords.longitude ?? initLng ?? 0;
+  const defaultValue = `${lat}, ${lng}`;
+
+  // const debouncedSearchTerm = useDebounce(inputValue, 3000);
+
+  const [searchTerm, setSearchTerm, debouncer] = useDebouncedState(
+    defaultValue,
+    { wait: 3000 },
+    (state) => ({
+      isPending: state.isPending,
+      lastArgs: state.lastArgs?.[0] as string,
+    })
+  );
 
   const handleInputChange = (text: string) => {
-    setInputValue(text);
-    const [lat, lng] = text.split(",").map((val) => parseFloat(val.trim()) || 0);
-    setLatLong({ lat, lng });
+    // setImmediateValue(text);
+    setSearchTerm(text);
   };
-
-  const theme = useTheme();
+  useEffect(() => {
+    if (searchTerm.includes(",")) {
+      const [lat, lng] = searchTerm.split(",").map((val) => parseFloat(val.trim()) || 0);
+      manuallySetLocation({ lat, lng });
+    }
+  }, [manuallySetLocation, searchTerm]);
 
   return (
     <View style={{ width: "100%", height: "100%", flex: 1 }}>
       <View style={{ flexDirection: "row", gap: 4, width: "100%" }}>
         <Searchbar
           placeholder="-1.2921, 36.8219"
+          clearIcon={"close"}
           style={{ flex: 1 }}
+          loading={debouncer.state.isPending}
           onChangeText={handleInputChange}
-          value={inputValue}
-          right={() => {
-            return (
-              <View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
-                <IconButton
-                  onPress={() => {
-                    manuallySetLocation(latLong);
-                  }}
-                  mode="contained-tonal"
-                  icon={getMaterialIconName("arrow-right")}
-                  loading={isLoading}
-                />
-                {action}
-              </View>
-            );
-          }}
+          value={debouncer.state.lastArgs ?? defaultValue}
+          // right={() => {
+          //   return (
+          //     <View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
+          //       <IconButton
+          //         onPress={() => {
+          //           manuallySetLocation(latLong);
+          //         }}
+          //         mode="contained-tonal"
+          //         icon={getMaterialIconName("arrow-right")}
+          //         loading={isLoading}
+          //       />
+          //       {action}
+          //     </View>
+          //   );
+          // }}
         />
         {/* <TextInput
           label="Coordinates"

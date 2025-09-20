@@ -1,7 +1,6 @@
 import { KenyaWardsSelect } from "@/lib/drizzle/schema";
 import { useExpoSpatialiteContext } from "@/lib/expo-spatialite/ExpoSpatialiteProvider";
 import { useQuery } from "@tanstack/react-query";
-import { LocationObject } from "expo-location/build/Location.types";
 import { StyleSheet, View } from "react-native";
 import { Card, Text, useTheme } from "react-native-paper";
 import { MaterialIcon } from "../default/ui/icon-symbol";
@@ -20,7 +19,7 @@ export function ClosestWards({ lat,lng }: ClosestWardsProps) {
   // const lat = location?.coords.latitude;
   // const lng = location?.coords.longitude;
 
-  const { data, isPending} = useQuery({
+  const { data, isPending } = useQuery({
     queryKey: ["closest-ward", lat, lng],
     queryFn: async () => {
       try {
@@ -83,6 +82,7 @@ export function ClosestWards({ lat,lng }: ClosestWardsProps) {
         };
       }
     },
+    placeholderData: (prevData) => prevData,
   });
 
   if (isPending) {

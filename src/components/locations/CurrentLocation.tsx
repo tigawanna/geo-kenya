@@ -1,10 +1,10 @@
 import { useDeviceLocation } from "@/hooks/use-device-location";
-import { View, Text, StyleSheet, ActivityIndicator, ScrollView } from "react-native";
-import { Button, Card, IconButton, useTheme } from "react-native-paper";
-import { NoDataScreen } from "../state-screens/NoDataScreen";
+import * as Clipboard from "expo-clipboard";
+import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Card, IconButton, useTheme } from "react-native-paper";
 import { MaterialIcon } from "../default/ui/icon-symbol";
-import { CurretWard } from "./CurretWard";
 import { ClosestWards } from "./ClosestWards";
+import { CurretWard } from "./CurretWard";
 import { LatLongForm } from "./form/LatLongForm";
 
 export function CurrentLocation() {
@@ -24,67 +24,7 @@ export function CurrentLocation() {
       </View>
     );
   }
-  // if (errorMsg) {
-  //   return (
-  //     <View style={{ ...styles.container }}>
-  //       <View style={[styles.errorContainer, { backgroundColor: theme.colors.surface, gap: 16 }]}>
-  //         <MaterialIcon name="error" size={48} color={theme.colors.error} />
-  //         <Text style={[styles.errorText, { color: theme.colors.onSurface }]}>{errorMsg}</Text>
-  //         <Text style={[styles.hintText, { color: theme.colors.onSurfaceVariant }]}>
-  //           For better location accuracy, enable network/WiFi alongside location services
-  //         </Text>
 
-  //         <Button
-  //           style={{ marginHorizontal: "20%" }}
-  //           disabled={isRefreshing}
-  //           loading={isRefreshing}
-  //           icon="reload"
-  //           mode="contained-tonal"
-  //           onPress={() => {
-  //             refetch();
-  //           }}>
-  //           Check again
-  //         </Button>
-  //       </View>
-  //     </View>
-  //   );
-  // }
-  // if (!location) {
-  //   return (
-  //     <View style={styles.container}>
-  //       {isRefreshing ? (
-  //         <ActivityIndicator
-  //           style={{
-  //             position: "absolute",
-  //             top: "50%",
-  //             left: "50%",
-  //             zIndex: 1000,
-  //             transform: [{ translateX: -20 }, { translateY: -20 }],
-  //           }}
-  //         />
-  //       ) : null}
-  //       <View style={{ height: "80%" }}>
-  //         <NoDataScreen
-  //           listName="Current location"
-  //           hint="Location data not found"
-  //           icon={<MaterialIcon color={theme.colors.primary} name="location-city" size={64} />}
-  //         />
-
-  //         <Button
-  //           style={{ marginHorizontal: "20%" }}
-  //           disabled={isRefreshing}
-  //           loading={isRefreshing}
-  //           icon="reload"
-  //           mode="contained"
-  //           onPress={() => {
-  //             refetch();
-  //           }}>
-  //           Check again
-  //         </Button>
-  //       </View>
-  //     </View>
-  //   );
-  // }
 
   const lat = location?.coords.latitude??0;
   const lng = location?.coords.longitude??0;
@@ -124,15 +64,34 @@ export function CurrentLocation() {
                     CURRENT LOCATION
                   </Text>
                 </View>
-                <IconButton
-                  icon="refresh"
-                  onPress={() => refetch()}
-                  loading={isRefreshing}
-                  style={{ padding: 0 }}
-                />
+                <View style={{ flexDirection: "row" }}>
+                  <IconButton
+                    icon="content-copy"
+                    onPress={() => Clipboard.setStringAsync(`${lat},${lng}`)}
+                    style={{ padding: 0 }}
+                  />
+                  <IconButton
+                    icon="refresh"
+                    onPress={() => refetch()}
+                    loading={isRefreshing}
+                    style={{ padding: 0 }}
+                  />
+                </View>
                 {/* Center: Coordinates */}
               </View>
               <LatLongForm initLat={lat} initLng={lng} />
+              {(errorMsg || !location) && (
+                <View
+                  style={{ flexDirection: "row", alignItems: "center", gap: 4, marginVertical: 4 }}>
+                  <MaterialIcon name="warning" size={16} color={theme.colors.error} />
+                  <Text style={{ fontSize: 12, color: theme.colors.error }}>
+                    Device location unavailable ,
+                    <Text style={{ fontSize: 10, color: theme.colors.error }}>
+                      Try typing in tne coordinates manually
+                    </Text>
+                  </Text>
+                </View>
+              )}
             </View>
 
             {/* Right Side: Refresh Button */}
