@@ -1,4 +1,4 @@
-import { getWardById } from "@/data-access-layer/wards-query-options";
+import { getWardByIdQueryOptions } from "@/data-access-layer/wards-query-options";
 import { useQuery } from "@tanstack/react-query";
 import { StyleSheet, View } from "react-native";
 import { Button, IconButton, useTheme } from "react-native-paper";
@@ -7,6 +7,7 @@ import { LoadingFallback } from "../../state-screens/LoadingFallback";
 import { NoDataScreen } from "../../state-screens/NoDataScreen";
 import { SingleWardCard } from "./SingleWardCard";
 import { useRouter } from "expo-router";
+import { ClosestWardsByGeom } from "../proximity/ClosestWardsByGeom";
 
 interface SingleWardByIdProps {
   wardId: string;
@@ -15,7 +16,7 @@ export function SingleWardById({ wardId }: SingleWardByIdProps) {
   const theme = useTheme();
   const router = useRouter();
 
-  const { data, isPending, refetch, isRefetching } = useQuery(getWardById({ id: Number(wardId) }));
+  const { data, isPending, refetch, isRefetching } = useQuery(getWardByIdQueryOptions({ id: Number(wardId) }));
 
   if (isPending) {
     return (
@@ -60,6 +61,7 @@ export function SingleWardById({ wardId }: SingleWardByIdProps) {
         <IconButton icon="arrow-left" onPress={() => router.back()} />
       </View>
       <SingleWardCard ward={data.result} />
+      <ClosestWardsByGeom wardId={data.result.id} />
     </View>
   );
 }

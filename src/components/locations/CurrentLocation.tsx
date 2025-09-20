@@ -3,9 +3,10 @@ import * as Clipboard from "expo-clipboard";
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Card, IconButton, useTheme } from "react-native-paper";
 import { MaterialIcon } from "../default/ui/icon-symbol";
-import { ClosestWards } from "./ClosestWards";
+
 import { CurretWard } from "./CurretWard";
 import { LatLongForm } from "./form/LatLongForm";
+import { ClosestWards } from "./proximity/ClosestWards";
 
 export function CurrentLocation() {
   const theme = useTheme();
