@@ -25,9 +25,8 @@ export function CurrentLocation() {
     );
   }
 
-
-  const lat = location?.coords.latitude??0;
-  const lng = location?.coords.longitude??0;
+  const lat = location?.coords.latitude ?? 0;
+  const lng = location?.coords.longitude ?? 0;
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
@@ -122,28 +121,10 @@ const styles = StyleSheet.create({
     marginTop: 16,
     textAlign: "center",
   },
-  hintText: {
-    fontSize: 12,
-    textAlign: "center",
-    opacity: 0.7,
-  },
   banner: {
     marginHorizontal: 16,
     marginBottom: 8,
     borderRadius: 12,
-  },
-  bannerContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    gap: 12,
-  },
-  leftSide: {
-    flexDirection: "row",
-    // alignItems: "center",
-    gap: 8,
   },
   bannerTitle: {
     fontSize: 12,
@@ -151,12 +132,5 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
     letterSpacing: 0.5,
     opacity: 0.8,
-  },
-  coordinatesText: {
-    fontSize: 16,
-    fontWeight: "500",
-    fontFamily: "monospace",
-    flex: 1,
-    textAlign: "center",
   },
 });

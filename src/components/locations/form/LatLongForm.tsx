@@ -1,12 +1,8 @@
-import { getMaterialIconName } from "@/components/default/ui/icon-symbol";
 import { useDeviceLocation } from "@/hooks/use-device-location";
-
-import React, { useEffect, useState } from "react";
-import { View } from "react-native";
-import { IconButton, Searchbar, Text, useTheme } from "react-native-paper";
-import { useDebounce } from "@uidotdev/usehooks";
 import { useDebouncedState } from "@tanstack/react-pacer";
-import { logger } from "@/utils/logger";
+import React, { useEffect } from "react";
+import { View } from "react-native";
+import { Searchbar, Text, useTheme } from "react-native-paper";
 
 interface LatLongFormProps {
   action?: React.ReactNode;
@@ -15,7 +11,7 @@ interface LatLongFormProps {
 }
 export function LatLongForm({ action, initLat, initLng }: LatLongFormProps) {
   const theme = useTheme();
-  const { location, manuallySetLocation, isLoading } = useDeviceLocation();
+  const { location, manuallySetLocation } = useDeviceLocation();
 
   const lat = location?.coords.latitude ?? initLat ?? 0;
   const lng = location?.coords.longitude ?? initLng ?? 0;
