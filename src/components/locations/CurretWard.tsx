@@ -1,13 +1,12 @@
-import { db } from "@/lib/drizzle/client";
+import { getWardByLocation } from "@/data-access-layer/wards-query-options";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { useQuery } from "@tanstack/react-query";
-import { sql } from "drizzle-orm";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { Button, useTheme } from "react-native-paper";
 import { MaterialIcon } from "../default/ui/icon-symbol";
 import { LoadingFallback } from "../state-screens/LoadingFallback";
 import { NoDataScreen } from "../state-screens/NoDataScreen";
-import { SingleWard } from "./SingleWard";
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { SingleWardCard } from "./single-ward/SingleWardCard";
 
 interface CurretWardProps {
   lat: number;
@@ -16,40 +15,13 @@ interface CurretWardProps {
 
 export function CurretWard({ lat, lng }: CurretWardProps) {
   const theme = useTheme();
+  const { data, isPending, refetch, isRefetching } = useQuery(
+    getWardByLocation({
+      lat,
+      lng,
+    })
+  );
 
-  // const lat = location?.coords.latitude;
-  // const lng = location?.coords.longitude;
-  const { data, isPending, refetch, isRefetching } = useQuery({
-    queryKey: ["current-ward", lat, lng],
-    queryFn: async () => {
-      try {
-        const result = await db.query.kenyaWards.findFirst({
-          where: (fields, { eq, or }) =>
-            or(
-              sql`
-                Within(GeomFromText('POINT(' || ${lng} || ' ' || ${lat} || ')', 4326), geom)
-            `
-            ),
-        });
-
-        if (!result) {
-          throw new Error("Ward not found");
-        }
-
-        return {
-          result,
-          error: null,
-        };
-      } catch (e) {
-        return {
-          result: null,
-          error: e instanceof Error ? e.message : JSON.stringify(e),
-        };
-      }
-    },
-    placeholderData: (prevData) => prevData,
-  });
-  // console.log(data);
   if (isPending) {
     return <LoadingFallback />;
   }
@@ -100,7 +72,7 @@ export function CurretWard({ lat, lng }: CurretWardProps) {
   }
   return (
     <View style={{ ...styles.container }}>
-      <SingleWard ward={data.result} />
+      <SingleWardCard ward={data.result} />
     </View>
   );
 }

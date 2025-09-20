@@ -1,16 +1,15 @@
 import { KenyaWardsSelect } from "@/lib/drizzle/schema";
 import { StyleSheet, View } from "react-native";
 import { Card, Text, useTheme } from "react-native-paper";
-import { MaterialIcon } from "../default/ui/icon-symbol";
+import { MaterialIcon } from "../../default/ui/icon-symbol";
 
-interface SingleWardProps {
+interface SingleWardCardProps {
   ward: Partial<KenyaWardsSelect>;
   loc?: { lat: number; lng: number };
 }
 
-export function SingleWard({ ward,loc }: SingleWardProps) {
+export function SingleWardCard({ ward,loc }: SingleWardCardProps) {
   const theme = useTheme();
-
   return (
     <Card style={styles.card}>
       <View style={styles.header}>
