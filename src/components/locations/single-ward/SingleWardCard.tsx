@@ -1,7 +1,6 @@
 import { KenyaWardsSelect } from "@/lib/drizzle/schema";
 import { StyleSheet, View } from "react-native";
 import { Card, Text, useTheme } from "react-native-paper";
-import { MaterialIcon } from "../../default/ui/icon-symbol";
 
 interface SingleWardCardProps {
   ward: Partial<KenyaWardsSelect>;
@@ -13,22 +12,14 @@ export function SingleWardCard({ ward,loc }: SingleWardCardProps) {
   return (
     <Card style={styles.card}>
       <View style={styles.header}>
-        <View style={styles.titleContainer}>
-          <Text
-            variant="headlineLarge"
-            style={[styles.wardName, { color: theme.colors.onSurface }]}>
-            {ward.ward}
-          </Text>
-          <MaterialIcon
-            name="location-on"
-            size={32}
-            color={theme.colors.primary}
-            style={styles.locationIcon}
-          />
-        </View>
+        <Text
+          variant="headlineMedium"
+          style={[styles.wardName, { color: theme.colors.onSurface }]}>
+          {ward.ward}
+        </Text>
         <View style={[styles.idBadge, { backgroundColor: theme.colors.primaryContainer }]}>
           <Text
-            variant="headlineSmall"
+            variant="titleMedium"
             style={[styles.idText, { color: theme.colors.onPrimaryContainer }]}>
             #{ward.id}
           </Text>
@@ -36,62 +27,30 @@ export function SingleWardCard({ ward,loc }: SingleWardCardProps) {
       </View>
 
       <View style={styles.infoSection}>
-        <View style={styles.infoRow}>
-          <View style={styles.iconContainer}>
-            <MaterialIcon name="map" size={24} color={theme.colors.primary} />
-          </View>
-          <View style={styles.infoContent}>
-            <Text
-              variant="labelLarge"
-              style={[styles.infoLabel, { color: theme.colors.onSurfaceVariant }]}>
+        <View style={styles.compactRow}>
+          <View style={styles.compactItem}>
+            <Text variant="labelSmall" style={[styles.compactLabel, { color: theme.colors.onSurfaceVariant }]}>
               COUNTY
             </Text>
-            <Text
-              variant="titleMedium"
-              style={[styles.infoValue, { color: theme.colors.onSurface }]}>
+            <Text variant="bodyMedium" style={[styles.compactValue, { color: theme.colors.onSurface }]}>
               {ward.county}
             </Text>
           </View>
-        </View>
-
-        {ward.subCounty && (
-          <View style={styles.infoRow}>
-            <View style={styles.iconContainer}>
-              <MaterialIcon name="location-city" size={24} color={theme.colors.primary} />
-            </View>
-            <View style={styles.infoContent}>
-              <Text
-                variant="labelLarge"
-                style={[styles.infoLabel, { color: theme.colors.onSurfaceVariant }]}>
-                SUB-COUNTY
-              </Text>
-              <Text
-                variant="titleMedium"
-                style={[styles.infoValue, { color: theme.colors.onSurface }]}>
-                {ward.subCounty}
-              </Text>
-            </View>
-          </View>
-        )}
-
-        {ward.constituency && (
-          <View style={styles.infoRow}>
-            <View style={styles.iconContainer}>
-              <MaterialIcon name="account-balance" size={24} color={theme.colors.primary} />
-            </View>
-            <View style={styles.infoContent}>
-              <Text
-                variant="labelLarge"
-                style={[styles.infoLabel, { color: theme.colors.onSurfaceVariant }]}>
+          {ward.constituency && (
+            <View style={styles.compactItem}>
+              <Text variant="labelSmall" style={[styles.compactLabel, { color: theme.colors.onSurfaceVariant }]}>
                 CONSTITUENCY
               </Text>
-              <Text
-                variant="titleMedium"
-                style={[styles.infoValue, { color: theme.colors.onSurface }]}>
+              <Text variant="bodyMedium" style={[styles.compactValue, { color: theme.colors.onSurface }]}>
                 {ward.constituency}
               </Text>
             </View>
-          </View>
+          )}
+        </View>
+        {ward.subCounty && (
+          <Text variant="bodySmall" style={[styles.subCounty, { color: theme.colors.onSurfaceVariant }]}>
+            Sub-County: {ward.subCounty}
+          </Text>
         )}
       </View>
     </Card>
@@ -100,57 +59,45 @@ export function SingleWardCard({ ward,loc }: SingleWardCardProps) {
 
 const styles = StyleSheet.create({
   card: {
-    // flex: 1,
-    paddingHorizontal: 26,
-    paddingBottom:16,
+    paddingHorizontal: 20,
+    paddingBottom: 12,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: 32,
-  },
-  titleContainer: {
-    flex: 1,
-    flexDirection: "row",
     alignItems: "center",
-    flexWrap: "wrap",
+    marginBottom: 16,
   },
   wardName: {
     fontWeight: "700",
-    marginRight: 12,
-  },
-  locationIcon: {
-    marginTop: 4,
-  },
-  idBadge: {
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-  },
-  idText: {
-    fontWeight: "700",
-  },
-  infoSection: {
-    gap: 24,
-  },
-  infoRow: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-  },
-  iconContainer: {
-    width: 40,
-    alignItems: "center",
-    paddingTop: 4,
-  },
-  infoContent: {
     flex: 1,
   },
-  infoLabel: {
-    marginBottom: 4,
-    letterSpacing: 1.5,
+  idBadge: {
+    borderRadius: 16,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
   },
-  infoValue: {
+  idText: {
+    fontWeight: "600",
+  },
+  infoSection: {
+    gap: 8,
+  },
+  compactRow: {
+    flexDirection: "row",
+    gap: 24,
+  },
+  compactItem: {
+    flex: 1,
+  },
+  compactLabel: {
+    marginBottom: 2,
+    letterSpacing: 0.5,
+  },
+  compactValue: {
     fontWeight: "500",
+  },
+  subCounty: {
+    fontStyle: "italic",
   },
 });
