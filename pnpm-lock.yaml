@@ -38,6 +38,9 @@ importers:
       '@tanstack/react-query':
         specifier: ^5.87.4
         version: 5.87.4(react@19.1.0)
+      '@types/spatialite':
+        specifier: ^0.0.8
+        version: 0.0.8
       '@uidotdev/usehooks':
         specifier: ^2.4.1
         version: 2.4.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -1691,6 +1694,12 @@ packages:
 
   '@types/react@19.1.12':
     resolution: {integrity: sha512-cMoR+FoAf/Jyq6+Df2/Z41jISvGZZ2eTlnsaJRptmZ76Caldwy1odD4xTr/gNV9VLj0AWgg/nmkevIyUfIIq5w==}
+
+  '@types/spatialite@0.0.8':
+    resolution: {integrity: sha512-yOcAWAuk8cZ2DzO8W8AC74nlxVzUK/LgmToPXTNFjnJgUxebk6RJAf2aeANNTrS7Ge6+xcuSgWp1SrOlYY5uVQ==}
+
+  '@types/sqlite3@3.1.11':
+    resolution: {integrity: sha512-KYF+QgxAnnAh7DWPdNDroxkDI3/MspH1NMx6m/N/6fT1G6+jvsw4/ZePt8R8cr7ta58aboeTfYFBDxTJ5yv15w==}
 
   '@types/stack-utils@2.0.3':
     resolution: {integrity: sha512-9aEbYZ3TbYMznPdcdr3SmIrLXwC/AKZXQeCf9Pgao5CKb8CyHuEX5jzWPTkvregvhRJHcpRO6BFoGW9ycaOkYw==}
@@ -6838,6 +6847,14 @@ snapshots:
   '@types/react@19.1.12':
     dependencies:
       csstype: 3.1.3
+
+  '@types/spatialite@0.0.8':
+    dependencies:
+      '@types/sqlite3': 3.1.11
+
+  '@types/sqlite3@3.1.11':
+    dependencies:
+      '@types/node': 24.3.1
 
   '@types/stack-utils@2.0.3': {}
 

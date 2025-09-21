@@ -7,7 +7,7 @@ import { MaterialIcon } from "../default/ui/icon-symbol";
 import { LoadingFallback } from "../state-screens/LoadingFallback";
 import { NoDataScreen } from "../state-screens/NoDataScreen";
 import { SingleWardCard } from "./single-ward/SingleWardCard";
-import { logger } from "@/utils/logger";
+
 
 interface CurretWardProps {
   lat: number;
@@ -22,7 +22,7 @@ export function CurretWard({ lat, lng }: CurretWardProps) {
       lng,
     })
   );
-  logger.log("result", data);
+
   if (isPending) {
     return <LoadingFallback />;
   }

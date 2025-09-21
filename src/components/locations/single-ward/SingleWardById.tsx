@@ -8,7 +8,8 @@ import { NoDataScreen } from "../../state-screens/NoDataScreen";
 import { SingleWardCard } from "./SingleWardCard";
 import { useRouter } from "expo-router";
 import { ClosestWardsByGeom } from "../proximity/ClosestWardsByGeom";
-import { SingleWardMap } from "./SingleWardMap";
+import { SingleWardMap } from "../maps/SingleWardMap";
+import { WardWithNeighborsMap } from "../maps/WardWithNeighborsMap.tsx";
 
 interface SingleWardByIdProps {
   wardId: string;
@@ -89,7 +90,8 @@ export function SingleWardById({ wardId }: SingleWardByIdProps) {
         <IconButton icon="arrow-left" onPress={() => router.back()} />
       </View>
       <SingleWardCard ward={data.result} />
-      <SingleWardMap wardId={data.result.id} />
+      <WardWithNeighborsMap wardId={data.result.id} />
+      {/* <SingleWardMap wardId={data.result.id} /> */}
       <ClosestWardsByGeom wardId={data.result.id} />
     </ScrollView>
   );
