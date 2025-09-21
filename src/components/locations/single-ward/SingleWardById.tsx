@@ -1,8 +1,8 @@
 import { getWardByIdQueryOptions } from "@/data-access-layer/wards-query-options";
 import { useQuery } from "@tanstack/react-query";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { Button, IconButton, useTheme } from "react-native-paper";
-import { MaterialIcon } from "../../default/ui/icon-symbol";
+import { Button, IconButton, useTheme,Text, Surface } from "react-native-paper";
+import { getMaterialIconName, MaterialIcon } from "../../default/ui/icon-symbol";
 import { LoadingFallback } from "../../state-screens/LoadingFallback";
 import { NoDataScreen } from "../../state-screens/NoDataScreen";
 import { SingleWardCard } from "./SingleWardCard";
@@ -10,6 +10,13 @@ import { useRouter } from "expo-router";
 import { ClosestWardsByGeom } from "../proximity/ClosestWardsByGeom";
 import { SingleWardMap } from "../maps/SingleWardMap";
 import { WardWithNeighborsMap } from "../maps/WardWithNeighborsMap.tsx";
+import {
+  TabsProvider,
+  Tabs,
+  TabScreen,
+  useTabIndex,
+  useTabNavigation,
+} from "react-native-paper-tabs";
 
 interface SingleWardByIdProps {
   wardId: string;
@@ -91,8 +98,31 @@ export function SingleWardById({ wardId }: SingleWardByIdProps) {
       </View>
       <SingleWardCard ward={data.result} />
       <WardWithNeighborsMap wardId={data.result.id} />
-      {/* <SingleWardMap wardId={data.result.id} /> */}
       <ClosestWardsByGeom wardId={data.result.id} />
+      {/* <TabsProvider
+        defaultIndex={0}
+        // onChangeIndex={handleChangeIndex} optional
+      >
+        <Surface style={{ flex: 1, paddingTop: 10 }}>
+          <Tabs
+            tabHeaderStyle={{
+              marginBottom: 12,
+            }}
+            theme={{
+              colors: {
+                primary: theme.colors.primary,
+                background: theme.colors.surface,
+              },
+            }}>
+            <TabScreen label="Map" icon="compass">
+              <WardWithNeighborsMap wardId={data.result.id} />
+            </TabScreen>
+            <TabScreen label="List" icon={getMaterialIconName("list-box")}>
+              <ClosestWardsByGeom wardId={data.result.id} />
+            </TabScreen>
+          </Tabs>
+        </Surface>
+      </TabsProvider> */}
     </ScrollView>
   );
 }
