@@ -1,12 +1,13 @@
 // components/locations/WardWithNeighborsMap.tsx
 import { getClosestWardsByGeomQueryOptions, getWardByIdQueryOptions } from "@/data-access-layer/wards-query-options";
 import {
-    Camera,
-    FillLayer,
-    LineLayer,
-    MapView,
-    ShapeSource,
-    SymbolLayer, // 👈 For labels
+  Camera,
+  FillLayer,
+  LineLayer,
+  MapView,
+  ShapeSource,
+  SymbolLayer, // 👈 For labels
+  VectorSource, // 👈 Import VectorSource
 } from "@maplibre/maplibre-react-native";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
@@ -15,7 +16,8 @@ import { useTheme } from "react-native-paper";
 import { calculateBBox, GeoJSONFeature, geomParse, isValidGeoJSONGeometry } from "@/lib/map-libre/geom-parse";
 import { logger } from "@/utils/logger";
 import { useQuery } from "@tanstack/react-query";
-
+import { useAssets } from "expo-asset";
+import countiesGeoJSON from "@/assets/counties.json";
 interface WardWithNeighborsMapProps {
   wardId: number;
 }
@@ -24,6 +26,12 @@ export function WardWithNeighborsMap({ wardId }: WardWithNeighborsMapProps) {
   const theme = useTheme();
   const [isZooming, setIsZooming] = useState(false);
 
+
+  // const [assets, error] = useAssets([
+  //   require("@/assets/counties.geojson")
+  // ]);
+  // const geojson = assets && assets?.[0];
+  // logger.log("assets",geojson)
   // 👇 Camera state
   const [camera, setCamera] = useState({
     centerCoordinate: [36.8087, -1.1728] as [number, number],
@@ -165,7 +173,7 @@ export function WardWithNeighborsMap({ wardId }: WardWithNeighborsMapProps) {
           animationDuration={camera.animationDuration}
         />
 
-        {/* Kenya Mask — dims the world outside Kenya */}
+        {/* 1️⃣ Kenya Mask — dims the world outside Kenya */}
         <ShapeSource
           id="kenya-mask"
           shape={{
@@ -193,7 +201,41 @@ export function WardWithNeighborsMap({ wardId }: WardWithNeighborsMapProps) {
           />
         </ShapeSource>
 
-        {/* 👇 ALL WARDS in ONE ShapeSource (for efficient rendering + labeling) */}
+        {/* 2️⃣ MapLibre Base Map — Cities, Roads, etc. */}
+        <ShapeSource id="kenya-counties" shape={countiesGeoJSON as any}>
+          <FillLayer
+            id="county-fill"
+            style={{
+              fillColor: theme.colors.surface,
+              fillOpacity: 1,
+            }}
+          />
+          <LineLayer
+            id="county-outline"
+            style={{
+              lineColor: theme.colors.onSurface,
+              lineWidth: 1,
+              lineDasharray: [2, 2],
+            }}
+          />
+          <SymbolLayer
+            id="county-labels"
+            style={{
+              textField: ["get", "COUNTY_NAM"], // ← Uses COUNTY_NAM property
+              textSize: 12,
+              textColor: theme.colors.onBackground,
+              textHaloColor: theme.colors.background,
+              textHaloWidth: 2,
+              textHaloBlur: 1,
+              textAnchor: "center",
+              textJustify: "center",
+              textAllowOverlap: false,
+              textIgnorePlacement: false,
+              textTransform: "uppercase",
+            }}
+          />
+        </ShapeSource>
+        {/* 3️⃣ 👇 ALL WARDS — Your custom data on TOP */}
         {allFeatures.length > 0 && (
           <ShapeSource
             id="all-wards"
@@ -201,7 +243,7 @@ export function WardWithNeighborsMap({ wardId }: WardWithNeighborsMapProps) {
               type: "FeatureCollection",
               features: allFeatures,
             }}>
-            {/* 👇 Fill Layer with data-driven styling */}
+            {/* Fill */}
             <FillLayer
               id="wards-fill"
               style={{
@@ -209,20 +251,13 @@ export function WardWithNeighborsMap({ wardId }: WardWithNeighborsMapProps) {
                   "match",
                   ["get", "type"],
                   "main",
-                  theme.colors.errorContainer, // 🟥 Main ward fill
-                  theme.colors.primaryContainer, // 🟦 Neighbor fill
+                  theme.colors.errorContainer,
+                  theme.colors.primaryContainer,
                 ],
-                fillOpacity: [
-                  "match",
-                  ["get", "type"],
-                  "main",
-                  0.3, // Main ward more opaque
-                  0.15, // Neighbors more transparent
-                ],
+                fillOpacity: ["match", ["get", "type"], "main", 0.3, 0.15],
               }}
             />
-
-            {/* 👇 Outline Layer with data-driven styling */}
+            {/* Outline */}
             <LineLayer
               id="wards-outline"
               style={{
@@ -230,34 +265,27 @@ export function WardWithNeighborsMap({ wardId }: WardWithNeighborsMapProps) {
                   "match",
                   ["get", "type"],
                   "main",
-                  theme.colors.error, // 🟥 Bold red for main
-                  theme.colors.primary, // 🟦 Softer blue for neighbors
+                  theme.colors.error,
+                  theme.colors.primary,
                 ],
-                lineWidth: [
-                  "match",
-                  ["get", "type"],
-                  "main",
-                  4, // Main ward thicker border
-                  2, // Neighbors thinner
-                ],
+                lineWidth: ["match", ["get", "type"], "main", 4, 2],
               }}
             />
-
-            {/* 👇 LABELS for all wards */}
+            {/* Labels — now on top of city labels, which is correct */}
             <SymbolLayer
               id="wards-label"
               style={{
                 textField: ["get", "name"],
-                textSize: 14, // 👈 Larger font
-                textColor: "#ffffff", // 👈 White text
-                textHaloColor: "#000000", // 👈 Black halo (contrast)
-                textHaloWidth: 2, // 👈 Thicker halo
+                textSize: 14,
+                textColor: theme.colors.onBackground,
+                textHaloColor: theme.colors.background,
+                textHaloWidth: 2,
                 textHaloBlur: 1,
                 textAnchor: "center",
                 textJustify: "center",
                 textAllowOverlap: false,
                 textIgnorePlacement: false,
-                textTransform: "uppercase", // 👈 Optional: makes it stand out
+                textTransform: "uppercase",
               }}
             />
           </ShapeSource>

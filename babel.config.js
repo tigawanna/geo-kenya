@@ -4,8 +4,8 @@ module.exports = function (api) {
     return {
         presets: ['babel-preset-expo'],
         plugins: [
-            ["inline-import", { "extensions": [".sql"] }] // <-- add this
-        
-        ] 
+            ["inline-import", { "extensions": [".sql", ".geo", ".geojson"] }] // <-- add this
+
+        ]
     };
 };

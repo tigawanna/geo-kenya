@@ -24,6 +24,6 @@ config.resolver.assetExts = [
     'db', // Add this line
     'sqlite',
 ];
-config.resolver.sourceExts.push('sql');
+config.resolver.sourceExts.push('sql', '.geo', 'geojson');
 
 module.exports = config;
