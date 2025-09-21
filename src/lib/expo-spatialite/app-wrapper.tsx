@@ -9,7 +9,7 @@ export function ExpoSpatialiteWrapper({ children }: { children: React.ReactNode 
         databaseName="lokeshen.db"
         // databaseName="tpp.db"
         checkTableName="kenya_wards"
-        assetSource={{ assetId: require("@/assets/kenya_wards.db"), forceOverwrite: true }}
+        assetSource={{ assetId: require("@/assets/kenya_wards_map_optz.db"), forceOverwrite: true }}
         // location="test"
 
         onInit={async ({ executeStatement, executeQuery, executePragmaQuery }) => {
@@ -17,7 +17,6 @@ export function ExpoSpatialiteWrapper({ children }: { children: React.ReactNode 
           // const funs = await executeQuery(
           //   `
           //   SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'spatial_ref_sys'
-
           //   `
           // ); // Write-Ahead Logging
           // console.log("\n 📝 PRAGMA function_list:", funs);

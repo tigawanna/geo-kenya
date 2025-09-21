@@ -1,5 +1,4 @@
-import { sqliteTable, integer, text,blob } from "drizzle-orm/sqlite-core";
-import { geometry } from "./drizzlespatialite-types";
+import { sqliteTable, integer, text,blob,real } from "drizzle-orm/sqlite-core";
 import { InferSelectModel, sql } from "drizzle-orm";
 
 export const kenyaWards = sqliteTable("kenya_wards", {
@@ -11,36 +10,19 @@ export const kenyaWards = sqliteTable("kenya_wards", {
   subCounty: text("sub_county"),
   constituency: text("constituency").notNull(),
   constituencyCode: integer("constituency_code"),
-  geom: geometry("geom"),
+
+  // ✅ Use REAL for bounding box — matches SQLite column type
+  minX: real("minx"),
+  minY: real("miny"),
+  maxX: real("maxx"),
+  maxY: real("maxy"),
+
+  // ✅ Use BLOB for geometry — Spatialite stores WKB as BLOB
+  geom: blob("geom"), // ← this is correct for WKB geometry
 });
 
 
 
-export const notes = sqliteTable('notes', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
-  title: text('title'),
-  content: text('content').notNull(),
-  contentHtml: text('content_html'),
-  type: text('type').default('note').notNull(),
-  status: text('status').default('active'),
-  tags: text('tags'),
-  meta: text('metadata', { mode: 'json' }),
-  imagePath: text('image_path'),
-  imageBlob: blob('image_blob'), // BLOB for storing images directly
-  priority: integer('priority').default(0),
-  lastViewed: text('last_viewed'),
-  reminderAt: text('reminder_at'),
-  completedAt: text('completed_at'),
-  dueDate: text('due_date'),
-  createdAt: text('created_at')
-    .default(sql`(CURRENT_TIMESTAMP)`)
-    .notNull(),
-  updatedAt: text('updated_at')
-    .default(sql`(CURRENT_TIMESTAMP)`)
-    .notNull(),
-  // Spatial column (will be populated by Spatialite)
-  locationPoint: text('location_point'), // Added by AddGeometryColumn
-});
 
 
 // Infer the select type for the users table
