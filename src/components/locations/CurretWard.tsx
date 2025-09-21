@@ -7,6 +7,7 @@ import { MaterialIcon } from "../default/ui/icon-symbol";
 import { LoadingFallback } from "../state-screens/LoadingFallback";
 import { NoDataScreen } from "../state-screens/NoDataScreen";
 import { SingleWardCard } from "./single-ward/SingleWardCard";
+import { logger } from "@/utils/logger";
 
 interface CurretWardProps {
   lat: number;
@@ -21,13 +22,13 @@ export function CurretWard({ lat, lng }: CurretWardProps) {
       lng,
     })
   );
-
+  logger.log("result", data);
   if (isPending) {
     return <LoadingFallback />;
   }
   if (!data?.result) {
     return (
-      <BottomSheetModalProvider>
+      <View style={{ height: "auto", gap: 6, paddingHorizontal: 10 }}>
         {isRefetching ? (
           <ActivityIndicator
             style={{
@@ -39,7 +40,7 @@ export function CurretWard({ lat, lng }: CurretWardProps) {
             }}
           />
         ) : null}
-        <View style={{ height: "70%" }}>
+        <View style={{ height: "auto", paddingBottom: 40 }}>
           <NoDataScreen
             listName="Wards"
             message="No ward found at that location"
@@ -67,7 +68,7 @@ export function CurretWard({ lat, lng }: CurretWardProps) {
             </Button>
           </View>
         </View>
-      </BottomSheetModalProvider>
+      </View>
     );
   }
   return (
@@ -79,7 +80,7 @@ export function CurretWard({ lat, lng }: CurretWardProps) {
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    height: "auto",
+    // height: "auto",
     // backgroundColor:"green"
   },
 });

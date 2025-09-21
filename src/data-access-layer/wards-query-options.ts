@@ -1,6 +1,7 @@
 import { db } from "@/lib/drizzle/client";
 import { KenyaWardsSelect } from "@/lib/drizzle/schema";
 import { executeQuery } from "@/modules/expo-spatialite";
+import { logger } from "@/utils/logger";
 import { queryOptions } from "@tanstack/react-query";
 import { sql } from "drizzle-orm";
 
@@ -56,13 +57,22 @@ export function getWardByLocation({ lat, lng }: GetWardByLocationProps) {
     queryFn: async () => {
       try {
         const result = await db.query.kenyaWards.findFirst({
-          where: (fields, { eq, or }) =>
-            or(
-              sql`
-                        Within(GeomFromText('POINT(' || ${lng} || ' ' || ${lat} || ')', 4326), geom)
-                    `
+          columns: {
+            geom: false,
+            subCounty: false,
+          },
+          where: (fields, { and, sql, or }) =>
+            and(
+              // Fast bbox pre-filter
+              sql`${fields.minX} <= ${lng}`,
+              sql`${fields.maxX} >= ${lng}`,
+              sql`${fields.minY} <= ${lat}`,
+              sql`${fields.maxY} >= ${lat}`,
+              // Precise spatial match
+              sql`ST_Contains(${fields.geom}, MakePoint(${lng}, ${lat}, 4326))`
             ),
-        });
+        }
+      );
 
         if (!result) {
           throw new Error("Ward not found");
@@ -75,7 +85,7 @@ export function getWardByLocation({ lat, lng }: GetWardByLocationProps) {
       } catch (e) {
         return {
           result: null,
-          error: e instanceof Error ? e.message : JSON.stringify(e),
+          error: e instanceof Error ? e.message : String(e),
         };
       }
     },
