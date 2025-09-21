@@ -1,8 +1,8 @@
 import { db } from "@/lib/drizzle/client";
 import { KenyaWardsSelect } from "@/lib/drizzle/schema";
 import { executeQuery } from "@/modules/expo-spatialite";
-import { logger } from "@/utils/logger";
 import { queryOptions } from "@tanstack/react-query";
+import { logger } from "@/utils/logger";
 import { sql } from "drizzle-orm";
 
 interface WardsQueryOptionsProps {
@@ -56,6 +56,33 @@ export function getWardByLocation({ lat, lng }: GetWardByLocationProps) {
     queryKey: ["current-ward", lat, lng],
     queryFn: async () => {
       try {
+        //         const result = await executeQuery<KenyaWardsSelect>(`
+        // SELECT
+        //   "id",
+        //   "ward_code",
+        //   "ward",
+        //   "county",
+        //   "county_code",
+        //   "sub_county",
+        //   "constituency",
+        //   "constituency_code",
+        //   "minx",
+        //   "miny",
+        //   "maxx",
+        //   "maxy"
+        // FROM "kenya_wards" AS "kenyaWards"
+        // WHERE (
+        //   "kenyaWards"."minx" <= ${lng}
+        //   AND "kenyaWards"."maxx" >= ${lng}
+        //   AND "kenyaWards"."miny" <= ${lat}
+        //   AND "kenyaWards"."maxy" >= ${lat}
+        //   AND ST_Contains(
+        //     "kenyaWards"."geom",
+        //     MakePoint(36.8219, ${lat}, 4326)
+        //   )
+        // )
+        // LIMIT 1;
+        // `);
         const result = await db.query.kenyaWards.findFirst({
           columns: {
             geom: false,
@@ -70,8 +97,7 @@ export function getWardByLocation({ lat, lng }: GetWardByLocationProps) {
               // Precise spatial match
               sql`ST_Contains(${fields.geom}, MakePoint(${lng}, ${lat}, 4326))`
             ),
-        }
-      );
+        });
 
         if (!result) {
           throw new Error("Ward not found");
@@ -100,19 +126,38 @@ export function getWardByIdQueryOptions({ id }: GetWardByIdProps) {
     queryKey: ["wards", "single", id],
     queryFn: async () => {
       try {
-        const result = await db.query.kenyaWards.findFirst({
-          columns: {
-            geom: false,
-          },
-          where: (fields, { eq }) => eq(fields.id, id),
-        });
+        // const result = await db.query.kenyaWards.findFirst({
+        //   where: (fields, { eq }) => eq(fields.id, id),
+        // });
+const result = await executeQuery<KenyaWardsSelect>(`
+SELECT 
+  "id", 
+  "ward_code", 
+  "ward", 
+  "county", 
+  "county_code", 
+  "sub_county", 
+  "constituency", 
+  "constituency_code", 
+  "minx", 
+  "miny", 
+  "maxx", 
+  "maxy" ,
+  "geom"
+FROM "kenya_wards" AS "kenyaWards" 
+WHERE (
+  "kenyaWards"."id" = ${id} 
+) 
+LIMIT 1;
+`);
 
-        if (!result) {
+        const ward = result?.data?.[0];
+        if (!ward) {
           throw new Error("Ward not found");
         }
 
         return {
-          result,
+          result: ward,
           error: null,
         };
       } catch (e) {
@@ -122,7 +167,8 @@ export function getWardByIdQueryOptions({ id }: GetWardByIdProps) {
         };
       }
     },
-    staleTime: 0,
+    enabled:!!id,
+    // staleTime: 0,
     // placeholderData: (prevData) => prevData,
   });
 }
