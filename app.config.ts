@@ -80,6 +80,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
           },
         },
       ],
+      "@maplibre/maplibre-react-native",
     ],
     experiments: {
       typedRoutes: true,

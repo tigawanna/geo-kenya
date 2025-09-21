@@ -1,6 +1,6 @@
 import { getWardByIdQueryOptions } from "@/data-access-layer/wards-query-options";
 import { useQuery } from "@tanstack/react-query";
-import { StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { Button, IconButton, useTheme } from "react-native-paper";
 import { MaterialIcon } from "../../default/ui/icon-symbol";
 import { LoadingFallback } from "../../state-screens/LoadingFallback";
@@ -8,6 +8,7 @@ import { NoDataScreen } from "../../state-screens/NoDataScreen";
 import { SingleWardCard } from "./SingleWardCard";
 import { useRouter } from "expo-router";
 import { ClosestWardsByGeom } from "../proximity/ClosestWardsByGeom";
+import { SingleWardMap } from "./SingleWardMap";
 
 interface SingleWardByIdProps {
   wardId: string;
@@ -83,13 +84,14 @@ export function SingleWardById({ wardId }: SingleWardByIdProps) {
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.header}>
         <IconButton icon="arrow-left" onPress={() => router.back()} />
       </View>
       <SingleWardCard ward={data.result} />
+      <SingleWardMap wardId={data.result.id} />
       <ClosestWardsByGeom wardId={data.result.id} />
-    </View>
+    </ScrollView>
   );
 }
 const styles = StyleSheet.create({

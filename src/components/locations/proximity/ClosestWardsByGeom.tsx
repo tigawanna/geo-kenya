@@ -26,7 +26,7 @@ export function ClosestWardsByGeom({ wardId }: ClosestWardsByGeomProps) {
       </View>
     );
   }
-  logger.log("closets by geom", data);
+  // logger.log("closets by geom", data);
   if (!data?.results || data?.results?.length === 0) {
     return (
       <View
@@ -54,7 +54,7 @@ export function ClosestWardsByGeom({ wardId }: ClosestWardsByGeomProps) {
     );
   }
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <Card style={styles.labelCard}>
         <Card.Content style={styles.labelContent}>
           <MaterialIcon name="my-location" color={theme.colors.primary} size={20} />
@@ -68,7 +68,7 @@ export function ClosestWardsByGeom({ wardId }: ClosestWardsByGeomProps) {
           <WardListItem key={ward.id} item={ward} theme={theme} />
         ))}
       </View>
-    </ScrollView>
+    </View>
   );
 }
 

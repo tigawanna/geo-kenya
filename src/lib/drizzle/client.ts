@@ -5,6 +5,7 @@ import * as schema  from './schema';
 const spatialiteAdapter = new ExpoSpatialiteDrizzle();
 
 export const db = drizzle(spatialiteAdapter.driver,{
-    schema
+    schema,
+    logger: true
 });
 
