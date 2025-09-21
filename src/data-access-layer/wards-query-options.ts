@@ -142,8 +142,8 @@ SELECT
   "minx", 
   "miny", 
   "maxx", 
-  "maxy" ,
-  "geom"
+  "maxy",
+  AsGeoJSON("geom") AS "geom"  -- ✅ This is the key fix!
 FROM "kenya_wards" AS "kenyaWards" 
 WHERE (
   "kenyaWards"."id" = ${id} 
@@ -170,6 +170,58 @@ LIMIT 1;
     enabled:!!id,
     // staleTime: 0,
     // placeholderData: (prevData) => prevData,
+  });
+}
+
+// data-access-layer/wards-query-options.ts
+
+interface GetWardsByIdsProps {
+  ids: number[];
+}
+
+export function getWardsByIdsQueryOptions({ ids }: GetWardsByIdsProps) {
+  return queryOptions({
+    queryKey: ["wards", "multiple", ids],
+    queryFn: async () => {
+      if (ids.length === 0) {
+        return { result: [], error: null };
+      }
+
+      try {
+        const placeholders = ids.map((_, i) => `$${i + 1}`).join(", ");
+        const result = await executeQuery<KenyaWardsSelect>(`
+SELECT 
+  "id", 
+  "ward_code", 
+  "ward", 
+  "county", 
+  "county_code", 
+  "sub_county", 
+  "constituency", 
+  "constituency_code", 
+  "minx", 
+  "miny", 
+  "maxx", 
+  "maxy",
+  AsGeoJSON("geom") AS "geom"
+FROM "kenya_wards" AS "kenyaWards" 
+WHERE "kenyaWards"."id" IN (${placeholders})
+        `, ids); // 👈 Pass IDs as parameters for safety
+
+        const wards = result?.data || [];
+
+        return {
+          result: wards,
+          error: null,
+        };
+      } catch (e) {
+        return {
+          result: [],
+          error: e instanceof Error ? e.message : JSON.stringify(e),
+        };
+      }
+    },
+    enabled: ids.length > 0,
   });
 }
 
@@ -236,7 +288,7 @@ export function getClosestWardsByGeomQueryOptions({ wardId }: GetClosestWardsByG
     queryKey: ["closest-wards-by-geom", wardId],
     queryFn: async () => {
       try {
-        const query = await executeQuery<KenyaWardsSelect>(
+        const query = await executeQuery<KenyaWardsSelect&{geometry:string ; distance:number}>(
           `
             SELECT 
               w2.id,

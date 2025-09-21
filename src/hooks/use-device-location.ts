@@ -40,7 +40,7 @@ export function useDeviceLocation() {
 
   function manuallySetLocation({ lat, lng }: { lat: number; lng: number }) {
     const oldlocation = queryClient.getQueryData<Location.LocationObject>(["device-location"]);
-    logger.log("oldlocation", oldlocation);
+    // logger.log("oldlocation", oldlocation);
     queryClient.setQueryData(["device-location"], {
       ...oldlocation,
       coords: {
