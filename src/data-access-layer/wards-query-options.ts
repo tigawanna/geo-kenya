@@ -59,7 +59,6 @@ export function getWardByLocation({ lat, lng }: GetWardByLocationProps) {
         const result = await db.query.kenyaWards.findFirst({
           columns: {
             geom: false,
-            subCounty: false,
           },
           where: (fields, { and, sql, or }) =>
             and(
@@ -102,6 +101,9 @@ export function getWardByIdQueryOptions({ id }: GetWardByIdProps) {
     queryFn: async () => {
       try {
         const result = await db.query.kenyaWards.findFirst({
+          columns: {
+            geom: false,
+          },
           where: (fields, { eq }) => eq(fields.id, id),
         });
 
