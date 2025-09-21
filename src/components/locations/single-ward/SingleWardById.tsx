@@ -16,15 +16,35 @@ export function SingleWardById({ wardId }: SingleWardByIdProps) {
   const theme = useTheme();
   const router = useRouter();
 
-  const { data, isPending, refetch, isRefetching } = useQuery(getWardByIdQueryOptions({ id: Number(wardId) }));
+  const { data, isPending, refetch, isRefetching } = useQuery(
+    getWardByIdQueryOptions({ id: Number(wardId) })
+  );
 
   if (isPending) {
     return (
       <View style={styles.container}>
-        <View style={styles.header}>
-          <IconButton icon="arrow-left" onPress={() => router.back()} />
-        </View>
-        <LoadingFallback />
+        <LoadingFallback
+          action={
+            <View style={styles.buttonContainer}>
+              <Button
+                disabled={isRefetching}
+                loading={isRefetching}
+                icon="arrow-left"
+                mode="outlined"
+                onPress={() => router.back()}>
+                Go back
+              </Button>
+              <Button
+                disabled={isRefetching}
+                loading={isRefetching}
+                icon="reload"
+                mode="contained-tonal"
+                onPress={() => refetch()}>
+                Reload
+              </Button>
+            </View>
+          }
+        />
       </View>
     );
   }
@@ -32,24 +52,31 @@ export function SingleWardById({ wardId }: SingleWardByIdProps) {
   if (!data?.result) {
     return (
       <View style={styles.container}>
-        <View style={styles.header}>
-          <IconButton icon="arrow-left" onPress={() => router.back()} />
-        </View>
-        <NoDataScreen
-          listName="Ward"
-          message="Ward not found"
-          hint="Please check the ward ID and try again"
-          icon={<MaterialIcon color={theme.colors.primary} name="location-city" size={64} />}
-        />
-        <View style={styles.buttonContainer}>
-          <Button
-            disabled={isRefetching}
-            loading={isRefetching}
-            icon="reload"
-            mode="contained-tonal"
-            onPress={() => refetch()}>
-            Reload
-          </Button>
+        <View style={{ height: "80%", justifyContent: "center", gap: 8 }}>
+          <NoDataScreen
+            listName="Ward"
+            message="Ward not found"
+            hint="Please check the ward ID and try again"
+            icon={<MaterialIcon color={theme.colors.primary} name="location-city" size={64} />}
+          />
+          <View style={styles.buttonContainer}>
+            <Button
+              disabled={isRefetching}
+              loading={isRefetching}
+              icon="reload"
+              mode="contained-tonal"
+              onPress={() => refetch()}>
+              Reload
+            </Button>
+            <Button
+              disabled={isRefetching}
+              loading={isRefetching}
+              icon="arrow-left"
+              mode="outlined"
+              onPress={() => router.back()}>
+              Go back
+            </Button>
+          </View>
         </View>
       </View>
     );
@@ -79,5 +106,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 20,
+    gap: 24,
   },
 });
