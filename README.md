@@ -28,29 +28,36 @@ Find wards closest to your current location with distance calculations (all comp
 
 **Note:** For improved location accuracy, consider enabling your network/WiFi connection alongside location services, even though the app works completely offline.
 
-![Wagalla Ward - Location View](https://github.com/tigawanna/geo-kenya/raw/4bab15a993660254634b55b58a34fd6e71a08072/docs/wagalla-ward.jpg)
+![yellowinsh-kajulu-ward](https://github.com/tigawanna/geo-kenya/raw/478368af31c74a993e8e9e88f406dc260f30e1ce/docs/yellowinsh-kajulu-ward.jpg)
 
-![Lokichar Ward - Detailed Information](https://github.com/tigawanna/geo-kenya/raw/4bab15a993660254634b55b58a34fd6e71a08072/docs/lokchar-ward.jpg)
+![blueish-nyalende ward and map.](https://github.com/tigawanna/geo-kenya/blob/master/docs/reddish-kyamatu-ward.jpg)
 
 ### Application Interface
 
 **Loading Screen**
-![Initial Loading Screen](https://github.com/tigawanna/geo-kenya/raw/4bab15a993660254634b55b58a34fd6e71a08072/docs/loading-screen.jpg)
+![Blueish Loading Screen](https://github.com/tigawanna/geo-kenya/raw/478368af31c74a993e8e9e88f406dc260f30e1ce/docs/blueish-loading-screen.jpg)
+
+![Yellowish Loading Screen](https://github.com/tigawanna/geo-kenya/raw/478368af31c74a993e8e9e88f406dc260f30e1ce/docs/yellowish-loading-screen.jpg)
+
 
 **Complete Ward Listing**
-![All Wards List View](https://github.com/tigawanna/geo-kenya/raw/master/docs/list-all-view.jpg)
+![blueish-ward-list](https://github.com/tigawanna/geo-kenya/raw/478368af31c74a993e8e9e88f406dc260f30e1ce/docs/blueish-ward-list.jpg)
+
+![Blueish Nearest ward](https://github.com/tigawanna/geo-kenya/raw/478368af31c74a993e8e9e88f406dc260f30e1ce/docs/blueish-nearest-wards.jpg)
+
+![brownish-ward-list](https://github.com/tigawanna/geo-kenya/raw/478368af31c74a993e8e9e88f406dc260f30e1ce/docs/brownish-ward-list.jpg)
 
 ### Dynamic Material You Theming
 The app automatically adapts to your device's color scheme
 
 **Green Theme Variant**
-![Green Color Theme](https://github.com/tigawanna/geo-kenya/raw/4bab15a993660254634b55b58a34fd6e71a08072/docs/greenish-theme.jpg)
+![Green Color Theme](https://github.com/tigawanna/geo-kenya/raw/478368af31c74a993e8e9e88f406dc260f30e1ce/docs/greenish-theme.jpg)
 
-**Red Theme Variant**
-![Red Color Theme](https://github.com/tigawanna/geo-kenya/raw/4bab15a993660254634b55b58a34fd6e71a08072/docs/red-theme.jpg)
+**Yellowis Theme Variant**
+![Yellowish Color Theme](https://github.com/tigawanna/geo-kenya/raw/478368af31c74a993e8e9e88f406dc260f30e1ce/docs/yellowish-theme.jpg)
 
 **Blue Theme Variant**
-![Blue Color Theme](https://github.com/tigawanna/geo-kenya/raw/master/docs/blueish-theme.jpg)
+![Blue Color Theme](https://github.com/tigawanna/geo-kenya/raw/478368af31c74a993e8e9e88f406dc260f30e1ce/docs/purpleish-theme.jpg)
 
 ## Prerequisites
 
