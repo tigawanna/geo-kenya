@@ -4,7 +4,6 @@ GeoKenya is a React Native mobile application built with Expo that provides comp
 
 **Note:** This is currently an Android-only project. iOS support is not yet implemented.
 
-![Ward Detail View - Soy Ward](https://github.com/tigawanna/geo-kenya/raw/4bab15a993660254634b55b58a34fd6e71a08072/docs/soy-ward.jpg)
 
 ## Features
 
@@ -30,7 +29,7 @@ Find wards closest to your current location with distance calculations (all comp
 
 ![yellowinsh-kajulu-ward](https://github.com/tigawanna/geo-kenya/raw/478368af31c74a993e8e9e88f406dc260f30e1ce/docs/yellowinsh-kajulu-ward.jpg)
 
-![blueish-nyalende ward and map.](https://github.com/tigawanna/geo-kenya/blob/master/docs/reddish-kyamatu-ward.jpg)
+![blueish-nyalende ward and map.](https://github.com/tigawanna/geo-kenya/raw/master/docs/reddish-kyamatu-ward.jpg)
 
 ### Application Interface
 
