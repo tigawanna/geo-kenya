@@ -1,6 +1,8 @@
 import * as Location from "expo-location";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { logger } from "@/utils/logger";
+import { isPointInkenya } from "@/data-access-layer/location-query";
+import { is } from "drizzle-orm";
 
 async function getCurrentLocation() {
   const { status } = await Location.requestForegroundPermissionsAsync();
@@ -38,18 +40,21 @@ export function useDeviceLocation() {
     },
   });
 
-  function manuallySetLocation({ lat, lng }: { lat: number; lng: number }) {
+  async function manuallySetLocation({ lat, lng }: { lat: number; lng: number }) {
     const oldlocation = queryClient.getQueryData<Location.LocationObject>(["device-location"]);
     // logger.log("oldlocation", oldlocation);
-    queryClient.setQueryData(["device-location"], {
-      ...oldlocation,
-      coords: {
-        ...oldlocation?.coords,
-        latitude: lat,
-        longitude: lng,
-      },
-    });
-    
+    const is_valid_point = await isPointInkenya({ lat, lng });
+    if (is_valid_point.results) {
+      queryClient.setQueryData(["device-location"], {
+        ...oldlocation,
+        mocked: true,
+        coords: {
+          ...oldlocation?.coords,
+          latitude: lat,
+          longitude: lng,
+        },
+      });
+    }
   }
 
   return {

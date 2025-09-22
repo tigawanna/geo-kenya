@@ -1,5 +1,5 @@
-import { sqliteTable, integer, text,blob,real } from "drizzle-orm/sqlite-core";
-import { InferSelectModel, sql } from "drizzle-orm";
+import { InferSelectModel } from "drizzle-orm";
+import { blob, integer, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 export const kenyaWards = sqliteTable("kenya_wards", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -25,5 +25,16 @@ export const kenyaWards = sqliteTable("kenya_wards", {
 
 
 
-// Infer the select type for the users table
+export const country = sqliteTable("country", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  shapeName: text("shape_name").notNull(),
+  shapeIso: text("shape_iso").notNull(),
+  shapeId: text("shape_id"),
+  shapeGroup: text("shape_group"),
+  shapeType: text("shape_type"),
+  geom: blob("geom"), // ← WKB geometry for country borders
+});
+
+// Infer the select types
 export type KenyaWardsSelect = InferSelectModel<typeof kenyaWards>;
+export type CountrySelect = InferSelectModel<typeof country>;

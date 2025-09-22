@@ -1,0 +1,15 @@
+{
+    "created": "2022-01-06T14:06:09.593156",
+    "description": "GeoJSON ADM0 boundaries for Kenya",
+    "format": "GeoJSON",
+    "download_url": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/KEN/ADM0/geoBoundaries-KEN-ADM0.geojson",
+    "id": "ccfb8b41-3f59-4a64-8dd4-439cd3616cde",
+    "last_modified": "2025-08-26T17:01:43",
+    "metadata_modified": "2025-08-26T17:18:53.316873",
+    "microdata": false,
+    "dataset_id": "fa59a3bc-7a5b-45ef-b1b3-7f6a3dd35f1a",
+    "resource_type": "api",
+    "name": "geoBoundaries-KEN-ADM0.geojson",
+    "mimetype": null,
+    "size": "1.3M"
+}

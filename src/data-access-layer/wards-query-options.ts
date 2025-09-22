@@ -4,6 +4,7 @@ import { executeQuery } from "@/modules/expo-spatialite";
 import { queryOptions } from "@tanstack/react-query";
 import { logger } from "@/utils/logger";
 import { sql } from "drizzle-orm";
+import { isPointInkenya } from "./location-query";
 
 interface WardsQueryOptionsProps {
   searchQuery: string;
@@ -129,7 +130,7 @@ export function getWardByIdQueryOptions({ id }: GetWardByIdProps) {
         // const result = await db.query.kenyaWards.findFirst({
         //   where: (fields, { eq }) => eq(fields.id, id),
         // });
-const result = await executeQuery<KenyaWardsSelect>(`
+        const result = await executeQuery<KenyaWardsSelect>(`
 SELECT 
   "id", 
   "ward_code", 
@@ -167,7 +168,7 @@ LIMIT 1;
         };
       }
     },
-    enabled:!!id,
+    enabled: !!id,
     // staleTime: 0,
     // placeholderData: (prevData) => prevData,
   });
@@ -189,7 +190,8 @@ export function getWardsByIdsQueryOptions({ ids }: GetWardsByIdsProps) {
 
       try {
         const placeholders = ids.map((_, i) => `$${i + 1}`).join(", ");
-        const result = await executeQuery<KenyaWardsSelect>(`
+        const result = await executeQuery<KenyaWardsSelect>(
+          `
 SELECT 
   "id", 
   "ward_code", 
@@ -206,7 +208,9 @@ SELECT
   AsGeoJSON("geom") AS "geom"
 FROM "kenya_wards" AS "kenyaWards" 
 WHERE "kenyaWards"."id" IN (${placeholders})
-        `, ids); // 👈 Pass IDs as parameters for safety
+        `,
+          ids
+        ); // 👈 Pass IDs as parameters for safety
 
         const wards = result?.data || [];
 
@@ -288,7 +292,7 @@ export function getClosestWardsByGeomQueryOptions({ wardId }: GetClosestWardsByG
     queryKey: ["closest-wards-by-geom", wardId],
     queryFn: async () => {
       try {
-        const query = await executeQuery<KenyaWardsSelect&{geometry:string ; distance:number}>(
+        const query = await executeQuery<KenyaWardsSelect & { geometry: string; distance: number }>(
           `
             SELECT 
               w2.id,
@@ -326,6 +330,25 @@ export function getClosestWardsByGeomQueryOptions({ wardId }: GetClosestWardsByG
       }
     },
     enabled: !!wardId,
+    placeholderData: (prevData) => prevData,
+  });
+}
+
+interface CheckIsPointInKenyaQueryOptionsProps {
+  lat: number;
+  lng: number;
+}
+
+export function checkIsPointInKenyaQueryOptions({
+  lat,
+  lng,
+}: CheckIsPointInKenyaQueryOptionsProps) {
+  return queryOptions({
+    queryKey: ["in-kenya", lat, lng],
+    queryFn: async () => {
+      return isPointInkenya({ lat, lng });
+    },
+    // staleTime: 0,
     placeholderData: (prevData) => prevData,
   });
 }
