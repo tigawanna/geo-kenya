@@ -17,6 +17,7 @@ import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { useTheme } from "react-native-paper";
 
 import countiesGeoJSON from "@/assets/counties.json";
+import { useDeviceLocation } from "@/hooks/use-device-location";
 import {
   calculateBBox,
   GeoJSONFeature,
@@ -25,9 +26,7 @@ import {
 } from "@/lib/map-libre/geom-parse";
 import { logger } from "@/utils/logger";
 import { useQuery } from "@tanstack/react-query";
-import { useDeviceLocation } from "@/hooks/use-device-location";
-
-import { Image as ExpoImage } from "expo-image";
+import { useRouter, usePathname } from "expo-router";
 
 interface WardWithNeighborsMapProps {
   wardId: number;
@@ -36,14 +35,10 @@ interface WardWithNeighborsMapProps {
 export function WardWithNeighborsMap({ wardId }: WardWithNeighborsMapProps) {
   const theme = useTheme();
   const [isZooming, setIsZooming] = useState(false);
-  const { errorMsg, location, isRefreshing, refetch, isLoading, manuallySetLocation } =
-    useDeviceLocation();
+  const { location, manuallySetLocation } = useDeviceLocation();
+  const router = useRouter();
+  const pathname = usePathname();
 
-  // const [assets, error] = useAssets([
-  //   require("@/assets/counties.geojson")
-  // ]);
-  // const geojson = assets && assets?.[0];
-  // logger.log("assets",geojson)
   // 👇 Camera state
   const [camera, setCamera] = useState({
     centerCoordinate: [36.8087, -1.1728] as [number, number],
@@ -169,6 +164,10 @@ export function WardWithNeighborsMap({ wardId }: WardWithNeighborsMapProps) {
         | undefined;
       if (coords) {
         const [lng, lat] = coords;
+        // console.log(" pathname == ",pathname)
+        if (pathname.startsWith("/ward-by-id/") || pathname.startsWith("/ward-by-lat-long/")) {
+          router.push(`/ward-by-lat-long/${lat},${lng}`);
+        };
         manuallySetLocation({ lat, lng });
       }
     } catch (error) {
@@ -271,7 +270,7 @@ export function WardWithNeighborsMap({ wardId }: WardWithNeighborsMapProps) {
               type: "FeatureCollection",
               features: allFeatures,
             }}>
-            {/* Fill */}
+            {/* Fill for neighbouring wards */}
             <FillLayer
               id="wards-fill"
               style={{
@@ -280,12 +279,12 @@ export function WardWithNeighborsMap({ wardId }: WardWithNeighborsMapProps) {
                   ["get", "type"],
                   "main",
                   theme.colors.errorContainer,
-                  theme.colors.primaryContainer,
+                  theme.colors.surfaceDisabled,
                 ],
                 fillOpacity: ["match", ["get", "type"], "main", 0.3, 0.15],
               }}
             />
-            {/* Outline */}
+            {/* Outline for neighbouring wards  */}
             <LineLayer
               id="wards-outline"
               style={{
@@ -294,7 +293,7 @@ export function WardWithNeighborsMap({ wardId }: WardWithNeighborsMapProps) {
                   ["get", "type"],
                   "main",
                   theme.colors.error,
-                  theme.colors.primary,
+                  theme.colors.onSurfaceDisabled,
                 ],
                 lineWidth: ["match", ["get", "type"], "main", 4, 2],
               }}
@@ -353,7 +352,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     minHeight: 400,
-    height: "100%",
+    maxHeight: "80%",
   },
   map: {
     flex: 1,

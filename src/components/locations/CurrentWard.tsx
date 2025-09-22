@@ -12,9 +12,10 @@ interface CurretWardProps {
   lat: number;
   lng: number;
   actions?: React.ReactNode;
+  backButton?: boolean;
 }
 
-export function CurrentWard({ lat, lng,actions }: CurretWardProps) {
+export function CurrentWard({ lat, lng,actions,backButton }: CurretWardProps) {
   const theme = useTheme();
   const qc = useQueryClient();
   const { data, isPending, refetch, isRefetching } = useQuery(
@@ -85,7 +86,7 @@ export function CurrentWard({ lat, lng,actions }: CurretWardProps) {
   }
   return (
     <View style={{ ...styles.container }}>
-      <SingleWardCard ward={data.result} backButton actions={actions}/>
+      <SingleWardCard ward={data.result} backButton={backButton} actions={actions}/>
       <WardWithNeighborsMap wardId={data.result.id} />
     </View>
   );

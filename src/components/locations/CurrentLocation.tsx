@@ -4,9 +4,8 @@ import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from "react-nat
 import { Card, IconButton, useTheme } from "react-native-paper";
 import { MaterialIcon } from "../default/ui/icon-symbol";
 
-import { CurrentWard } from "./CurrentWard";
 import { LatLongForm } from "./form/LatLongForm";
-import { ClosestWards } from "./proximity/ClosestWards";
+import { SingleWardByLatLng } from "./single-ward/SingleWardByLatLng";
 
 export function CurrentLocation() {
   const theme = useTheme();
@@ -49,39 +48,6 @@ export function CurrentLocation() {
             }}>
             {/* Left Side: Icon + Title */}
             <View style={{ gap: 0, width: "100%" }}>
-              {/* <View
-                style={{
-                  width: "100%",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  flexDirection: "row",
-                  
-                  gap: 8,
-                }}>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    gap: 8,
-                  }}>
-                  <MaterialIcon name="my-location" size={20} color={theme.colors.primary} />
-                  <Text style={[styles.bannerTitle, { color: theme.colors.onSurfaceVariant }]}>
-                    CURRENT LOCATION
-                  </Text>
-                </View>
-                <View style={{ flexDirection: "row" }}>
-                  <IconButton
-                    icon="content-copy"
-                    onPress={() => Clipboard.setStringAsync(`${lat},${lng}`)}
-                    style={{ padding: 0 }}
-                  />
-                  <IconButton
-                    icon="refresh"
-                    onPress={() => refetch()}
-                    loading={isRefreshing}
-                    style={{ padding: 0 }}
-                  />
-                </View>
-              </View> */}
               <LatLongForm initLat={lat} initLng={lng} />
 
               {(errorMsg || !location) && (
@@ -97,15 +63,14 @@ export function CurrentLocation() {
                 </View>
               )}
             </View>
-
-            {/* Right Side: Refresh Button */}
           </View>
         </Card.Content>
       </Card>
 
-      <CurrentWard
+      <SingleWardByLatLng
         lat={lat}
         lng={lng}
+        backButton={false}
         actions={
           <View style={{ flexDirection: "row", justifyContent: "center" }}>
             <IconButton
@@ -122,7 +87,6 @@ export function CurrentLocation() {
           </View>
         }
       />
-      <ClosestWards lat={lat} lng={lng} />
     </ScrollView>
   );
 }
