@@ -84,9 +84,9 @@ export function LatLongForm({ action, initLat, initLng }: LatLongFormProps) {
           {action}
         </View> */}
       </View>
-      <Text style={{ fontSize: 12, color: theme.colors.onSurfaceVariant, marginTop: 4 }}>
+      {/* <Text style={{ fontSize: 12, color: theme.colors.onSurfaceVariant, marginTop: 4 }}>
         latitude, longitude (comma separated)
-      </Text>
+      </Text> */}
     </View>
   );
 }

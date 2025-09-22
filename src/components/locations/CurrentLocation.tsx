@@ -4,7 +4,7 @@ import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from "react-nat
 import { Card, IconButton, useTheme } from "react-native-paper";
 import { MaterialIcon } from "../default/ui/icon-symbol";
 
-import { CurretWard } from "./CurretWard";
+import { CurrentWard } from "./CurrentWard";
 import { LatLongForm } from "./form/LatLongForm";
 import { ClosestWards } from "./proximity/ClosestWards";
 
@@ -36,9 +36,9 @@ export function CurrentLocation() {
           style={{
             alignItems: "center",
             justifyContent: "space-between",
-            padding:0,
-            paddingBottom:12,
-            paddingTop:0,
+            padding: 0,
+            paddingBottom: 2,
+            paddingTop: 0,
             gap: 0,
           }}>
           <View
@@ -48,8 +48,8 @@ export function CurrentLocation() {
               justifyContent: "space-between",
             }}>
             {/* Left Side: Icon + Title */}
-            <View style={{ gap: 0, width: "100%", }}>
-              <View
+            <View style={{ gap: 0, width: "100%" }}>
+              {/* <View
                 style={{
                   width: "100%",
                   justifyContent: "space-between",
@@ -81,9 +81,9 @@ export function CurrentLocation() {
                     style={{ padding: 0 }}
                   />
                 </View>
-                {/* Center: Coordinates */}
-              </View>
+              </View> */}
               <LatLongForm initLat={lat} initLng={lng} />
+
               {(errorMsg || !location) && (
                 <View
                   style={{ flexDirection: "row", alignItems: "center", gap: 4, marginVertical: 4 }}>
@@ -102,7 +102,26 @@ export function CurrentLocation() {
           </View>
         </Card.Content>
       </Card>
-      <CurretWard lat={lat} lng={lng} />
+
+      <CurrentWard
+        lat={lat}
+        lng={lng}
+        actions={
+          <View style={{ flexDirection: "row", justifyContent: "center" }}>
+            <IconButton
+              icon="content-copy"
+              onPress={() => Clipboard.setStringAsync(`${lat},${lng}`)}
+              style={{ padding: 0 }}
+            />
+            <IconButton
+              icon="refresh"
+              onPress={() => refetch()}
+              loading={isRefreshing}
+              style={{ padding: 0 }}
+            />
+          </View>
+        }
+      />
       <ClosestWards lat={lat} lng={lng} />
     </ScrollView>
   );
@@ -113,7 +132,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   scrollContent: {
-    gap: 16,
+    // gap: 16,
     // paddingBottom: 16,
   },
   errorContainer: {

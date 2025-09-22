@@ -2,8 +2,6 @@ import { db } from "@/lib/drizzle/client";
 import { KenyaWardsSelect } from "@/lib/drizzle/schema";
 import { executeQuery } from "@/modules/expo-spatialite";
 import { queryOptions } from "@tanstack/react-query";
-import { logger } from "@/utils/logger";
-import { sql } from "drizzle-orm";
 import { isPointInkenya } from "./location-query";
 
 interface WardsQueryOptionsProps {

@@ -1,21 +1,22 @@
 import { getWardByLocation } from "@/data-access-layer/wards-query-options";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { Button, useTheme } from "react-native-paper";
-import { MaterialIcon } from "../default/ui/icon-symbol";
+import { getMaterialIconName, MaterialIcon } from "../default/ui/icon-symbol";
 import { LoadingFallback } from "../state-screens/LoadingFallback";
 import { NoDataScreen } from "../state-screens/NoDataScreen";
 import { SingleWardCard } from "./single-ward/SingleWardCard";
 import { WardWithNeighborsMap } from "./maps/WardWithNeighborsMap.tsx";
 
-
 interface CurretWardProps {
   lat: number;
   lng: number;
+  actions?: React.ReactNode;
 }
 
-export function CurretWard({ lat, lng }: CurretWardProps) {
+export function CurrentWard({ lat, lng,actions }: CurretWardProps) {
   const theme = useTheme();
+  const qc = useQueryClient();
   const { data, isPending, refetch, isRefetching } = useQuery(
     getWardByLocation({
       lat,
@@ -65,6 +66,17 @@ export function CurretWard({ lat, lng }: CurretWardProps) {
                 refetch();
               }}>
               Reload
+            </Button>{" "}
+            <Button
+              style={{}}
+              disabled={isRefetching}
+              loading={isRefetching}
+              icon={getMaterialIconName("map-marker-multiple")}
+              mode="contained-tonal"
+              onPress={() => {
+                qc.invalidateQueries({ queryKey: ["device-location"] });
+              }}>
+              Reset Location
             </Button>
           </View>
         </View>
@@ -73,7 +85,7 @@ export function CurretWard({ lat, lng }: CurretWardProps) {
   }
   return (
     <View style={{ ...styles.container }}>
-      <SingleWardCard ward={data.result} backButton/>
+      <SingleWardCard ward={data.result} backButton actions={actions}/>
       <WardWithNeighborsMap wardId={data.result.id} />
     </View>
   );
