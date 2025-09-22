@@ -9,7 +9,7 @@ export function ExpoSpatialiteWrapper({ children }: { children: React.ReactNode 
         databaseName="lokeshen.db"
         // databaseName="tpp.db"
         checkTableName="kenya_wards"
-        assetSource={{ assetId: require("@/assets/kenya_wards_map_optz.db"), forceOverwrite: true }}
+        assetSource={{ assetId: require("@/assets/kenya_wards.db"), forceOverwrite: true }}
         // location="test"
 
         onInit={async ({ executeStatement, executeQuery, executePragmaQuery }) => {

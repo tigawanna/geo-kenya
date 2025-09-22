@@ -7,6 +7,7 @@ import { StyleSheet, View } from "react-native";
 import { Card, Text, useTheme } from "react-native-paper";
 import { WardListItem } from "../list/WardListItem";
 import { getClosestWardsByCorrdsQueryOptions } from "@/data-access-layer/wards-query-options";
+import { WardWithNeighborsMap } from "../maps/WardWithNeighborsMap.tsx";
 
 interface ClosestWardsProps {
   lat: number;

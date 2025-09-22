@@ -1,22 +1,28 @@
 import { KenyaWardsSelect } from "@/lib/drizzle/schema";
+import { useRouter } from "expo-router";
 import { StyleSheet, View } from "react-native";
-import { Card, Text, useTheme } from "react-native-paper";
+import { Card, IconButton, Text, useTheme } from "react-native-paper";
 
 interface SingleWardCardProps {
   ward: Partial<KenyaWardsSelect>;
   loc?: { lat: number; lng: number };
+  backButton?: boolean;
 }
 
-export function SingleWardCard({ ward,loc }: SingleWardCardProps) {
+export function SingleWardCard({ ward, loc, backButton }: SingleWardCardProps) {
   const theme = useTheme();
+  const router = useRouter();
   return (
     <Card style={styles.card}>
       <View style={styles.header}>
-        <Text
-          variant="headlineMedium"
-          style={[styles.wardName, { color: theme.colors.onSurface }]}>
-          {ward.ward}
-        </Text>
+        <IconButton icon="arrow-left" onPress={() => router.back()} />
+        {backButton ? (
+          <Text
+            variant="headlineMedium"
+            style={[styles.wardName, { color: theme.colors.onSurface }]}>
+            {ward.ward}
+          </Text>
+        ) : null}
         <View style={[styles.idBadge, { backgroundColor: theme.colors.primaryContainer }]}>
           <Text
             variant="titleMedium"
@@ -29,26 +35,36 @@ export function SingleWardCard({ ward,loc }: SingleWardCardProps) {
       <View style={styles.infoSection}>
         <View style={styles.compactRow}>
           <View style={styles.compactItem}>
-            <Text variant="labelSmall" style={[styles.compactLabel, { color: theme.colors.onSurfaceVariant }]}>
+            <Text
+              variant="labelSmall"
+              style={[styles.compactLabel, { color: theme.colors.onSurfaceVariant }]}>
               COUNTY
             </Text>
-            <Text variant="bodyMedium" style={[styles.compactValue, { color: theme.colors.onSurface }]}>
+            <Text
+              variant="bodyMedium"
+              style={[styles.compactValue, { color: theme.colors.onSurface }]}>
               {ward.county}
             </Text>
           </View>
           {ward.constituency && (
             <View style={styles.compactItem}>
-              <Text variant="labelSmall" style={[styles.compactLabel, { color: theme.colors.onSurfaceVariant }]}>
+              <Text
+                variant="labelSmall"
+                style={[styles.compactLabel, { color: theme.colors.onSurfaceVariant }]}>
                 CONSTITUENCY
               </Text>
-              <Text variant="bodyMedium" style={[styles.compactValue, { color: theme.colors.onSurface }]}>
+              <Text
+                variant="bodyMedium"
+                style={[styles.compactValue, { color: theme.colors.onSurface }]}>
                 {ward.constituency}
               </Text>
             </View>
           )}
         </View>
         {ward.subCounty && (
-          <Text variant="bodySmall" style={[styles.subCounty, { color: theme.colors.onSurfaceVariant }]}>
+          <Text
+            variant="bodySmall"
+            style={[styles.subCounty, { color: theme.colors.onSurfaceVariant }]}>
             Sub-County: {ward.subCounty}
           </Text>
         )}

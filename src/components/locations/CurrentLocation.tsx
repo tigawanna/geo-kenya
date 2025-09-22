@@ -36,7 +36,10 @@ export function CurrentLocation() {
           style={{
             alignItems: "center",
             justifyContent: "space-between",
-            gap: 4,
+            padding:0,
+            paddingBottom:12,
+            paddingTop:0,
+            gap: 0,
           }}>
           <View
             style={{
@@ -45,13 +48,14 @@ export function CurrentLocation() {
               justifyContent: "space-between",
             }}>
             {/* Left Side: Icon + Title */}
-            <View style={{ gap: 0, width: "100%" }}>
+            <View style={{ gap: 0, width: "100%", }}>
               <View
                 style={{
                   width: "100%",
                   justifyContent: "space-between",
                   alignItems: "center",
                   flexDirection: "row",
+                  
                   gap: 8,
                 }}>
                 <View
@@ -124,7 +128,7 @@ const styles = StyleSheet.create({
   },
   banner: {
     marginHorizontal: 16,
-    marginBottom: 8,
+    marginVertical: 8,
     borderRadius: 12,
   },
   bannerTitle: {

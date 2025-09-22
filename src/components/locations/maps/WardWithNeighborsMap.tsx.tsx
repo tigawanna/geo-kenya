@@ -1,23 +1,34 @@
 // components/locations/WardWithNeighborsMap.tsx
-import { getClosestWardsByGeomQueryOptions, getWardByIdQueryOptions } from "@/data-access-layer/wards-query-options";
+import {
+  getClosestWardsByGeomQueryOptions,
+  getWardByIdQueryOptions,
+} from "@/data-access-layer/wards-query-options";
 import {
   Camera,
   FillLayer,
+  Images,
   LineLayer,
   MapView,
   ShapeSource,
-  SymbolLayer, // 👈 For labels
-  VectorSource, // 👈 Import VectorSource
+  SymbolLayer,
 } from "@maplibre/maplibre-react-native";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { useTheme } from "react-native-paper";
 
-import { calculateBBox, GeoJSONFeature, geomParse, isValidGeoJSONGeometry } from "@/lib/map-libre/geom-parse";
+import countiesGeoJSON from "@/assets/counties.json";
+import {
+  calculateBBox,
+  GeoJSONFeature,
+  geomParse,
+  isValidGeoJSONGeometry,
+} from "@/lib/map-libre/geom-parse";
 import { logger } from "@/utils/logger";
 import { useQuery } from "@tanstack/react-query";
-import { useAssets } from "expo-asset";
-import countiesGeoJSON from "@/assets/counties.json";
+import { useDeviceLocation } from "@/hooks/use-device-location";
+
+import { Image as ExpoImage } from "expo-image";
+
 interface WardWithNeighborsMapProps {
   wardId: number;
 }
@@ -25,7 +36,8 @@ interface WardWithNeighborsMapProps {
 export function WardWithNeighborsMap({ wardId }: WardWithNeighborsMapProps) {
   const theme = useTheme();
   const [isZooming, setIsZooming] = useState(false);
-
+  const { errorMsg, location, isRefreshing, refetch, isLoading, manuallySetLocation } =
+    useDeviceLocation();
 
   // const [assets, error] = useAssets([
   //   require("@/assets/counties.geojson")
@@ -35,7 +47,7 @@ export function WardWithNeighborsMap({ wardId }: WardWithNeighborsMapProps) {
   // 👇 Camera state
   const [camera, setCamera] = useState({
     centerCoordinate: [36.8087, -1.1728] as [number, number],
-    zoomLevel: 5,
+    zoomLevel: 1,
     animationDuration: 2000,
   });
 
@@ -91,16 +103,16 @@ export function WardWithNeighborsMap({ wardId }: WardWithNeighborsMapProps) {
             type: "neighbor", // 👈 Flag for styling
             distance: ward.distance,
           },
-        } as const
+        } as const;
       })
-      .filter(f => f !== null);
+      .filter((f) => f !== null);
   }, [closestWardsData]);
 
   // 👇 Combine all features for bbox calculation
   const allFeatures = React.useMemo(() => {
     const features: GeoJSONFeature[] = [];
     if (mainWardFeature) features.push(mainWardFeature as any);
-    features.push(...closestWardFeatures as any);
+    features.push(...(closestWardFeatures as any));
     return features;
   }, [mainWardFeature, closestWardFeatures]);
 
@@ -133,11 +145,11 @@ export function WardWithNeighborsMap({ wardId }: WardWithNeighborsMapProps) {
       const maxDelta = Math.max(latDelta, lngDelta);
 
       let zoomLevel = 12;
-      if (maxDelta > 0.1) zoomLevel = 11;
-      if (maxDelta > 0.25) zoomLevel = 10;
-      if (maxDelta > 0.5) zoomLevel = 9;
-      if (maxDelta > 1) zoomLevel = 8;
-      if (maxDelta > 2) zoomLevel = 7;
+      if (maxDelta > 0.1) zoomLevel = 10;
+      if (maxDelta > 0.25) zoomLevel = 9;
+      if (maxDelta > 0.5) zoomLevel = 8;
+      if (maxDelta > 1) zoomLevel = 7;
+      if (maxDelta > 2) zoomLevel = 6;
 
       setCamera({
         centerCoordinate: [centerLng, centerLat],
@@ -150,7 +162,18 @@ export function WardWithNeighborsMap({ wardId }: WardWithNeighborsMapProps) {
   }, [allFeatures]);
 
   const handleMapPress = (feature: GeoJSON.Feature) => {
+    try {
       logger.log("Tapped ward:", feature);
+      const coords = (feature as GeoJSONFeature)?.geometry?.coordinates as
+        | [number, number]
+        | undefined;
+      if (coords) {
+        const [lng, lat] = coords;
+        manuallySetLocation({ lat, lng });
+      }
+    } catch (error) {
+      logger.error("Error handling map press:", error);
+    }
   };
 
   const isPending = isMainWardPending || isClosestWardsPending;
@@ -165,12 +188,17 @@ export function WardWithNeighborsMap({ wardId }: WardWithNeighborsMapProps) {
           </Text>
         </View>
       )}
-
+      {/* <ExpoImage source={require("@/assets/icons/location-pin.png")} style={{height:300,width:300}} /> */}
       <MapView style={styles.map} onPress={handleMapPress}>
         <Camera
           zoomLevel={camera.zoomLevel}
           centerCoordinate={camera.centerCoordinate}
           animationDuration={camera.animationDuration}
+        />
+        <Images
+          images={{
+            "marker-15": require("@/assets/icons/location-pin.png"), // ✅ Use require directly
+          }}
         />
 
         {/* 1️⃣ Kenya Mask — dims the world outside Kenya */}
@@ -200,8 +228,7 @@ export function WardWithNeighborsMap({ wardId }: WardWithNeighborsMapProps) {
             }}
           />
         </ShapeSource>
-
-        {/* 2️⃣ MapLibre Base Map — Cities, Roads, etc. */}
+        {/* Labels for all the counties */}
         <ShapeSource id="kenya-counties" shape={countiesGeoJSON as any}>
           <FillLayer
             id="county-fill"
@@ -218,6 +245,7 @@ export function WardWithNeighborsMap({ wardId }: WardWithNeighborsMapProps) {
               lineDasharray: [2, 2],
             }}
           />
+
           <SymbolLayer
             id="county-labels"
             style={{
@@ -285,7 +313,33 @@ export function WardWithNeighborsMap({ wardId }: WardWithNeighborsMapProps) {
                 textJustify: "center",
                 textAllowOverlap: false,
                 textIgnorePlacement: false,
-                textTransform: "uppercase",
+              }}
+            />
+          </ShapeSource>
+        )}
+        {/* 4️⃣ User Location Pin */}
+        {location && (
+          <ShapeSource
+            id="user-location"
+            shape={{
+              type: "Feature",
+              geometry: {
+                type: "Point",
+                coordinates: [location.coords.longitude, location.coords.latitude],
+              },
+              properties: {
+                name: "Your Location",
+              },
+            }}>
+            <SymbolLayer
+              id="user-location-pin"
+              style={{
+                iconImage: "marker-15",
+                iconSize: 0.1,
+                iconColor: theme.colors.error,
+                iconAnchor: "bottom",
+                iconAllowOverlap: true,
+                iconIgnorePlacement: true,
               }}
             />
           </ShapeSource>
@@ -294,7 +348,6 @@ export function WardWithNeighborsMap({ wardId }: WardWithNeighborsMapProps) {
     </View>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
