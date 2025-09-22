@@ -1,13 +1,10 @@
 import { MaterialIcon } from "@/components/default/ui/icon-symbol";
 import { LoadingIndicatorDots } from "@/components/state-screens/LoadingIndicatorDots";
-import { KenyaWardsSelect } from "@/lib/drizzle/schema";
-import { useExpoSpatialiteContext } from "@/lib/expo-spatialite/ExpoSpatialiteProvider";
+import { getClosestWardsByCorrdsQueryOptions } from "@/data-access-layer/wards-query-options";
 import { useQuery } from "@tanstack/react-query";
 import { StyleSheet, View } from "react-native";
 import { Card, Text, useTheme } from "react-native-paper";
 import { WardListItem } from "../list/WardListItem";
-import { getClosestWardsByCorrdsQueryOptions } from "@/data-access-layer/wards-query-options";
-import { WardWithNeighborsMap } from "../maps/WardWithNeighborsMap.tsx";
 
 interface ClosestWardsProps {
   lat: number;
@@ -25,7 +22,15 @@ export function ClosestWards({ lat, lng }: ClosestWardsProps) {
 
   if (isPending) {
     return (
-      <View style={{ paddingVertical: 14 }}>
+      <View style={{ paddingVertical:4, gap:24 }}>
+        <Card style={styles.labelCard}>
+          <Card.Content style={styles.labelContent}>
+            <MaterialIcon name="my-location" color={theme.colors.primary} size={20} />
+            <Text variant="titleMedium" style={{ color: theme.colors.primary }}>
+              Nearby Wards
+            </Text>
+          </Card.Content>
+        </Card>
         <LoadingIndicatorDots />
       </View>
     );

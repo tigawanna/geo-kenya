@@ -41,52 +41,30 @@ export function LatLongForm({ action, initLat, initLng }: LatLongFormProps) {
 
   return (
     <View style={{ width: "100%", height: "100%", flex: 1 }}>
-      <View style={{ flexDirection: "row", gap: 4, width: "100%" }}>
-        <Searchbar
-          placeholder="-1.2921, 36.8219"
-          clearIcon={"close"}
-          style={{ flex: 1 }}
-          loading={debouncer.state.isPending}
-          onChangeText={handleInputChange}
-          value={debouncer.state.lastArgs ?? defaultValue}
-          // right={() => {
-          //   return (
-          //     <View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
-          //       <IconButton
-          //         onPress={() => {
-          //           manuallySetLocation(latLong);
-          //         }}
-          //         mode="contained-tonal"
-          //         icon={getMaterialIconName("arrow-right")}
-          //         loading={isLoading}
-          //       />
-          //       {action}
-          //     </View>
-          //   );
-          // }}
-        />
-        {/* <TextInput
-          label="Coordinates"
-          mode="outlined"
-          value={inputValue}
-          onChangeText={handleInputChange}
-          placeholder="-1.2921, 36.8219"
-          style={{ flex: 1 }}
-        /> */}
-        {/* <View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
-          <IconButton
-            onPress={() => {
-              manuallySetLocation(latLong);
-            }}
-            mode="contained-tonal"
-            icon={getMaterialIconName("arrow-right")}
-          />
-          {action}
-        </View> */}
+      <Searchbar
+        placeholder="-1.2921, 36.8219"
+        clearIcon={"close"}
+        style={{ flex: 1 }}
+        loading={debouncer.state.isPending}
+        onChangeText={handleInputChange}
+        value={debouncer.state.lastArgs ?? defaultValue}
+      />
+
+      <View
+        style={{
+          width: "100%",
+          justifyContent: "center",
+          alignItems: "center",
+        }}>
+        <Text
+          style={{
+            fontSize: 12,
+            color: theme.colors.onSurfaceVariant,
+            paddingBottom: 4,
+          }}>
+          latitude, longitude (comma separated)
+        </Text>
       </View>
-      {/* <Text style={{ fontSize: 12, color: theme.colors.onSurfaceVariant, marginTop: 4 }}>
-        latitude, longitude (comma separated)
-      </Text> */}
     </View>
   );
 }

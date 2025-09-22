@@ -18,7 +18,7 @@ interface WardListItemProps {
 }
 export function WardListItem({theme,item}:WardListItemProps){
 return (
-  <Link href={`/wards/${item.id}`} asChild style={{ ...styles.card,backgroundColor: theme.colors.surface }}>
+  <Link href={`/ward-by-id/${item.id}`} asChild style={{ ...styles.card,backgroundColor: theme.colors.surface }}>
     <Card  elevation={1}>
       <Card.Content style={styles.cardContent}>
         <View style={styles.mainContent}>

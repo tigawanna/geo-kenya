@@ -139,15 +139,7 @@ We're grateful to the maintainers of these projects for their excellent work tha
 
 This is currently an **Android-only** project. While the codebase uses cross-platform technologies, it has only been tested and optimized for Android devices. iOS support is not yet implemented and may require additional work to function properly.
 
-## TODO
 
-### Location-Based Routing Features
-
-- [ ] **Add location route with coordinates parameter** - Create a new route `/location/[lat]/[lng]` that accepts latitude and longitude parameters to display location-based ward information similar to the home screen
-
-- [ ] **Implement location coordinate querying** - Add functionality to query wards by specific coordinates using the existing Spatialite geospatial database
-
-- [ ] **Add conditional checks in ward detail component** - Update the `wards/[ward]` component to include conditional logic that routes to the location view when a map is clicked while viewing ward details
 
 
 
