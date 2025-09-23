@@ -30,7 +30,7 @@ export function CurrentWard({ lat, lng,actions,backButton }: CurretWardProps) {
   }
   if (!data?.result) {
     return (
-      <View style={{ height: "auto", gap: 6, paddingHorizontal: 10 }}>
+      <View style={{ height: "100%", gap: 6, paddingHorizontal: 10,justifyContent:"center" }}>
         {isRefetching ? (
           <ActivityIndicator
             style={{
@@ -82,7 +82,7 @@ export function CurrentWard({ lat, lng,actions,backButton }: CurretWardProps) {
           </View>
         </View>
       </View>
-    );
+    )
   }
   return (
     <View style={{ ...styles.container }}>
