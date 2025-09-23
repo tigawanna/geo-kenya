@@ -6,6 +6,7 @@ import { MaterialIcon } from "../default/ui/icon-symbol";
 
 import { LatLongForm } from "./form/LatLongForm";
 import { SingleWardByLatLng } from "./single-ward/SingleWardByLatLng";
+import { RefreshControl } from "react-native-gesture-handler";
 
 export function CurrentLocation() {
   const theme = useTheme();
@@ -29,7 +30,17 @@ export function CurrentLocation() {
   const lng = location?.coords.longitude ?? 0;
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.scrollContent}
+      refreshControl={
+        <RefreshControl
+          refreshing={isRefreshing || true}
+          onRefresh={refetch}
+          colors={[theme.colors.primary]}
+          tintColor={theme.colors.primary}
+        />
+      }>
       <Card style={styles.banner} elevation={4}>
         <Card.Content
           style={{
