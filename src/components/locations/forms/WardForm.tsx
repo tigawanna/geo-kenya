@@ -1,5 +1,9 @@
+import { updateWardMutationOptions } from "@/data-access-layer/wards-mutation-options";
 import { KenyaWardsSelect } from "@/lib/drizzle/schema";
+import { useSnackbarStore } from "@/lib/react-native-paper/snackbar/global-snackbar-store";
+import { logger } from "@/utils/logger";
 import { KeyboardAwareScrollView } from "@pietile-native-kit/keyboard-aware-scrollview";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
 import { StyleSheet, View } from "react-native";
@@ -10,6 +14,8 @@ interface WardFormProps {
 }
 export function WardForm({ ward }: WardFormProps) {
   const router = useRouter();
+  const mutation = useMutation(updateWardMutationOptions());
+  const { showSnackbar } = useSnackbarStore();
   const {
     control,
     handleSubmit,
@@ -20,16 +26,38 @@ export function WardForm({ ward }: WardFormProps) {
 
   const onSubmit = (data: KenyaWardsSelect) => {
     console.log("Ward data:", data);
+    mutation.mutate(
+      { id: ward.id, data },
+      {
+        onSuccess: (data) => {
+          if (data.error) {
+            showSnackbar(data.error);
+            logger.log("Error updating ward:", data.error)
+            return;
+          }
+          if (!data.result) {
+            showSnackbar("Something went wrong");
+            return;
+          }
+          router.back();
+          showSnackbar("Updated succesfully");
+        },
+      }
+    );
   };
 
   return (
     <KeyboardAwareScrollView extraHeight={70} style={styles.container}>
       <View style={styles.header}>
         <IconButton icon="arrow-left" onPress={() => router.back()} />
-        <Text variant="headlineMedium" style={styles.title}>Edit Ward</Text>
+        <Text variant="headlineMedium" style={styles.title}>
+          Edit Ward
+        </Text>
         <View style={styles.spacer} />
       </View>
-      <Text variant="bodyMedium" style={styles.description}>Update any wrong info you notice</Text>
+      <Text variant="bodyMedium" style={styles.description}>
+        Update any wrong info you notice
+      </Text>
       <Controller
         control={control}
         name="ward"
@@ -139,7 +167,12 @@ export function WardForm({ ward }: WardFormProps) {
         )}
       />
 
-      <Button mode="contained" onPress={handleSubmit(onSubmit)} style={styles.button}>
+      <Button
+        loading={mutation.isPending}
+        disabled={mutation.isPending}
+        mode="contained"
+        onPress={handleSubmit(onSubmit)}
+        style={styles.button}>
         Submit
       </Button>
     </KeyboardAwareScrollView>

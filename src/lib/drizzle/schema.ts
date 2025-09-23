@@ -1,4 +1,4 @@
-import { InferSelectModel } from "drizzle-orm";
+import { InferSelectModel,InferInsertModel } from "drizzle-orm";
 import { blob, integer, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 export const kenyaWards = sqliteTable("kenya_wards", {
@@ -37,4 +37,5 @@ export const country = sqliteTable("country", {
 
 // Infer the select types
 export type KenyaWardsSelect = InferSelectModel<typeof kenyaWards>;
+export type KenyaWardsInsert = InferInsertModel<typeof kenyaWards>;
 export type CountrySelect = InferSelectModel<typeof country>;
