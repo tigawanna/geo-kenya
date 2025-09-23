@@ -26,6 +26,10 @@ export function SingleWardCard({ ward, loc, backButton, actions }: SingleWardCar
           style={[styles.idText, { color: theme.colors.onPrimaryContainer }]}>
           #{ward.id}
         </Text>
+        <IconButton icon="pencil" onPress={() => {
+          console.log('Edit ward:', ward.id)
+          router.push(`/ward-by-id/${ward.id}/edit`)
+          }} />
       </View>
 
       <View style={styles.infoSection}>

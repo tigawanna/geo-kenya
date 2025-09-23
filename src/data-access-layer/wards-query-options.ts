@@ -131,13 +131,13 @@ export function getWardByIdQueryOptions({ id }: GetWardByIdProps) {
         const result = await executeQuery<KenyaWardsSelect>(`
 SELECT 
   "id", 
-  "ward_code", 
   "ward", 
   "county", 
-  "county_code", 
-  "sub_county", 
   "constituency", 
-  "constituency_code", 
+  "ward_code" as "wardCode", 
+  "county_code" as "countyCode", 
+  "sub_county" as "subCounty", 
+  "constituency_code" as "constituencyCode", 
   "minx", 
   "miny", 
   "maxx", 
@@ -192,13 +192,13 @@ export function getWardsByIdsQueryOptions({ ids }: GetWardsByIdsProps) {
           `
 SELECT 
   "id", 
-  "ward_code", 
   "ward", 
   "county", 
-  "county_code", 
-  "sub_county", 
   "constituency", 
-  "constituency_code", 
+  "ward_code" as "wardCode", 
+  "county_code" as "countyCode", 
+  "sub_county" as "subCounty", 
+  "constituency_code" as "constituencyCode", 
   "minx", 
   "miny", 
   "maxx", 
@@ -294,12 +294,12 @@ export function getClosestWardsByGeomQueryOptions({ wardId }: GetClosestWardsByG
           `
             SELECT 
               w2.id,
-              w2.ward_code AS "wardCode",
               w2.ward,
               w2.county,
+              w2.constituency,
+              w2.ward_code AS "wardCode",
               w2.county_code AS "countyCode",
               w2.sub_county AS "subCounty",
-              w2.constituency,
               w2.constituency_code AS "constituencyCode",
               AsGeoJSON(w2.geom) AS geometry,
               ST_Distance(ST_Centroid(w1.geom), ST_Centroid(w2.geom), 1) AS distance

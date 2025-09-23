@@ -4,9 +4,8 @@ import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from "react-nat
 import { Card, IconButton, useTheme } from "react-native-paper";
 import { MaterialIcon } from "../default/ui/icon-symbol";
 
-import { LatLongForm } from "./form/LatLongForm";
+import { LatLongForm } from "./forms/LatLongForm";
 import { SingleWardByLatLng } from "./single-ward/SingleWardByLatLng";
-import { RefreshControl } from "react-native-gesture-handler";
 
 export function CurrentLocation() {
   const theme = useTheme();
