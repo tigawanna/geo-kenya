@@ -43,11 +43,18 @@ export default function RootLayout() {
                 <Stack>
                   <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
                   <Stack.Screen
-                    name="ward-by-id/[ward]"
+                    name="ward-by-id/[ward]/index"
                     options={{
                       headerShown: false,
                     }}
-                  />               <Stack.Screen
+                  />
+                  <Stack.Screen
+                    name="ward-by-id/[ward]/edit"
+                    options={{
+                      headerShown: false,
+                    }}
+                  />
+                  <Stack.Screen
                     name="ward-by-lat-long/[coords]"
                     options={{
                       headerShown: false,

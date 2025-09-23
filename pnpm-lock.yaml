@@ -20,6 +20,9 @@ importers:
       '@material/material-color-utilities':
         specifier: ^0.3.0
         version: 0.3.0
+      '@pietile-native-kit/keyboard-aware-scrollview':
+        specifier: ^1.5.0
+        version: 1.5.0(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0)
       '@react-native-async-storage/async-storage':
         specifier: 2.2.0
         version: 2.2.0(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.12)(react@19.1.0))
@@ -107,6 +110,9 @@ importers:
       react-dom:
         specifier: 19.1.0
         version: 19.1.0(react@19.1.0)
+      react-hook-form:
+        specifier: ^7.63.0
+        version: 7.63.0(react@19.1.0)
       react-native:
         specifier: 0.81.4
         version: 0.81.4(@babel/core@7.28.4)(@types/react@19.1.12)(react@19.1.0)
@@ -1151,6 +1157,12 @@ packages:
   '@nolyfill/is-core-module@1.0.39':
     resolution: {integrity: sha512-nn5ozdjYQpUCZlWGuxcJY/KpxkWQs4DcbMCmKojjyrYDEAGy4Ce19NN4v5MduafTwJlbKc99UA8YhSVqq9yPZA==}
     engines: {node: '>=12.4.0'}
+
+  '@pietile-native-kit/keyboard-aware-scrollview@1.5.0':
+    resolution: {integrity: sha512-a+IcOr2GwHM6x/j8AUcEaT43Paj/nD3rWqLFeh4MOZ6wMZ+Ye3slm6ctuLospMkJe+NCzsEmdd3+VvuIS3J4PA==}
+    peerDependencies:
+      react: '>= 16.3.0'
+      react-native: '>= 0.54.0'
 
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
@@ -4104,6 +4116,12 @@ packages:
     peerDependencies:
       react: '>=17.0.0'
 
+  react-hook-form@7.63.0:
+    resolution: {integrity: sha512-ZwueDMvUeucovM2VjkCf7zIHcs1aAlDimZu2Hvel5C5907gUzMpm4xCrQXtRzCvsBqFjonB4m3x4LzCFI1ZKWA==}
+    engines: {node: '>=18.0.0'}
+    peerDependencies:
+      react: ^16.8.0 || ^17 || ^18 || ^19
+
   react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
 
@@ -6236,6 +6254,11 @@ snapshots:
       fastq: 1.19.1
 
   '@nolyfill/is-core-module@1.0.39': {}
+
+  '@pietile-native-kit/keyboard-aware-scrollview@1.5.0(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      react: 19.1.0
+      react-native: 0.81.4(@babel/core@7.28.4)(@types/react@19.1.12)(react@19.1.0)
 
   '@pkgjs/parseargs@0.11.0':
     optional: true
@@ -9533,6 +9556,10 @@ snapshots:
   react-fast-compare@3.2.2: {}
 
   react-freeze@1.0.4(react@19.1.0):
+    dependencies:
+      react: 19.1.0
+
+  react-hook-form@7.63.0(react@19.1.0):
     dependencies:
       react: 19.1.0
 
