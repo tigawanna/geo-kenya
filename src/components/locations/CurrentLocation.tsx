@@ -14,7 +14,7 @@ export function CurrentLocation() {
 
   if (isLoading) {
     return (
-      <View style={{ ...styles.container }}>
+      <View style={{ ...styles.container,flex:1 }}>
         <View style={[styles.errorContainer, { gap: 16 }]}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
           <MaterialIcon color={theme.colors.primary} name="location-city" size={64} />
@@ -33,14 +33,7 @@ export function CurrentLocation() {
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.scrollContent}
-      refreshControl={
-        <RefreshControl
-          refreshing={isRefreshing || true}
-          onRefresh={refetch}
-          colors={[theme.colors.primary]}
-          tintColor={theme.colors.primary}
-        />
-      }>
+      >
       <Card style={styles.banner} elevation={4}>
         <Card.Content
           style={{
@@ -64,8 +57,7 @@ export function CurrentLocation() {
               {(errorMsg || !location) && (
                 <View
                   style={{ flexDirection: "row", alignItems: "center", gap: 4, marginVertical: 4 }}>
-                  <MaterialIcon name="warning" size={16} color={theme.colors.error} />
-                  <Text style={{ fontSize: 12, color: theme.colors.error }}>
+                  <Text style={{ fontSize: 12, color: theme.colors.error,textAlign:"center" }}>
                     Device location unavailable ,
                     <Text style={{ fontSize: 10, color: theme.colors.error }}>
                       Try typing in tne coordinates manually
@@ -124,12 +116,5 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginVertical: 8,
     borderRadius: 12,
-  },
-  bannerTitle: {
-    fontSize: 12,
-    fontWeight: "600",
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-    opacity: 0.8,
   },
 });
