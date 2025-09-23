@@ -26,7 +26,7 @@ export function CurrentWard({ lat, lng,actions,backButton }: CurretWardProps) {
   );
 
   if (isPending) {
-    return <LoadingFallback />;
+    return <LoadingFallback />
   }
   if (!data?.result) {
     return (
@@ -67,7 +67,7 @@ export function CurrentWard({ lat, lng,actions,backButton }: CurretWardProps) {
                 refetch();
               }}>
               Reload
-            </Button>{" "}
+            </Button>
             <Button
               style={{}}
               disabled={isRefetching}
