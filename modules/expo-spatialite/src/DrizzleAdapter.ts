@@ -15,9 +15,9 @@ export class ExpoSpatialiteDrizzle {
     params: SpatialiteParam[] = [],
     method: Sqlite3Method = "all"
   ): Promise<RawResultData> {
-    // logger.sql("exec called with sql:", sql);
-    // logger.log("exec called with params:", params);
-    // console.log("exec called with method:", method)
+    logger.sql("exec called with sql:", sql);
+    logger.log("exec called with params:", params);
+    console.log("exec called with method:", method)
     //
     const sqlInput = sql.toLowerCase();
     if (sqlInput.includes("pragma")) {

@@ -24,10 +24,10 @@ export const logger = {
   },
 
   sql: (message: string, query: string) => {
-    console.log("\n========== SQL ===========");
+    console.log("\n\n========== SQL ===========");
     console.log(`[SQL] ${message}`);
     console.log("Query:");
     console.log(query.replace(/ FROM /gi, '\nFROM ').replace(/ WHERE /gi, '\nWHERE ').replace(/ ORDER BY /gi, '\nORDER BY '));
-    console.log("=========================\n");
+    console.log("=========================\n\n");
   }
 };

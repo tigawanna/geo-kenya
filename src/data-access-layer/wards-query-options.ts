@@ -255,7 +255,7 @@ export function getClosestWardsByCorrdsQueryOptions({
         //   .where(sql`ST_Distance(${kenyaWards.geom}, MakePoint(${lng}, ${lat}, 4326), 1) < 5000`)
         //   .limit(10);
 
-        logger.log(" plain strin closest location results ", query);
+        // logger.log(" plain strin closest location results ", query);
         const results = query?.data?.slice(1);
         if (!results.length) {
           throw new Error("No nearby wards found");
