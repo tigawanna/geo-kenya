@@ -50,10 +50,11 @@ export function updateWardMutationOptions() {
     meta: {
       invalidates: [
         ["closest-ward"],
-        ["wards"], 
+        ["wards"],
         ["closest-wards-by-geom"],
-        ["current-ward"]]
-        ,
+        ["current-ward"],
+        ["ward-events"],
+      ],
     },
   });
 }
