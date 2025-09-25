@@ -1,8 +1,10 @@
 import { db } from "@/lib/drizzle/client";
-import { KenyaWardsSelect } from "@/lib/drizzle/schema";
+import { kenyaWards, KenyaWardsSelect } from "@/lib/drizzle/schema";
 import { executeQuery } from "@/modules/expo-spatialite";
 import { queryOptions } from "@tanstack/react-query";
 import { isPointInkenya } from "./location-query";
+import { sql, eq, getTableColumns } from "drizzle-orm";
+import { logger } from "@/utils/logger";
 
 interface WardsQueryOptionsProps {
   searchQuery: string;
@@ -125,32 +127,15 @@ export function getWardByIdQueryOptions({ id }: GetWardByIdProps) {
     queryKey: ["wards", "single", id],
     queryFn: async () => {
       try {
-        // const result = await db.query.kenyaWards.findFirst({
-        //   where: (fields, { eq }) => eq(fields.id, id),
-        // });
-        const result = await executeQuery<KenyaWardsSelect>(`
-SELECT 
-  "id", 
-  "ward", 
-  "county", 
-  "constituency", 
-  "ward_code" as "wardCode", 
-  "county_code" as "countyCode", 
-  "sub_county" as "subCounty", 
-  "constituency_code" as "constituencyCode", 
-  "minx", 
-  "miny", 
-  "maxx", 
-  "maxy",
-  AsGeoJSON("geom") AS "geom"  -- ✅ This is the key fix!
-FROM "kenya_wards" AS "kenyaWards" 
-WHERE (
-  "kenyaWards"."id" = ${id} 
-) 
-LIMIT 1;
-`);
-
-        const ward = result?.data?.[0];
+        const query = await db
+          .select({
+            ...getTableColumns(kenyaWards),
+            geom: sql`AsGeoJSON(${kenyaWards.geom})`,
+          })
+          .from(kenyaWards)
+          .where(eq(kenyaWards.id, id))
+          .limit(1);
+        const ward = query?.[0];
         if (!ward) {
           throw new Error("Ward not found");
         }
@@ -259,8 +244,19 @@ export function getClosestWardsByCorrdsQueryOptions({
                 LIMIT 10
               `
         );
-        // logger.log(" plain strin closest location results ", query);
-        const results = query.data.slice(1);
+
+        // const query = await db
+        //   .select({
+        //     ...getTableColumns(kenyaWards),
+        //     geom: sql`AsGeoJSON(${kenyaWards.geom})`,
+        //     distance: sql`ST_Distance(${kenyaWards.geom}, MakePoint(${lng}, ${lat}, 4326), 1)`,
+        //   })
+        //   .from(kenyaWards)
+        //   .where(sql`ST_Distance(${kenyaWards.geom}, MakePoint(${lng}, ${lat}, 4326), 1) < 5000`)
+        //   .limit(10);
+
+        logger.log(" plain strin closest location results ", query);
+        const results = query?.data?.slice(1);
         if (!results.length) {
           throw new Error("No nearby wards found");
         }
@@ -270,7 +266,7 @@ export function getClosestWardsByCorrdsQueryOptions({
           error: null,
         };
       } catch (e) {
-        console.log("error getting closest wards", e);
+        logger.log("error getting closest wards", e);
         return {
           results: null,
           error: e instanceof Error ? e.message : JSON.stringify(e),

@@ -17,7 +17,19 @@ export class ExpoSpatialiteDrizzle {
   ): Promise<RawResultData> {
     // logger.sql("exec called with sql:", sql);
     // logger.log("exec called with params:", params);
-    // console.log("exec called with method:", method);
+    // console.log("exec called with method:", method)
+    //
+    const sqlInput = sql.toLowerCase();
+    if (sqlInput.includes("pragma")) {
+      const result = await ExpoSpatialiteModule.executePragmaQuery(sql);
+      return { rows: result.data, columns: Object.keys(result.data[0]) };
+    }
+
+    if (sqlInput.includes("update") || sqlInput.includes("insert") || sqlInput.includes("delete")) {
+      await ExpoSpatialiteModule.executeStatement(sql, params);
+     return { rows: [], columns: [] };
+
+    }
 
     switch (method) {
       case "run":

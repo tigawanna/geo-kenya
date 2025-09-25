@@ -9,3 +9,5 @@ export const db = drizzle(spatialiteAdapter.driver,{
     logger: true
 });
 
+
+
