@@ -19,7 +19,6 @@
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",
     "@gorhom/bottom-sheet": "^5.2.6",
-    "@libsql/client": "^0.15.15",
     "@maplibre/maplibre-react-native": "^10.2.1",
     "@material/material-color-utilities": "^0.3.0",
     "@pietile-native-kit/keyboard-aware-scrollview": "^1.5.0",

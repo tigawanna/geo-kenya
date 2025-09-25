@@ -1,77 +1,125 @@
+import { sql } from "drizzle-orm/sql";
+import { customType } from "drizzle-orm/sqlite-core";
+
 /**
- * Custom SpatiaLite Geometry Types for Drizzle ORM
- * 
- * SpatiaLite geometry columns are created via AddGeometryColumn() function,
- * not direct column types. These types represent the data structure.
+ * SpatiaLite Geometry Types for Drizzle ORM
+ *
+ * IMPORTANT: When querying geometry columns for React Native/MapLibre usage,
+ * always convert BLOB geometry to GeoJSON using AsGeoJSON():
+ *
+ * ✅ CORRECT:
+ * SELECT AsGeoJSON(geom) AS geom FROM table_name
+ *
+ * ❌ WRONG:
+ * SELECT geom FROM table_name  -- Returns binary WKB data
+ *
+ * WHY: BLOB type in Drizzle assumes Node.js Buffer existence, which is not
+ * available in React Native. Raw BLOB queries will fail or return unusable data.
+ * AsGeoJSON() converts the binary WKB to a JSON string that works everywhere.
+ *
+ * Example query:
+ * const result = db.prepare(`
+ *   SELECT id, name, AsGeoJSON(geom) AS geom
+ *   FROM kenya_wards
+ *   WHERE id = ?
+ * `).get(wardId);
+ *
+ * Then parse the GeoJSON string:
+ * const geometry = JSON.parse(result.geom);
  */
 
-import { sql } from "drizzle-orm/sql";
-import { customType} from "drizzle-orm/sqlite-core";
+// Point geometry type
+export const point = customType<{
+  data: string; // GeoJSON string or "POINT(lng lat)"
+}>({
+  dataType() {
+    return "blob"; // SpatiaLite stores all geometries as WKB in BLOB
+  },
+  toDriver(value) {
+    return sql`ST_MakeValid(GeomFromGeoJSON(${value}))`;
+  },
+});
 
-// Geometry type for SpatiaLite (handles all geometry types)
+// MultiPoint geometry type
+export const multiPoint = customType<{
+  data: string; // GeoJSON string
+}>({
+  dataType() {
+    return "blob";
+  },
+  toDriver(value) {
+    return sql`ST_MakeValid(GeomFromGeoJSON(${value}))`;
+  },
+});
+
+// LineString geometry type
+export const lineString = customType<{
+  data: string; // GeoJSON string
+}>({
+  dataType() {
+    return "blob";
+  },
+  toDriver(value) {
+    return sql`ST_MakeValid(GeomFromGeoJSON(${value}))`;
+  },
+});
+
+// MultiLineString geometry type
+export const multiLineString = customType<{
+  data: string; // GeoJSON string
+}>({
+  dataType() {
+    return "blob";
+  },
+  toDriver(value) {
+    return sql`ST_MakeValid(GeomFromGeoJSON(${value}))`;
+  },
+});
+
+// Polygon geometry type
+export const polygon = customType<{
+  data: string; // GeoJSON string
+}>({
+  dataType() {
+    return "blob";
+  },
+  toDriver(value) {
+    return sql`ST_MakeValid(GeomFromGeoJSON(${value}))`;
+  },
+});
+
+// MultiPolygon geometry type
+export const multiPolygon = customType<{
+  data: string; // GeoJSON string
+}>({
+  dataType() {
+    return "blob";
+  },
+  toDriver(value) {
+    return sql`ST_MakeValid(GeomFromGeoJSON(${value}))`;
+  },
+});
+
+// Generic geometry type (accepts any geometry)
 export const geometry = customType<{
   data: string; // GeoJSON string
 }>({
   dataType() {
-    return "GEOMETRY"; // SpatiaLite geometry column type
+    return "blob";
+  },
+  toDriver(value) {
+    return sql`ST_MakeValid(GeomFromGeoJSON(${value}))`;
   },
 });
 
-// Convenience aliases for specific geometry types
-export const multiPolygon = geometry;
-export const polygon = geometry;
-export const point = geometry;
-
-// SQL functions for SpatiaLite operations
-export const spatialiteFunctions = {
-  // Convert GeoJSON to geometry
-  geomFromGeoJSON: (geojson: string, srid = 4326) => 
-    sql`GeomFromGeoJSON(${geojson}, ${srid})`,
-  
-  // Convert geometry to GeoJSON
-  asGeoJSON: (geom: any) => sql`AsGeoJSON(${geom})`,
-  
-  // Spatial queries
-  within: (geom1: any, geom2: any) => sql`Within(${geom1}, ${geom2})`,
-  intersects: (geom1: any, geom2: any) => sql`Intersects(${geom1}, ${geom2})`,
-};
-
-// Helper types for GeoJSON structures
-export type GeoJSONPolygon = {
-  type: "Polygon";
-  coordinates: number[][][];
-};
-
-export type GeoJSONMultiPolygon = {
-  type: "MultiPolygon";
-  coordinates: number[][][][];
-};
-
-export type GeoJSONPoint = {
-  type: "Point";
-  coordinates: [number, number];
-};
-
-// Helper functions to create GeoJSON objects
-export function createPolygon(coordinates: number[][][]): GeoJSONPolygon {
-  return {
-    type: "Polygon",
-    coordinates,
-  };
-}
-
-export function createMultiPolygon(
-  coordinates: number[][][][],
-): GeoJSONMultiPolygon {
-  return {
-    type: "MultiPolygon",
-    coordinates,
-  };
-}
-
-export function createPoint(coordinates: [number, number]): GeoJSONPoint {
-  return {
-    type: "Point",
-    coordinates,
-  };
-}
+// Geometry collection type
+export const geometryCollection = customType<{
+  data: string; // GeoJSON string
+}>({
+  dataType() {
+    return "blob";
+  },
+  toDriver(value) {
+    return sql`ST_MakeValid(GeomFromGeoJSON(${value}))`;
+  },
+});
