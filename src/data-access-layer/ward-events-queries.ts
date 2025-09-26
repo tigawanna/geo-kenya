@@ -1,4 +1,5 @@
 import { db } from "@/lib/drizzle/client";
+import { logger } from "@/utils/logger";
 import { queryOptions } from "@tanstack/react-query";
 
 export function getWardEventsQueryOptions() {
@@ -6,11 +7,8 @@ export function getWardEventsQueryOptions() {
     queryKey: ["ward-events"],
     queryFn: async () => {
       try {
-        const result = await db.query.wardEvents.findMany({
-          with: {
-            ward: true,
-          },
-        });
+        const result = await db.query.wardEvents.findMany();
+        logger.log("📝 ward-events:", result)
         return {
           result,
           error: null,
