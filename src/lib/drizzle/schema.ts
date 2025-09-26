@@ -41,6 +41,7 @@ export const wardEvents = sqliteTable("kenya_ward_events", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
+  eventSource: text("trigger_by",{enum:["REPLAY","TRIGGER"]}), // Identifies which client triggered the event  
   eventType: text("event_type", { enum: ["INSERT", "UPDATE", "DELETE"] }).notNull(),
   wardId: integer("ward_id"), // NULL for INSERT events (before ID assigned)
   wardCode: text("ward_code"), // For tracking even when ID changes

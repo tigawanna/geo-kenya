@@ -1,18 +1,25 @@
 import { LoadingFallback } from "@/components/state-screens/LoadingFallback";
 import { ExpoSpatialiteProvider } from "@/lib/expo-spatialite/ExpoSpatialiteProvider";
+import { logger } from "@/utils/logger";
 import { Suspense } from "react";
 
 export function ExpoSpatialiteWrapper({ children }: { children: React.ReactNode }) {
   return (
     <Suspense fallback={<LoadingFallback />}>
       <ExpoSpatialiteProvider
-        databaseName="lokeshen.db"
+        databaseName="geo_kenya.db"
         // databaseName="tpp.db"
         checkTableName="kenya_wards"
-        assetSource={{ assetId: require("@/assets/kenya_wards.db"), forceOverwrite: true }}
+        assetSource={{ assetId: require("@/assets/geo_kenya.db"), forceOverwrite: true }}
         // location="test"
 
         onInit={async ({ executeStatement, executeQuery, executePragmaQuery }) => {
+          const eventTrigger = await executeQuery(
+            `
+           SELECT name FROM sqlite_master WHERE type='trigger'
+            `
+          );
+          logger.log("📝 event_trigger:", eventTrigger);
           // await executeStatement("PRAGMA synchronous=NORMAL"); // Faster writes
           // const funs = await executeQuery(
           //   `
