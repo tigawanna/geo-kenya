@@ -5,7 +5,9 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 export default function HomeScreen() {
     const { top } = useSafeAreaInsets();
   return (
-    <Surface style={{ flex: 1, justifyContent: "center", alignItems: "center",paddingTop: top }}>
+    <Surface
+      style={{ flex: 1, justifyContent: "center", alignItems: "center", paddingTop: top }}
+      >
       <CurrentLocation />
     </Surface>
   );
