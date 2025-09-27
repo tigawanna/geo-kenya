@@ -23,3 +23,16 @@ jest.mock('expo-file-system', () => ({
   File: jest.fn(),
   Paths: { document: '/mock/document/path' },
 }));
+
+// Mock MapLibre React Native
+jest.mock('@maplibre/maplibre-react-native', () => ({
+  MapView: 'MapView',
+  Camera: 'Camera',
+  FillLayer: 'FillLayer',
+  Images: 'Images',
+  ShapeSource: 'ShapeSource',
+  SymbolLayer: 'SymbolLayer',
+  LineLayer: 'LineLayer',
+  UserLocation: 'UserLocation',
+  Logger: { setLogLevel: jest.fn() },
+}));

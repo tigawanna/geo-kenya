@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react-native";
+import { render } from "../__test-utils_/root_provider";
 
 import HomeScreen from "@/app/(tabs)/index";
 

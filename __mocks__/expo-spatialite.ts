@@ -61,10 +61,12 @@ export const closeDatabase = jest.fn(async (): Promise<CloseDatabaseResult> => (
   message: 'Database closed successfully',
 }));
 
-export const ExpoSpatialiteDrizzle = {
-  query: jest.fn(),
-  run: jest.fn(),
-  all: jest.fn(),
-  get: jest.fn(),
-  values: jest.fn(),
-};
+export class ExpoSpatialiteDrizzle {
+  driver = {
+    query: jest.fn(),
+    run: jest.fn(),
+    all: jest.fn(),
+    get: jest.fn(),
+    values: jest.fn(),
+  };
+}
