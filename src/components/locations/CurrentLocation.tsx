@@ -13,7 +13,7 @@ export function CurrentLocation() {
 
   if (isLoading) {
     return (
-      <View style={{ ...styles.container,flex:1 }}>
+      <View style={{ ...styles.container, flex: 1 }} testID="current-location-card">
         <View style={[styles.errorContainer, { gap: 16 }]}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
           <MaterialIcon color={theme.colors.primary} name="location-city" size={64} />
@@ -33,7 +33,7 @@ export function CurrentLocation() {
       style={styles.container}
       contentContainerStyle={styles.scrollContent}
       >
-      <Card style={styles.banner} elevation={4}>
+      <Card style={styles.banner} elevation={4} testID="current-location-card">
         <Card.Content
           style={{
             alignItems: "center",
