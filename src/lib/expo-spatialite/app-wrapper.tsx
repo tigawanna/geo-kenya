@@ -14,12 +14,12 @@ export function ExpoSpatialiteWrapper({ children }: { children: React.ReactNode 
         // location="test"
 
         onInit={async ({ executeStatement, executeQuery, executePragmaQuery }) => {
-          const eventTrigger = await executeQuery(
-            `
-           SELECT name FROM sqlite_master WHERE type='trigger'
-            `
-          );
-          logger.log("📝 event_trigger:", eventTrigger);
+          // const eventTrigger = await executeQuery(
+          //   `
+          //  SELECT name FROM sqlite_master WHERE type='trigger'
+          //   `
+          // );
+          // logger.log("📝 event_trigger:", eventTrigger);
           // await executeStatement("PRAGMA synchronous=NORMAL"); // Faster writes
           // const funs = await executeQuery(
           //   `

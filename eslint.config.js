@@ -7,4 +7,13 @@ module.exports = defineConfig([
   {
     ignores: ['dist/*'],
   },
+  {
+    files: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'],
+    plugins: {
+      'testing-library': require('eslint-plugin-testing-library'),
+    },
+    rules: {
+      ...require('eslint-plugin-testing-library/configs/react').rules,
+    },
+  },
 ]);
