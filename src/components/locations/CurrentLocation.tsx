@@ -6,6 +6,7 @@ import { MaterialIcon } from "../default/ui/icon-symbol";
 
 import { LatLongForm } from "./forms/LatLongForm";
 import { SingleWardByLatLng } from "./single-ward/SingleWardByLatLng";
+import { logger } from "@/utils/logger";
 
 export function CurrentLocation() {
   const theme = useTheme();
@@ -13,7 +14,7 @@ export function CurrentLocation() {
 
   if (isLoading) {
     return (
-      <View style={{ ...styles.container, flex: 1 }} testID="current-location-card">
+      <View style={{ ...styles.container, flex: 1 }} testID="current-location-loading">
         <View style={[styles.errorContainer, { gap: 16 }]}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
           <MaterialIcon color={theme.colors.primary} name="location-city" size={64} />
@@ -27,6 +28,7 @@ export function CurrentLocation() {
 
   const lat = location?.coords.latitude ?? 0;
   const lng = location?.coords.longitude ?? 0;
+  logger.log("location ==",{lat,lng})
 
   return (
     <ScrollView
