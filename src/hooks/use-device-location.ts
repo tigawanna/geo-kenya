@@ -51,7 +51,8 @@ export function useDeviceLocation() {
           latitude: lat,
           longitude: lng,
         },
-      });
+      }
+    );
     }
   }
 
