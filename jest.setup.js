@@ -1,3 +1,4 @@
+// jest.setup.js
 import 'react-native-gesture-handler/jestSetup';
 
 // Mock native modules
