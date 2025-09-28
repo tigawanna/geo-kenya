@@ -7,6 +7,7 @@ import { LoadingFallback } from "../state-screens/LoadingFallback";
 import { NoDataScreen } from "../state-screens/NoDataScreen";
 import { SingleWardCard } from "./single-ward/SingleWardCard";
 import { WardWithNeighborsMap } from "./maps/WardWithNeighborsMap.tsx";
+import { logger } from "@/utils/logger";
 
 interface CurretWardProps {
   lat: number;
@@ -24,13 +25,15 @@ export function CurrentWard({ lat, lng,actions,backButton }: CurretWardProps) {
       lng,
     })
   );
-
+   logger.log(" == CurrentWard ==", { data });
   if (isPending) {
     return <LoadingFallback />
   }
   if (!data?.result) {
     return (
-      <View style={{ height: "100%", gap: 6, paddingHorizontal: 10,justifyContent:"center" }}>
+      <View
+        style={{ height: "100%", gap: 6, paddingHorizontal: 10, justifyContent: "center" }}
+        testID="current-ward-not-found">
         {isRefetching ? (
           <ActivityIndicator
             style={{
@@ -82,7 +85,7 @@ export function CurrentWard({ lat, lng,actions,backButton }: CurretWardProps) {
           </View>
         </View>
       </View>
-    )
+    );
   }
   return (
     <View style={{ ...styles.container }}>

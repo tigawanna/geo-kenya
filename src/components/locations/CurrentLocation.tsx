@@ -28,14 +28,14 @@ export function CurrentLocation() {
 
   const lat = location?.coords.latitude ?? 0;
   const lng = location?.coords.longitude ?? 0;
-  logger.log("location ==",{lat,lng})
+
 
   return (
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.scrollContent}
       >
-      <Card style={styles.banner} elevation={4} testID="current-location-card">
+      <Card style={styles.banner} elevation={4} >
         <Card.Content
           style={{
             alignItems: "center",

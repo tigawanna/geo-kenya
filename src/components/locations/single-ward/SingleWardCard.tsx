@@ -15,10 +15,10 @@ export function SingleWardCard({ ward, loc, backButton, actions }: SingleWardCar
   const theme = useTheme();
   const router = useRouter();
   return (
-    <Card style={styles.card}>
+    <Card style={styles.card} testID="single-ward-card">
       <View style={styles.titleRow}>
         {backButton && <IconButton icon="arrow-left" onPress={() => router.back()} />}
-        <Text variant="headlineMedium" style={[styles.wardName, { color: theme.colors.onSurface }]}>
+        <Text variant="headlineMedium" style={[styles.wardName, { color: theme.colors.onSurface }]} testID="single-ward-card-ward-name">
           {ward.ward}
         </Text>
         <Text

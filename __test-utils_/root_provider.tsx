@@ -14,8 +14,9 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native
 
 const queryClient = new QueryClient({
   defaultOptions: {
-    queries: { retry: false },
+    queries: { retry: false,staleTime:Infinity },
     mutations: { retry: false },
+    
   },
 });
 function onAppStateChange(status: AppStateStatus) {
