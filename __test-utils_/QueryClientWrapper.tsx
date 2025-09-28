@@ -1,5 +1,5 @@
-import { QueryClient, useQueryClient } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 
 interface QueryClientWrapperPrips {
@@ -7,11 +7,25 @@ interface QueryClientWrapperPrips {
   qcFn: (qc: QueryClient) => void;
 }
 export function QueryClientWrapper({ children, qcFn }: QueryClientWrapperPrips) {
-  const qc = useQueryClient();
-  useEffect(() => {
+  const testQueryClient = useMemo(() => {
+    const qc = new QueryClient({
+      defaultOptions: {
+        queries: {
+          enabled: false,
+          retry: false,
+          staleTime: Infinity,
+        },
+      },
+    });
     qcFn(qc);
+    return qc;
   }, [qcFn]);
-  return <View style={{ ...styles.container }}>{children}</View>;
+
+  return (
+    <QueryClientProvider client={testQueryClient}>
+      <View style={styles.container}>{children}</View>
+    </QueryClientProvider>
+  );
 }
 const styles = StyleSheet.create({
   container: {

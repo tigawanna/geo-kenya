@@ -53,6 +53,18 @@ jest.mock('@react-native-async-storage/async-storage', () =>
   require('@react-native-async-storage/async-storage/jest/async-storage-mock')
 );
 
+// Mock expo-font and vector icons
+jest.mock('expo-font', () => ({
+  loadAsync: jest.fn(() => Promise.resolve()),
+  isLoaded: jest.fn(() => true),
+}));
+
+jest.mock('@expo/vector-icons', () => ({
+  MaterialIcons: 'MaterialIcons',
+  MaterialCommunityIcons: 'MaterialCommunityIcons',
+  Ionicons: 'Ionicons',
+}));
+
 // Mock material color utilities
 jest.mock('@material/material-color-utilities', () => ({
   argbFromHex: jest.fn(() => 0xff6750a4),

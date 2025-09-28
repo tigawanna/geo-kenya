@@ -47,7 +47,7 @@ export function LoadingFallback({ initialScreen,logoSize=250,action }: LoadingFa
   }));
 
   return (
-    <Surface style={[styles.container, { backgroundColor: colors.surface }]}>
+    <Surface style={[styles.container, { backgroundColor: colors.surface }]} testID="loading-fallback">
       <View style={styles.content}>
         <Animated.View style={[styles.logoContainer, animatedLogoStyle]}>
           <AppLogoSvg width={logoSize} height={logoSize}/>
