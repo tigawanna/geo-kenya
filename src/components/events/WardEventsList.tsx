@@ -4,6 +4,7 @@ import { View, StyleSheet, FlatList, ActivityIndicator } from "react-native";
 import { Button, Card, Text } from "react-native-paper";
 import { NoDataScreen } from "../state-screens/NoDataScreen";
 import { logger } from "@/utils/logger";
+import { CheckUpdates } from "./CheckUpdates";
 
 export function WardEventsList() {
   const { data, isLoading, error, isRefetching, refetch } = useQuery(getWardEventsQueryOptions());
@@ -48,6 +49,7 @@ export function WardEventsList() {
   if (!data?.result || data.result.length === 0) {
     return (
       <View style={styles.centered}>
+        <CheckUpdates />
         <NoDataScreen
           listName="ward  data events"
           message=""
@@ -69,6 +71,7 @@ export function WardEventsList() {
 
   return (
     <View style={styles.container}>
+      <CheckUpdates/>
       <FlatList
         data={data?.result}
         keyExtractor={(item) => item.id}

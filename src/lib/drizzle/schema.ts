@@ -64,7 +64,7 @@ export const wardUpdates = sqliteTable("kenya_ward_updates", {
   createdAt: text("created_at")
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
-  createdBy: text("created_by"),
+  // createdBy: text("created_by"),
   description: text("description"),
 });
 
@@ -91,6 +91,7 @@ export const WardUpdateZodSchema = z.object({
   event: z.enum(["create", "update", "delete"]),
 });
 
-export const WardUpdatesZodSchema = createInsertSchema(wardUpdates).extend({
+export const WardUpdatesZodSchema = createInsertSchema(wardUpdates)
+.extend({
   data: z.array(WardUpdateZodSchema),
 });
