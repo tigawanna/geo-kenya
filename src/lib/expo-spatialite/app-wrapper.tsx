@@ -2,6 +2,8 @@ import { LoadingFallback } from "@/components/state-screens/LoadingFallback";
 import { ExpoSpatialiteProvider } from "@/lib/expo-spatialite/ExpoSpatialiteProvider";
 import { logger } from "@/utils/logger";
 import { Suspense } from "react";
+import { syncWardDb } from "./sync/sync_ward_updates";
+import { executeRawQuery } from "@/modules/expo-spatialite";
 
 export function ExpoSpatialiteWrapper({ children }: { children: React.ReactNode }) {
   return (
@@ -14,21 +16,11 @@ export function ExpoSpatialiteWrapper({ children }: { children: React.ReactNode 
         // location="test"
 
         onInit={async ({ executeStatement, executeQuery, executePragmaQuery }) => {
-          // const eventTrigger = await executeQuery(
-          //   `
-          //  SELECT name FROM sqlite_master WHERE type='trigger'
-          //   `
-          // );
-          // logger.log("📝 event_trigger:", eventTrigger);
-          // await executeStatement("PRAGMA synchronous=NORMAL"); // Faster writes
-          // const funs = await executeQuery(
-          //   `
-          //   SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'spatial_ref_sys'
-          //   `
-          // ); // Write-Ahead Logging
-          // console.log("\n 📝 PRAGMA function_list:", funs);
-          // await executeStatement("PRAGMA mmap_size=268435456"); // 256MB memory mapping
-          // Performance optimizations
+          // const wardEventsColumns = await executeRawQuery(`PRAGMA table_info(kenya_ward_events)`);
+          // logger.log("📝 kenya_ward_events columns:", wardEventsColumns);
+
+          // const wardUpdatesColumns = await executeRawQuery(`PRAGMA table_info(kenya_ward_updates)`);
+          // logger.log("📝 kenya_ward_updates columns:", wardUpdatesColumns);
         }}
         onError={(error) => {
           console.error("\n ❌ Spatialite database error:", error);

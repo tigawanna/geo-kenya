@@ -25,7 +25,7 @@ export function CurrentWard({ lat, lng,actions,backButton }: CurretWardProps) {
       lng,
     })
   );
-   logger.log(" == CurrentWard ==", { data });
+  //  logger.log(" == CurrentWard ==", { data });
   if (isPending) {
     return <LoadingFallback />
   }

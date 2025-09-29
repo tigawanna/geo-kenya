@@ -104,6 +104,7 @@ jest.mock('@/components/default/ui/icon-symbol', () => ({
 jest.mock('expo', () => ({
   ...jest.requireActual('expo'),
   requireNativeModule: jest.fn((moduleName) => {
+    console.log('\n\n\n\ test moduleName', moduleName,"\n\n\n");
     if (moduleName === 'ExpoMaterialDynamicColors') {
       return require('./__mocks__/ExpoMaterialDynamicColors').default;
     }
