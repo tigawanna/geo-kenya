@@ -72,13 +72,21 @@ export async function executeQuery<T extends Record<string, any> = Record<string
   sql: string,
   params?: SpatialiteParam[]
 ): Promise<QueryResult<T>> {
-  const result = await ExpoSpatialiteModule.executeQuery(sql, params);
-
-  return {
-    success: result.success,
-    rowCount: result.rowCount,
-    data: result.data as T[],
-  };
+  try {
+    const result = await ExpoSpatialiteModule.executeQuery(sql, params);
+    return {
+      success: result.success,
+      rowCount: result.rowCount,
+      data: result.data as T[],
+    };
+  } catch (error) {
+    console.error("❌ executeQuery Error:", {
+      sql,
+      params,
+      error: error instanceof Error ? error.message : String(error)
+    });
+    throw error;
+  }
 }
 
 /**
@@ -91,12 +99,20 @@ export async function executeStatement(
   sql: string,
   params?: SpatialiteParam[]
 ): Promise<StatementResult> {
-  const result = await ExpoSpatialiteModule.executeStatement(sql, params);
-
-  return {
-    success: result.success,
-    rowsAffected: result.rowsAffected,
-  };
+  try {
+    const result = await ExpoSpatialiteModule.executeStatement(sql, params);
+    return {
+      success: result.success,
+      rowsAffected: result.rowsAffected,
+    };
+  } catch (error) {
+    console.error("❌ executeStatement Error:", {
+      sql,
+      params,
+      error: error instanceof Error ? error.message : String(error)
+    });
+    throw error;
+  }
 }
 
 /**
@@ -107,12 +123,19 @@ export async function executeStatement(
 export async function executePragmaQuery<T extends Record<string, any> = Record<string, any>>(
   pragma: string
 ): Promise<PragmaQueryResult<T>> {
-  const result = await ExpoSpatialiteModule.executePragmaQuery(pragma);
-
-  return {
-    success: result.success,
-    data: result.data as T[],
-  };
+  try {
+    const result = await ExpoSpatialiteModule.executePragmaQuery(pragma);
+    return {
+      success: result.success,
+      data: result.data as T[],
+    };
+  } catch (error) {
+    console.error("❌ executePragmaQuery Error:", {
+      pragma,
+      error: error instanceof Error ? error.message : String(error)
+    });
+    throw error;
+  }
 }
 
 /**
@@ -126,13 +149,21 @@ export async function executeRawQuery<T extends Record<string, any> = Record<str
   sql: string,
   params?: SpatialiteParam[]
 ): Promise<QueryResult<T>> {
-  const result = await ExpoSpatialiteModule.executeRawQuery(sql, params);
-
-  return {
-    success: result.success,
-    rowCount: result.rowCount,
-    data: result.data as T[],
-  };
+  try {
+    const result = await ExpoSpatialiteModule.executeRawQuery(sql, params);
+    return {
+      success: result.success,
+      rowCount: result.rowCount,
+      data: result.data as T[],
+    };
+  } catch (error) {
+    console.error("❌ executeRawQuery Error:", {
+      sql,
+      params,
+      error: error instanceof Error ? error.message : String(error)
+    });
+    throw error;
+  }
 }
 
 /**

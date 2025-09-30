@@ -3,7 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { View, StyleSheet, FlatList, ActivityIndicator } from "react-native";
 import { Button, Card, Text } from "react-native-paper";
 import { NoDataScreen } from "../state-screens/NoDataScreen";
-import { logger } from "@/utils/logger";
 import { CheckUpdates } from "./CheckUpdates";
 
 export function WardEventsList() {
@@ -71,10 +70,14 @@ export function WardEventsList() {
 
   return (
     <View style={styles.container}>
-      <CheckUpdates/>
       <FlatList
         data={data?.result}
         keyExtractor={(item) => item.id}
+        ListHeaderComponent={() => (
+          <View style={{ marginBottom: 8 }}>
+            <CheckUpdates />
+          </View>
+        )}
         renderItem={({ item }) => (
           <Card style={styles.card} elevation={4}>
             <Card.Content>
@@ -82,14 +85,14 @@ export function WardEventsList() {
               <Text style={styles.timestamp}>{new Date(item.timestamp).toLocaleString()}</Text>
               <Text style={styles.status}>Status: {item.syncStatus}</Text>
               {item.wardCode && <Text>Ward: {item.wardCode}</Text>}
-              
+
               {item.oldData && (
                 <View style={styles.dataSection}>
                   <Text style={styles.dataLabel}>Previous:</Text>
                   <Text style={styles.dataText}>{item.oldData}</Text>
                 </View>
               )}
-              
+
               {item.newData && (
                 <View style={styles.dataSection}>
                   <Text style={styles.dataLabel}>Current:</Text>

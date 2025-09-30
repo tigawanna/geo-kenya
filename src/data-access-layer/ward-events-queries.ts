@@ -8,7 +8,7 @@ export function getWardEventsQueryOptions() {
     queryFn: async () => {
       try {
         const result = await db.query.wardEvents.findMany();
-        logger.log("📝 ward-events:", result)
+        logger.log("📝 ward-events:", result);
         return {
           result,
           error: null,
@@ -16,7 +16,7 @@ export function getWardEventsQueryOptions() {
       } catch (error) {
         return {
           result: null,
-          error:error instanceof Error?error.message:JSON.stringify(error),
+          error: error instanceof Error ? error.message : "Unknown error",
         };
       }
     },

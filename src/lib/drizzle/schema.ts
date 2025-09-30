@@ -1,7 +1,7 @@
-import { InferSelectModel, InferInsertModel, sql } from "drizzle-orm";
-import { createInsertSchema } from "drizzle-zod";
-import { blob, integer, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { sqliteTable, integer, text, blob, real } from "drizzle-orm/sqlite-core";
+import { type InferSelectModel, sql } from "drizzle-orm";
 import { multiPolygon } from "./drizzlespatialite-types";
+import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
 export const kenyaWards = sqliteTable("kenya_wards", {
@@ -24,15 +24,15 @@ export const kenyaWards = sqliteTable("kenya_wards", {
   geom: multiPolygon("geom"), // ← this is correct for WKB geometry
 });
 
-export const country = sqliteTable("kenya_country", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  shapeName: text("shape_name").notNull(),
-  shapeIso: text("shape_iso").notNull(),
-  shapeId: text("shape_id"),
-  shapeGroup: text("shape_group"),
-  shapeType: text("shape_type"),
-  geom: blob("geom"), // ← WKB geometry for country borders
-});
+// export const country = sqliteTable("kenya_country", {
+//   id: integer("id").primaryKey({ autoIncrement: true }),
+//   shapeName: text("shape_name").notNull(),
+//   shapeIso: text("shape_iso").notNull(),
+//   shapeId: text("shape_id"),
+//   shapeGroup: text("shape_group"),
+//   shapeType: text("shape_type"),
+//   geom: multiPolygon("geom"), // ← WKB geometry for country borders
+// });
 
 export const wardEvents = sqliteTable("kenya_ward_events", {
   id: text("id")
@@ -54,6 +54,12 @@ export const wardEvents = sqliteTable("kenya_ward_events", {
   lastSyncAttempt: text("last_sync_attempt"),
   errorMessage: text("error_message"),
   clientId: text("client_id"), // Identifies which client created the event
+  createdAt: text("created_at")
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at")
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
 });
 
 // Drizzle table schema with custom type for data array
@@ -64,21 +70,24 @@ export const wardUpdates = sqliteTable("kenya_ward_updates", {
   createdAt: text("created_at")
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
-  // createdBy: text("created_by"),
+  updatedAt: text("updated_at")
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
+  createdBy: text("created_by"),
   description: text("description"),
 });
-
-// Infer the select types
-export type KenyaWardsSelect = InferSelectModel<typeof kenyaWards>;
-export type KenyaWardsInsert = InferInsertModel<typeof kenyaWards>;
-export type CountrySelect = InferSelectModel<typeof country>;
-export type WardUpdatesSelect = InferSelectModel<typeof wardUpdates>;
 
 export interface WardUpdateData {
   id: number; // ward id
   data: Partial<KenyaWardsSelect>; // partial object of updated row
   event: "create" | "update" | "delete";
 }
+
+// Infer the select types
+// export type CountrySelect = InferSelectModel<typeof country>;
+export type KenyaWardsSelect = InferSelectModel<typeof kenyaWards>;
+export type WardEventsSelect = InferSelectModel<typeof wardEvents>;
+export type WardUpdatesSelect = InferSelectModel<typeof wardUpdates>;
 
  
 export const WardsZodSchema = createInsertSchema(kenyaWards).extend({
@@ -91,7 +100,15 @@ export const WardUpdateZodSchema = z.object({
   event: z.enum(["create", "update", "delete"]),
 });
 
-export const WardUpdatesZodSchema = createInsertSchema(wardUpdates)
-.extend({
+export const WardUpdatesZodSchema = createInsertSchema(wardUpdates).extend({
   data: z.array(WardUpdateZodSchema),
 });
+
+export const wardDataPayload = z.codec(
+  z.string(), // input schema: ISO date string
+  WardsZodSchema.partial(), // output schema: Date object
+  {
+    decode: (dataAsString) => JSON.parse(dataAsString), // ISO string → Date
+    encode: (dataAsObject) => JSON.stringify(dataAsObject), // Date → ISO string
+  }
+);

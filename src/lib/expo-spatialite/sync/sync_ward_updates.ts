@@ -1,5 +1,5 @@
 import { db } from "@/lib/drizzle/client";
-import { kenyaWards, wardEvents, wardUpdates, WardUpdatesZodSchema } from "@/lib/drizzle/schema";
+import { kenyaWards, wardEvents, wardUpdates, WardUpdatesZodSchema, } from "@/lib/drizzle/schema";
 import { executeQuery } from "@/modules/expo-spatialite";
 import { logger } from "@/utils/logger";
 import { and, eq, or } from "drizzle-orm";
@@ -101,7 +101,7 @@ export async function checkDbUpdates() {
     // .query.wardUpdates.findFirst({
     //   orderBy: (wardUpdates, { desc }) => [desc(wardUpdates.version)]
     // })
-    const localEvents = await db.select().from(wardEvents).orderBy(wardUpdates.createdAt).get();
+    const localEvents = await db.select().from(wardEvents).get();
 
     logger.log("lastLocalUpdates:: ", localEvents);
 
