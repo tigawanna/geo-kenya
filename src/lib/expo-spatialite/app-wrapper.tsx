@@ -19,8 +19,13 @@ export function ExpoSpatialiteWrapper({ children }: { children: React.ReactNode 
           // const wardEventsColumns = await executeRawQuery(`PRAGMA table_info(kenya_ward_events)`);
           // logger.log("📝 kenya_ward_events columns:", wardEventsColumns);
 
-          // const wardUpdatesColumns = await executeRawQuery(`PRAGMA table_info(kenya_ward_updates)`);
-          // logger.log("📝 kenya_ward_updates columns:", wardUpdatesColumns);
+          const wardEventsColumns = await executeRawQuery(`PRAGMA table_info(kenya_ward_events)`);
+          logger.log(
+            "📝 kenya_ward_updates columns:",
+            wardEventsColumns.data.map((t) => t.name)
+          );         
+          const wardUpdatesColumns = await executeRawQuery(`PRAGMA table_info(kenya_ward_updates)`);
+          logger.log("📝 kenya_ward_updates columns:", wardUpdatesColumns.data.map((t)=>t.name));
         }}
         onError={(error) => {
           console.error("\n ❌ Spatialite database error:", error);

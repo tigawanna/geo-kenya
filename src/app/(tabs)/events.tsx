@@ -4,9 +4,9 @@ import { Surface } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function WardEventsScreen() {
-    const { top } = useSafeAreaInsets();
+  const { top } = useSafeAreaInsets();
   return (
-    <Surface style={{ ...styles.container,paddingTop:top }}>
+    <Surface style={{ ...styles.container, paddingTop: top }}>
       <WardEventsList />
     </Surface>
   );

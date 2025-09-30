@@ -75,6 +75,7 @@
     "@types/jest": "^30.0.0",
     "@types/react": "~19.1.0",
     "better-sqlite3": "^12.4.1",
+    "dotenv": "^17.2.3",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~10.0.0",
     "eslint-plugin-testing-library": "^7.10.0",
