@@ -43,6 +43,9 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     ios: {
       ...config.ios,
       supportsTablet: true,
+      infoPlist: {
+        NSAppTransportSecurity: { NSAllowsArbitraryLoads: true }, // ? enable HTTP requests
+      },
       icon: {
         light: "./assets/icons/ios-light.png",
         dark: "./assets/icons/ios-dark.png",
@@ -81,6 +84,18 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         },
       ],
       "@maplibre/maplibre-react-native",
+      [
+        "expo-build-properties",
+        {
+          android: {
+            usesCleartextTraffic: true, // ? enable HTTP requests
+          },
+          ios: {
+            flipper: true,
+          },
+        },
+      ],
+      "expo-background-task",
     ],
     experiments: {
       typedRoutes: true,

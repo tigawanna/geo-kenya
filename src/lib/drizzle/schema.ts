@@ -80,7 +80,7 @@ export const wardUpdates = sqliteTable("kenya_ward_updates", {
 export interface WardUpdateData {
   id: number; // ward id
   data: Partial<KenyaWardsSelect>; // partial object of updated row
-  event: "create" | "update" | "delete";
+  event: "CREATE" | "UPDATE" | "DELETE";
 }
 
 // Infer the select types
@@ -89,7 +89,6 @@ export type KenyaWardsSelect = InferSelectModel<typeof kenyaWards>;
 export type WardEventsSelect = InferSelectModel<typeof wardEvents>;
 export type WardUpdatesSelect = InferSelectModel<typeof wardUpdates>;
 
- 
 export const WardsZodSchema = createInsertSchema(kenyaWards).extend({
   id: z.number().int().positive().optional(),
 });
@@ -97,7 +96,7 @@ export const WardsZodSchema = createInsertSchema(kenyaWards).extend({
 export const WardUpdateZodSchema = z.object({
   id: z.number().int().positive(),
   data: WardsZodSchema.partial(),
-  event: z.enum(["create", "update", "delete"]),
+  event: z.enum(["CREATE", "UPDATE", "DELETE"]),
 });
 
 export const WardUpdatesZodSchema = createInsertSchema(wardUpdates).extend({
@@ -110,5 +109,13 @@ export const wardDataPayload = z.codec(
   {
     decode: (dataAsString) => JSON.parse(dataAsString), // ISO string → Date
     encode: (dataAsObject) => JSON.stringify(dataAsObject), // Date → ISO string
+  }
+);
+export const wardEventType = z.codec(
+  z.enum(["CREATE", "UPDATE", "DELETE"]), // input schema: ISO date string
+  z.array(z.enum(["CREATE", "UPDATE", "DELETE"])), // output schema: Date object
+  {
+    decode: (str) => [str], // ISO string → Date
+    encode: (strArr) => strArr[0], // Date → ISO string
   }
 );

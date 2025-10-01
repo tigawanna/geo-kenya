@@ -14,16 +14,16 @@ export async function syncWardDb() {
       await db.insert(wardUpdates).values(updates).run();
       const allNewUpdates = updates.flatMap((update) => update.data);
       const updatesRows = allNewUpdates.map((update) => {
-        if (update.event === "create") {
+        if (update.event === "CREATE") {
           return db.insert(kenyaWards).values({
             ...update.data,
             id: update.id,
           } as any);
         }
-        if (update.event === "update") {
+        if (update.event === "UPDATE") {
           db.update(kenyaWards).set(update.data).where(eq(kenyaWards.id, update.id)).run();
         }
-        if (update.event === "delete") {
+        if (update.event === "DELETE") {
           db.delete(kenyaWards).where(eq(kenyaWards.id, update.id)).run();
         }
       });

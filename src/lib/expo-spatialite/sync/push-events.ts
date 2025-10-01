@@ -1,15 +1,19 @@
 import { db } from "@/lib/drizzle/client";
-import { wardDataPayload, wardEvents } from "@/lib/drizzle/schema";
+import { wardDataPayload, wardEvents, wardEventType } from "@/lib/drizzle/schema";
 import { WardsEventsCreateZodSchema } from "@/lib/pb/types/pb-zod";
 import { logger } from "@/utils/logger";
 import { and, eq, or } from "drizzle-orm";
 import { z } from "zod";
+import { fetch } from "expo/fetch";
 
 const EXPO_PUBLIC_SYNC_URL = process.env.EXPO_PUBLIC_SYNC_URL;
 
 const eventsSchema = WardsEventsCreateZodSchema.extend({
+  id: z.uuid().optional(),
   old_data: wardDataPayload,
   new_data: wardDataPayload,
+  //   event_type: wardEventType,
+  ward_id: z.number().int().positive(),
 });
 
 interface PushLocalEventsProps {}
@@ -29,36 +33,99 @@ export async function pushLocalEvents({}: PushLocalEventsProps) {
       )
       .all();
 
-    // eventsToSync?.[0]?.oldData &&
-    //   logger.log("events to sync", JSON.parse(eventsToSync?.[0]?.oldData));
-    logger.log(" == eventsToSync ==", eventsToSync);
-    const {
-      data: parsedEventsToSync,
-      error,
-      success,
-    } = z.array(eventsSchema).safeParse(eventsToSync);
-    if (error) {
-      const message = z.prettifyError(error)
-      console.log("error parsing events", error);
-      throw message;
-    }
-    const syncUpUrl = new URL("/api/collections/wards_events/records", EXPO_PUBLIC_SYNC_URL);
-    const response = await fetch(syncUpUrl, {
-      method: "POST",
-      body: JSON.stringify(parsedEventsToSync),
+    const adaptedEventsToSync = eventsToSync.map((event) => {
+      const { id, oldData, newData, eventType, wardId, ...rest } = event;
+      return {
+        ...rest,
+        old_data: oldData,
+        new_data: newData,
+        event_type: eventType,
+        ward_id: wardId,
+        event_id: id,
+      };
     });
-    if (!response.ok) {
-      throw new Error(response.statusText);
-    }
-    const responseData = await response.json();
-    logger.log("ward updates response", response);
-    await db.delete(wardEvents).run();
+
+    const eventSyncPromises = adaptedEventsToSync.map((event) => {
+    //   logger.log("event", event);/
+      return sendAnEvent({ rawEvent: event });
+    });
+    await Promise.allSettled(eventSyncPromises);
     return {
-      result: "No new updates available",
+      result: "Events pushed successfully",
       error: null,
     };
   } catch (error) {
     logger.log("something went wrong seeding ward data updates", error);
+    return {
+      result: null,
+      error: error instanceof Error ? error.message : JSON.stringify(error),
+    };
+  }
+}
+
+interface SendAnEventProps {
+  rawEvent: {
+    event_id: string;
+    old_data: string | null;
+    new_data: string | null;
+    event_type: "INSERT" | "UPDATE" | "DELETE";
+    ward_id: number | null;
+    eventSource: "REPLAY" | "TRIGGER" | null;
+  };
+}
+
+export async function sendAnEvent({ rawEvent }: SendAnEventProps) {
+  try {
+    if (!EXPO_PUBLIC_SYNC_URL) {
+      throw new Error("No sync url provided");
+    }
+    const { data: parsedEvent, error } = eventsSchema.safeParse(rawEvent);
+    if (error) {
+      const message = z.prettifyError(error);
+      console.log("error parsing events", error);
+      throw message;
+    }
+    const syncUpUrl = new URL("/api/collections/wards_events/records", EXPO_PUBLIC_SYNC_URL);
+    logger.log("syncUpUrl", syncUpUrl.toString());
+    const response = await fetch(syncUpUrl.toString(), {
+    //   method: "POST",
+    //   body: JSON.stringify(parsedEvent),
+    });
+    logger.log("ward updates response", response);
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
+    const responseData = await response.json();
+    logger.log("ward updates response", responseData);
+    if (rawEvent.event_id) {
+      await db
+        .update(wardEvents)
+        .set({
+          syncStatus: "SYNCED",
+          syncAttempts: 1,
+          lastSyncAttempt: new Date().toISOString(),
+        })
+        .where(eq(wardEvents.id, rawEvent.event_id));
+    }
+    return {
+      result: `${rawEvent.event_type} event synced successfully ${rawEvent.event_id}`,
+      error: null,
+    };
+  } catch (error) {
+    logger.log(
+      `something went wrong syncing ${rawEvent.event_type} event ${rawEvent.event_id}`,
+      error
+    );
+    if (rawEvent.event_id) {
+      await db
+        .update(wardEvents)
+        .set({
+          syncStatus: "FAILED",
+          syncAttempts: 1,
+          lastSyncAttempt: new Date().toISOString(),
+        })
+        .where(eq(wardEvents.id, rawEvent.event_id));
+    }
     return {
       result: null,
       error: error instanceof Error ? error.message : JSON.stringify(error),
