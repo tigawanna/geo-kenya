@@ -8,7 +8,7 @@ export function getWardEventsQueryOptions() {
     queryKey: ["ward-events"],
     queryFn: async () => {
       try {
-        await sleepFor(2_000)
+        await sleepFor(5_000)
         const result = await db.query.wardEvents.findMany();
         return {
           result,

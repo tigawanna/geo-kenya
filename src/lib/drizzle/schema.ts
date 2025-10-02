@@ -112,9 +112,19 @@ export const WardUpdatesZodSchema = createInsertSchema(wardUpdates).extend({
   data: wardUpdatesDataCodec,
 });
 
+export const WardsSnakeCaseZodSchema = WardsZodSchema.extend({
+  ward_code: z.string().optional().nullable(),
+  county_code: z.number().int().optional().nullable(),
+  sub_county: z.string().optional().nullable(),
+  constituency_code: z.number().int().optional().nullable(),
+  min_x: z.number().optional().nullable(),
+  min_y: z.number().optional().nullable(),
+  max_x: z.number().optional().nullable(),
+  max_y: z.number().optional().nullable(),
+});
 export const wardDataPayload = z.codec(
   z.string(), // input schema: ISO date string
-  WardsZodSchema.partial(), // output schema: Date object
+  WardsSnakeCaseZodSchema.partial(), // output schema: Date object
   {
     decode: (dataAsString) => JSON.parse(dataAsString), // ISO string → Date
     encode: (dataAsObject) => JSON.stringify(dataAsObject), // Date → ISO string

@@ -1,13 +1,16 @@
 import { getWardEventsQueryOptions } from "@/data-access-layer/ward-events-queries";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { View, StyleSheet, FlatList, ActivityIndicator } from "react-native";
-import { Button, Card, Text } from "react-native-paper";
-import { NoDataScreen } from "../state-screens/NoDataScreen";
-import { CheckUpdates } from "./CheckUpdates";
 import { db } from "@/lib/drizzle/client";
 import { wardEvents } from "@/lib/drizzle/schema";
+import { sendAnEvent, SendAnEventProps } from "@/lib/expo-spatialite/sync/push_events";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { eq } from "drizzle-orm";
+import { ActivityIndicator, FlatList, StyleSheet, View } from "react-native";
+import { Button, Card, Text } from "react-native-paper";
+import { getMaterialIconName } from "../default/ui/icon-symbol";
+import { NoDataScreen } from "../state-screens/NoDataScreen";
+import { WardMiniCard } from "./WardMiniCard";
 import { RefreshWardEvents, WardsEventsHheaders } from "./WardsEventsHheaders";
+import { DiffView } from "../shared/DiffView";
 
 export function WardEventsList() {
   const { data, isLoading, error, isRefetching, refetch } = useQuery(getWardEventsQueryOptions());
@@ -25,13 +28,8 @@ export function WardEventsList() {
     },
   });
   const pushEventMutation = useMutation({
-    mutationFn: async ({ id }: { id: string }) => {
-      return db
-        .update(wardEvents)
-        .set({
-          syncStatus: "PENDING",
-        })
-        .where(eq(wardEvents.id, id));
+    mutationFn: async (vars: SendAnEventProps) => {
+      sendAnEvent(vars);
     },
     meta: {
       invalidates: [["ward-events"]],
@@ -111,26 +109,56 @@ export function WardEventsList() {
         renderItem={({ item }) => (
           <Card style={styles.card} elevation={4}>
             <Card.Content>
-              <Text style={styles.eventType}>{item.eventType}</Text>
-              <Text style={styles.timestamp}>{new Date(item.timestamp).toLocaleString()}</Text>
-              <Text style={styles.status}>Status: {item.syncStatus}</Text>
-              {item.wardCode && <Text>Ward: {item.wardCode}</Text>}
-              <Button onPress={() => unsyncMutation.mutate({ id: item.id })}>
-                Set Not Synced
-              </Button>
-              <Button onPress={() => unsyncMutation.mutate({ id: item.id })}>Set Not Synced</Button>
-              {item.oldData && (
-                <View style={styles.dataSection}>
-                  <Text style={styles.dataLabel}>Previous:</Text>
-                  <Text style={styles.dataText}>{item.oldData.split("geom")[0]}</Text>
+              <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                <View>
+                  <Text style={styles.eventType}>{item.eventType}</Text>
+                  <Text style={styles.timestamp}>{new Date(item.timestamp).toLocaleString()}</Text>
+                  <Text style={styles.status}>Status: {item.syncStatus}</Text>
+                  {item.wardCode ? <Text>Ward: {item.wardCode}</Text> : null}
                 </View>
-              )}
-              {item.newData && (
-                <View style={styles.dataSection}>
-                  <Text style={styles.dataLabel}>Current:</Text>
-                  <Text style={styles.dataText}>{item.newData.split("geom")[0]}</Text>
+                <View>
+                  <Button
+                    icon={getMaterialIconName("undo")}
+                    loading={unsyncMutation.isPending}
+                    onPress={() => unsyncMutation.mutate({ id: item.id })}>
+                    unsync
+                  </Button>
+                  <Button
+                    icon={getMaterialIconName("publish")}
+                    loading={pushEventMutation.isPending}
+                    onPress={() =>
+                      pushEventMutation.mutate({
+                        rawEvent: {
+                          event_id: item.id,
+                          event_type: item.eventType,
+                          old_data: item.oldData,
+                          new_data: item.newData,
+                          ward_id: item.wardId,
+                          eventSource: item.eventSource,
+                        },
+                      })
+                    }>
+                    push
+                  </Button>
                 </View>
-              )}
+              </View>
+              <DiffView
+                old={item?.oldData ? JSON.parse(item.oldData) : {}}
+                new={item?.newData ? JSON.parse(item.newData) : {}}
+                truncate={["geom"]}
+              />
+              {/* {item.oldData ? (
+                <View style={{ paddingTop: 8 }}>
+                  <Text>Old data</Text>
+                  <WardMiniCard ward={JSON.parse(item.oldData)} />
+                </View>
+              ) : null}
+              {item.newData ? (
+                <View style={{}}>
+                  <Text>New data</Text>
+                  <WardMiniCard ward={JSON.parse(item.newData)} />
+                </View>
+              ) : null} */}
             </Card.Content>
           </Card>
         )}

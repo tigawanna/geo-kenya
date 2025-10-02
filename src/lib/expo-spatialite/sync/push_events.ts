@@ -65,7 +65,7 @@ export async function pushLocalEvents() {
   }
 }
 
-interface SendAnEventProps {
+export interface SendAnEventProps {
   rawEvent: {
     event_id: string;
     old_data: string | null;
