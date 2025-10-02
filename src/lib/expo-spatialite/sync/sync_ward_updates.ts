@@ -7,38 +7,38 @@ import { z } from "zod";
 
 const EXPO_PUBLIC_SYNC_URL = process.env.EXPO_PUBLIC_SYNC_URL;
 
-export async function syncWardDb() {
-  try {
-    const { result: updates } = await checkDbUpdates();
-    if (updates) {
-      await db.insert(wardUpdates).values(updates).run();
-      const allNewUpdates = updates.flatMap((update) => update.data);
-      const updatesRows = allNewUpdates.map((update) => {
-        if (update.event === "CREATE") {
-          return db.insert(kenyaWards).values({
-            ...update.data,
-            id: update.id,
-          } as any);
-        }
-        if (update.event === "UPDATE") {
-          db.update(kenyaWards).set(update.data).where(eq(kenyaWards.id, update.id)).run();
-        }
-        if (update.event === "DELETE") {
-          db.delete(kenyaWards).where(eq(kenyaWards.id, update.id)).run();
-        }
-      });
-      const updatedPromises = await Promise.allSettled(updatesRows);
-      logger.log("📝 updatedPromises:", updatedPromises);
-      const sendUpdatesResult = await seedDbUpdates({
-        lastUpdateID: updates?.at(-1)?.id,
-        lastUpdateTimestamp: updates?.at(-1)?.createdAt,
-      });
-      logger.log("📝 sendUpdatesResult:", sendUpdatesResult);
-    }
-  } catch (error) {
-    logger.log("something went wrong syncing ward data", error);
-  }
-}
+// export async function syncWardDb() {
+//   try {
+//     const { result: updates } = await checkDbUpdates();
+//     if (updates) {
+//       await db.insert(wardUpdates).values(updates).run();
+//       const allNewUpdates = updates.flatMap((update) => update.data);
+//       const updatesRows = allNewUpdates.map((update) => {
+//         if (update.event === "CREATE") {
+//           return db.insert(kenyaWards).values({
+//             ...update.data,
+//             id: update.id,
+//           } as any);
+//         }
+//         if (update.event === "UPDATE") {
+//           db.update(kenyaWards).set(update.data).where(eq(kenyaWards.id, update.id)).run();
+//         }
+//         if (update.event === "DELETE") {
+//           db.delete(kenyaWards).where(eq(kenyaWards.id, update.id)).run();
+//         }
+//       });
+//       const updatedPromises = await Promise.allSettled(updatesRows);
+//       logger.log("📝 updatedPromises:", updatedPromises);
+//       const sendUpdatesResult = await seedDbUpdates({
+//         lastUpdateID: updates?.at(-1)?.id,
+//         lastUpdateTimestamp: updates?.at(-1)?.createdAt,
+//       });
+//       logger.log("📝 sendUpdatesResult:", sendUpdatesResult);
+//     }
+//   } catch (error) {
+//     logger.log("something went wrong syncing ward data", error);
+//   }
+// }
 
 interface SeedDbUpdatesProps {
   lastUpdateTimestamp?: string;

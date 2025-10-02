@@ -117,7 +117,9 @@ export const WardsUpdatesResponseZodSchema = baseResponseSchema.extend({
     created_by: z.string().optional(),
     description: z.string().optional(),
     ready: z.boolean().optional(),
-    data: z.union([z.record(z.string(), z.any()), z.array(z.any()), z.null()]).optional()
+    data: z.union([z.record(z.string(), z.any()), z.array(z.any()), z.null()]).optional(),
+    updated: z.string().optional(),
+    created: z.string().optional()
 });
 
 export const WardsUpdatesCreateZodSchema = baseCreateSchema.extend({
@@ -126,7 +128,9 @@ export const WardsUpdatesCreateZodSchema = baseCreateSchema.extend({
     created_by: z.string().optional(),
     description: z.string().optional(),
     ready: z.boolean().optional(),
-    data: z.union([z.record(z.string(), z.any()), z.array(z.any()), z.null()]).optional()
+    data: z.union([z.record(z.string(), z.any()), z.array(z.any()), z.null()]).optional(),
+    updated: z.union([z.string(), z.date()]).optional(),
+    created: z.union([z.string(), z.date()]).optional()
 });
 
 export const WardsUpdatesUpdateZodSchema = baseUpdateSchema.extend({
@@ -137,7 +141,9 @@ export const WardsUpdatesUpdateZodSchema = baseUpdateSchema.extend({
     created_by: z.string().optional(),
     description: z.string().optional(),
     ready: z.boolean().optional(),
-    data: z.union([z.record(z.string(), z.any()), z.array(z.any()), z.null()]).optional()
+    data: z.union([z.record(z.string(), z.any()), z.array(z.any()), z.null()]).optional(),
+    updated: z.union([z.string(), z.date()]).optional(),
+    created: z.union([z.string(), z.date()]).optional()
 });
 
 

@@ -1,5 +1,6 @@
 import { db } from "@/lib/drizzle/client";
 import { logger } from "@/utils/logger";
+import { sleepFor } from "@/utils/promises";
 import { queryOptions } from "@tanstack/react-query";
 
 export function getWardEventsQueryOptions() {
@@ -7,8 +8,8 @@ export function getWardEventsQueryOptions() {
     queryKey: ["ward-events"],
     queryFn: async () => {
       try {
+        await sleepFor(2_000)
         const result = await db.query.wardEvents.findMany();
-        logger.log("📝 ward-events:", result);
         return {
           result,
           error: null,
@@ -16,7 +17,7 @@ export function getWardEventsQueryOptions() {
       } catch (error) {
         return {
           result: null,
-          error: error instanceof Error ? error.message : "Unknown error",
+          error: error instanceof Error ? error.message : JSON.stringify(error),
         };
       }
     },

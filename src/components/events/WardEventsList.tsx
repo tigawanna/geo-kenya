@@ -1,12 +1,42 @@
 import { getWardEventsQueryOptions } from "@/data-access-layer/ward-events-queries";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { View, StyleSheet, FlatList, ActivityIndicator } from "react-native";
 import { Button, Card, Text } from "react-native-paper";
 import { NoDataScreen } from "../state-screens/NoDataScreen";
 import { CheckUpdates } from "./CheckUpdates";
+import { db } from "@/lib/drizzle/client";
+import { wardEvents } from "@/lib/drizzle/schema";
+import { eq } from "drizzle-orm";
+import { RefreshWardEvents, WardsEventsHheaders } from "./WardsEventsHheaders";
 
 export function WardEventsList() {
   const { data, isLoading, error, isRefetching, refetch } = useQuery(getWardEventsQueryOptions());
+  const unsyncMutation = useMutation({
+    mutationFn: async ({ id }: { id: string }) => {
+      return db
+        .update(wardEvents)
+        .set({
+          syncStatus: "PENDING",
+        })
+        .where(eq(wardEvents.id, id));
+    },
+    meta: {
+      invalidates: [["ward-events"]],
+    },
+  });
+  const pushEventMutation = useMutation({
+    mutationFn: async ({ id }: { id: string }) => {
+      return db
+        .update(wardEvents)
+        .set({
+          syncStatus: "PENDING",
+        })
+        .where(eq(wardEvents.id, id));
+    },
+    meta: {
+      invalidates: [["ward-events"]],
+    },
+  });
   // logger.log("WardEventsList::", data);
   if (isLoading) {
     return (
@@ -48,7 +78,7 @@ export function WardEventsList() {
   if (!data?.result || data.result.length === 0) {
     return (
       <View style={styles.centered}>
-        <CheckUpdates />
+        <RefreshWardEvents />
         <NoDataScreen
           listName="ward  data events"
           message=""
@@ -75,7 +105,7 @@ export function WardEventsList() {
         keyExtractor={(item) => item.id}
         ListHeaderComponent={() => (
           <View style={{ marginBottom: 8 }}>
-            <CheckUpdates />
+            <WardsEventsHheaders />
           </View>
         )}
         renderItem={({ item }) => (
@@ -85,18 +115,20 @@ export function WardEventsList() {
               <Text style={styles.timestamp}>{new Date(item.timestamp).toLocaleString()}</Text>
               <Text style={styles.status}>Status: {item.syncStatus}</Text>
               {item.wardCode && <Text>Ward: {item.wardCode}</Text>}
-
+              <Button onPress={() => unsyncMutation.mutate({ id: item.id })}>
+                Set Not Synced
+              </Button>
+              <Button onPress={() => unsyncMutation.mutate({ id: item.id })}>Set Not Synced</Button>
               {item.oldData && (
                 <View style={styles.dataSection}>
                   <Text style={styles.dataLabel}>Previous:</Text>
-                  <Text style={styles.dataText}>{item.oldData}</Text>
+                  <Text style={styles.dataText}>{item.oldData.split("geom")[0]}</Text>
                 </View>
               )}
-
               {item.newData && (
                 <View style={styles.dataSection}>
                   <Text style={styles.dataLabel}>Current:</Text>
-                  <Text style={styles.dataText}>{item.newData}</Text>
+                  <Text style={styles.dataText}>{item.newData.split("geom")[0]}</Text>
                 </View>
               )}
             </Card.Content>
@@ -137,16 +169,16 @@ const styles = StyleSheet.create({
   dataSection: {
     marginTop: 8,
     padding: 8,
-    backgroundColor: 'rgba(0,0,0,0.05)',
+    backgroundColor: "rgba(0,0,0,0.05)",
     borderRadius: 4,
   },
   dataLabel: {
     fontSize: 12,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 4,
   },
   dataText: {
     fontSize: 11,
-    fontFamily: 'monospace',
+    fontFamily: "monospace",
   },
 });

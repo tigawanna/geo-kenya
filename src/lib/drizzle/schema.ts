@@ -99,8 +99,17 @@ export const WardUpdateZodSchema = z.object({
   event: z.enum(["CREATE", "UPDATE", "DELETE"]),
 });
 
+export const wardUpdatesDataCodec = z.codec(
+  WardUpdateZodSchema.array(), // output schema: Date object
+  z.string(), // input schema:  string
+  {
+    decode: (dataAsArrayOfObject) => JSON.stringify(dataAsArrayOfObject),
+    encode: (dataAsString) => JSON.parse(dataAsString),
+  }
+);
+
 export const WardUpdatesZodSchema = createInsertSchema(wardUpdates).extend({
-  data: z.array(WardUpdateZodSchema),
+  data: wardUpdatesDataCodec,
 });
 
 export const wardDataPayload = z.codec(
