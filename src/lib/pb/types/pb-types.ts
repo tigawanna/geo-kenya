@@ -12,9 +12,10 @@
   // === end of custom type ===
 // === start of custom type ===
   // WardsUpdates.WardsUpdatesData.data
-  export type WardsUpdatesData = Array<{
- 
-  }>;
+  export type WardsUpdatesData = {
+	changes:Array<{
+  
+  }>};
   // === end of custom type ===
 
 /**

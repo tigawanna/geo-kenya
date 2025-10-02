@@ -33,7 +33,7 @@ export function CheckRemoteUpdates() {
               <Text variant="bodySmall" style={{fontWeight: "bold"}}>
                 Data:
               </Text>
-              <Text variant="bodySmall" style={{fontFamily: "monospace"}}>
+              <Text variant="bodySmall" style={{fontFamily: "monospace",padding:12}}>
                 {JSON.stringify(update.data, null, 2)}
               </Text>
             </ScrollView>

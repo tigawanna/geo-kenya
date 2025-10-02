@@ -1,19 +1,11 @@
 import { db } from "@/lib/drizzle/client";
-import { wardUpdates, WardUpdatesSelect, WardUpdatesZodSchema } from "@/lib/drizzle/schema";
+import { wardUpdates } from "@/lib/drizzle/schema";
 import { WardsUpdatesResponse } from "@/lib/pb/types/pb-types";
 import { pbResponeErrorTrap } from "@/lib/pb/utils/errors";
 import { logger } from "@/utils/logger";
-import { z } from "zod";
+
 
 const EXPO_PUBLIC_SYNC_URL = process.env.EXPO_PUBLIC_SYNC_URL;
-
-// const wardUpdatesResponseSchema = z.object({
-//   page: z.number(),
-//   perPage: z.number(),
-//   totalPages: z.number(),
-//   totalItems: z.number(),
-//   items: z.array(WardUpdatesZodSchema),
-// });
 
 export interface WardsUpdatesShape {
   page: number;
@@ -34,7 +26,7 @@ export async function pullUpdates() {
       .get();
     const syncUrl = new URL("/api/collections/wards_updates/records", EXPO_PUBLIC_SYNC_URL);
     if (lastLocalUpdates) {
-      //   syncUrl.searchParams.set("filter", `(version>${lastLocalUpdates.version})`);
+        syncUrl.searchParams.set("filter", `(version>${lastLocalUpdates.version??0})`);
       syncUrl.searchParams.set("sort", "-version");
       syncUrl.searchParams.set("skipTotal", "true");
     }
