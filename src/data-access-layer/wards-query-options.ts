@@ -130,7 +130,7 @@ export function getWardByIdQueryOptions({ id }: GetWardByIdProps) {
         const query = await db
           .select({
             ...getTableColumns(kenyaWards),
-            geom: sql`AsGeoJSON(${kenyaWards.geom})`,
+            geom: sql<string>`AsGeoJSON(${kenyaWards.geom})`,
           })
           .from(kenyaWards)
           .where(eq(kenyaWards.id, id))

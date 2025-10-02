@@ -81,6 +81,7 @@ export const WardsEventsResponseZodSchema = baseResponseSchema.extend({
     event_type: z.enum(['INSERT', 'UPDATE', 'DELETE']),
     ward_id: z.number().optional(),
     client_id: z.string().optional(),
+    client_event_id: z.string().optional(),
     approved: z.boolean().optional(),
     old_data: z.union([z.record(z.string(), z.any()), z.array(z.any()), z.null()]).optional(),
     new_data: z.union([z.record(z.string(), z.any()), z.array(z.any()), z.null()]).optional()
@@ -91,6 +92,7 @@ export const WardsEventsCreateZodSchema = baseCreateSchema.extend({
     event_type: z.enum(['INSERT', 'UPDATE', 'DELETE']),
     ward_id: z.number().optional(),
     client_id: z.string().optional(),
+    client_event_id: z.string().optional(),
     approved: z.boolean().optional(),
     old_data: z.union([z.record(z.string(), z.any()), z.array(z.any()), z.null()]).optional(),
     new_data: z.union([z.record(z.string(), z.any()), z.array(z.any()), z.null()]).optional()
@@ -103,6 +105,7 @@ export const WardsEventsUpdateZodSchema = baseUpdateSchema.extend({
     'ward_id+': z.number().optional(),
     'ward_id-': z.number().optional(),
     client_id: z.string().optional(),
+    client_event_id: z.string().optional(),
     approved: z.boolean().optional(),
     old_data: z.union([z.record(z.string(), z.any()), z.array(z.any()), z.null()]).optional(),
     new_data: z.union([z.record(z.string(), z.any()), z.array(z.any()), z.null()]).optional()

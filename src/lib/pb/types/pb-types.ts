@@ -1,22 +1,18 @@
 // === start of custom type ===
-  // WardsEvents.WardsEventsOld_data.old_data
-  export type WardsEventsOld_data = Array<{
- 
-  }>;
-  // === end of custom type ===
+
+import { WardItem } from "./extra-types";
+
+// WardsEvents.WardsEventsOld_data.old_data
+export type WardsEventsOld_data = Array<WardItem>;
+// === end of custom type ===
 // === start of custom type ===
-  // Wards.WardsData.data
-  export type WardsData = Array<{
- 
-  }>;
-  // === end of custom type ===
+// Wards.WardsData.data
+export type WardsData = Array<WardItem>;
+// === end of custom type ===
 // === start of custom type ===
-  // WardsUpdates.WardsUpdatesData.data
-  export type WardsUpdatesData = {
-	changes:Array<{
-  
-  }>};
-  // === end of custom type ===
+// WardsUpdates.WardsUpdatesData.data
+export type WardsUpdatesData = { changes: Array<WardItem> };
+// === end of custom type ===
 
 /**
  * This file was @generated using typed-pocketbase
@@ -531,6 +527,7 @@ export interface WardsEventsResponse extends BaseCollectionResponse {
 	event_type: 'INSERT' | 'UPDATE' | 'DELETE';
 	ward_id: number;
 	client_id: string;
+	client_event_id: string;
 	approved: boolean;
 	old_data?: WardsEventsOld_data
 	new_data: Record<string, any> | Array<any> | null;
@@ -541,6 +538,7 @@ export interface WardsEventsCreate extends BaseCollectionCreate {
 	event_type: 'INSERT' | 'UPDATE' | 'DELETE';
 	ward_id?: number;
 	client_id?: string;
+	client_event_id?: string;
 	approved?: boolean;
 	old_data?: WardsEventsOld_data
 	new_data?: Record<string, any> | Array<any> | null;
@@ -553,6 +551,7 @@ export interface WardsEventsUpdate extends BaseCollectionUpdate {
 	'ward_id+'?: number;
 	'ward_id-'?: number;
 	client_id?: string;
+	client_event_id?: string;
 	approved?: boolean;
 	old_data?: WardsEventsOld_data
 	new_data?: Record<string, any> | Array<any> | null;

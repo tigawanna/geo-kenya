@@ -19,7 +19,7 @@ const eventsSchema = WardsEventsCreateZodSchema.extend({
 });
 
 interface PushLocalEventsProps {}
-export async function pushLocalEvents() {
+export async function pushAllEvents() {
   try {
     if (!EXPO_PUBLIC_SYNC_URL) {
       throw new Error("No sync url provided");

@@ -1,9 +1,7 @@
-import { KenyaWardsSelect, WardEventsSelect } from "@/lib/drizzle/schema";
-import { CamelToSnakeKeys } from "@/utils/types";
-
-export type WardItem = CamelToSnakeKeys<KenyaWardsSelect>;
-
 // === start of custom type ===
+
+import { WardItem } from "./extra-types";
+
 // WardsEvents.WardsEventsOld_data.old_data
 export type WardsEventsOld_data = Array<WardItem>;
 // === end of custom type ===
