@@ -1,4 +1,4 @@
-import { pushLocalEvents } from "@/lib/expo-spatialite/sync/push_events";
+import { pushAllEvents } from "@/lib/expo-spatialite/sync/push_events";
 import { useSnackbar } from "@/lib/react-native-paper/snackbar/global-snackbar-store";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { StyleSheet, View } from "react-native";
@@ -9,7 +9,7 @@ export function WardsEventsHheaders() {
   const { showSnackbar } = useSnackbar();
   const pushEventsMutation = useMutation({
     mutationFn: async () => {
-      return pushLocalEvents();
+      return pushAllEvents();
     },
     onSuccess: (data) => {
       if (data.result) {

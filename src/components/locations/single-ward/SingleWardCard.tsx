@@ -18,7 +18,10 @@ export function SingleWardCard({ ward, loc, backButton, actions }: SingleWardCar
     <Card style={styles.card} testID="single-ward-card">
       <View style={styles.titleRow}>
         {backButton && <IconButton icon="arrow-left" onPress={() => router.back()} />}
-        <Text variant="headlineMedium" style={[styles.wardName, { color: theme.colors.onSurface }]} testID="single-ward-card-ward-name">
+        <Text
+          variant="headlineMedium"
+          style={[styles.wardName, { color: theme.colors.onSurface }]}
+          testID="single-ward-card-ward-name">
           {ward.ward}
         </Text>
         <Text
@@ -26,10 +29,13 @@ export function SingleWardCard({ ward, loc, backButton, actions }: SingleWardCar
           style={[styles.idText, { color: theme.colors.onPrimaryContainer }]}>
           #{ward.id}
         </Text>
-        <IconButton icon="pencil" onPress={() => {
-          console.log('Edit ward:', ward.id)
-          router.push(`/ward-by-id/${ward.id}/edit`)
-          }} />
+        <IconButton
+          icon="pencil"
+          onPress={() => {
+            console.log("Edit ward:", ward.id);
+            router.push(`/ward-by-id/${ward.id}/edit`);
+          }}
+        />
       </View>
 
       <View style={styles.infoSection}>
@@ -72,25 +78,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 8,
   },
-  actionRow: {
-    flexDirection: "row",
-
-    justifyContent: "space-between",
-    // marginBottom: 16,
-  },
   wardName: {
     fontWeight: "700",
     flex: 1,
-  },
-  rightSection: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  idBadge: {
-    borderRadius: 16,
-    paddingHorizontal: 12,
-    paddingVertical: 4,
   },
   idText: {
     fontWeight: "600",
@@ -99,20 +89,10 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   compactRow: {
-    flex:1,
-    flexDirection: "row",
-    alignContent: "center",
-    gap: 24,
-
-  },
-  compactItem: {
     flex: 1,
     flexDirection: "row",
     alignContent: "center",
-    gap: 8,
-  },
-  compactLabel: {
-    letterSpacing: 0.5,
+    gap: 24,
   },
   compactValue: {
     fontWeight: "500",

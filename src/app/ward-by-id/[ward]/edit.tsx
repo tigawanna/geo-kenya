@@ -3,7 +3,6 @@ import { WardForm } from "@/components/locations/forms/WardForm";
 import { LoadingFallback } from "@/components/state-screens/LoadingFallback";
 import { NoDataScreen } from "@/components/state-screens/NoDataScreen";
 import { getWardByIdQueryOptions } from "@/data-access-layer/wards-query-options";
-import { logger } from "@/utils/logger";
 import { useQuery } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { StyleSheet, View } from "react-native";

@@ -86,6 +86,7 @@ export interface WardUpdateData {
 // Infer the select types
 // export type CountrySelect = InferSelectModel<typeof country>;
 export type KenyaWardsSelect = InferSelectModel<typeof kenyaWards>;
+export type KenyaWardsInsert = InferSelectModel<typeof kenyaWards>;
 export type WardEventsSelect = InferSelectModel<typeof wardEvents>;
 export type WardUpdatesSelect = InferSelectModel<typeof wardUpdates>;
 
