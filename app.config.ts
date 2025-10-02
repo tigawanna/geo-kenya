@@ -56,7 +56,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     android: {
       ...config.android,
       adaptiveIcon: {
-        backgroundColor: "#E6F4FE",
+        // backgroundColor: "#693535ff",
         foregroundImage: "./assets/icons/adaptive-icon.png",
         monochromeImage: "./assets/icons/adaptive-icon.png",
       },
@@ -76,14 +76,13 @@ export default ({ config }: ConfigContext): ExpoConfig => {
           image: "./assets/icons/splash-icon-light.png",
           imageWidth: 200,
           resizeMode: "contain",
-          backgroundColor: "#ffffff",
+          backgroundColor: "#693535ff",
           dark: {
             image: "./assets/icons/splash-icon-dark.png",
-            backgroundColor: "#000000",
+            backgroundColor: "#390F0F",
           },
         },
       ],
-      "@maplibre/maplibre-react-native",
       [
         "expo-build-properties",
         {
@@ -95,6 +94,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
           },
         },
       ],
+      "@maplibre/maplibre-react-native",
       "expo-background-task",
     ],
     experiments: {

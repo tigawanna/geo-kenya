@@ -4,23 +4,18 @@
  
   }>;
   // === end of custom type ===
-
-
 // === start of custom type ===
   // Wards.WardsData.data
   export type WardsData = Array<{
  
   }>;
   // === end of custom type ===
-
-
 // === start of custom type ===
   // WardsUpdates.WardsUpdatesData.data
   export type WardsUpdatesData = Array<{
  
   }>;
   // === end of custom type ===
-
 
 /**
  * This file was @generated using typed-pocketbase
@@ -546,7 +541,7 @@ export interface WardsEventsCreate extends BaseCollectionCreate {
 	ward_id?: number;
 	client_id?: string;
 	approved?: boolean;
-	old_data?: Record<string, any> | Array<any> | null;
+	old_data?: WardsEventsOld_data
 	new_data?: Record<string, any> | Array<any> | null;
 }
 
@@ -558,7 +553,7 @@ export interface WardsEventsUpdate extends BaseCollectionUpdate {
 	'ward_id-'?: number;
 	client_id?: string;
 	approved?: boolean;
-	old_data?: Record<string, any> | Array<any> | null;
+	old_data?: WardsEventsOld_data
 	new_data?: Record<string, any> | Array<any> | null;
 }
 
@@ -581,7 +576,9 @@ export interface WardsUpdatesResponse extends BaseCollectionResponse {
 	created_by: string;
 	description: string;
 	ready: boolean;
-	data?: WardsData
+	data?: WardsUpdatesData
+	updated: string;
+	created: string;
 }
 
 export interface WardsUpdatesCreate extends BaseCollectionCreate {
@@ -591,6 +588,8 @@ export interface WardsUpdatesCreate extends BaseCollectionCreate {
 	description?: string;
 	ready?: boolean;
 	data?: WardsUpdatesData
+	updated?: string | Date;
+	created?: string | Date;
 }
 
 export interface WardsUpdatesUpdate extends BaseCollectionUpdate {
@@ -601,7 +600,9 @@ export interface WardsUpdatesUpdate extends BaseCollectionUpdate {
 	created_by?: string;
 	description?: string;
 	ready?: boolean;
-	data?: WardsData
+	data?: WardsUpdatesData
+	updated?: string | Date;
+	created?: string | Date;
 }
 
 export interface WardsUpdatesCollection {

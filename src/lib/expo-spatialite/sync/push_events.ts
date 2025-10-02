@@ -1,10 +1,12 @@
 import { db } from "@/lib/drizzle/client";
-import { wardDataPayload, wardEvents, wardEventType } from "@/lib/drizzle/schema";
+import { wardDataPayload, wardEvents } from "@/lib/drizzle/schema";
 import { WardsEventsCreateZodSchema } from "@/lib/pb/types/pb-zod";
+import { pbResponeErrorTrap } from "@/lib/pb/utils/errors";
 import { logger } from "@/utils/logger";
 import { and, eq, or } from "drizzle-orm";
 import { z } from "zod";
-import { fetch } from "expo/fetch";
+
+// import { fetch } from "expo/fetch";
 
 const EXPO_PUBLIC_SYNC_URL = process.env.EXPO_PUBLIC_SYNC_URL;
 
@@ -17,7 +19,7 @@ const eventsSchema = WardsEventsCreateZodSchema.extend({
 });
 
 interface PushLocalEventsProps {}
-export async function pushLocalEvents({}: PushLocalEventsProps) {
+export async function pushLocalEvents() {
   try {
     if (!EXPO_PUBLIC_SYNC_URL) {
       throw new Error("No sync url provided");
@@ -41,7 +43,7 @@ export async function pushLocalEvents({}: PushLocalEventsProps) {
         new_data: newData,
         event_type: eventType,
         ward_id: wardId,
-        event_id: id,
+        event_id: id
       };
     });
 
@@ -82,21 +84,18 @@ export async function sendAnEvent({ rawEvent }: SendAnEventProps) {
     const { data: parsedEvent, error } = eventsSchema.safeParse(rawEvent);
     if (error) {
       const message = z.prettifyError(error);
-      console.log("error parsing events", error);
       throw message;
     }
     const syncUpUrl = new URL("/api/collections/wards_events/records", EXPO_PUBLIC_SYNC_URL);
-    logger.log("syncUpUrl", syncUpUrl.toString());
     const response = await fetch(syncUpUrl.toString(), {
-    //   method: "POST",
-    //   body: JSON.stringify(parsedEvent),
+      method: "POST",
+      body: JSON.stringify(parsedEvent),
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
-    logger.log("ward updates response", response);
-    if (!response.ok) {
-      throw new Error(response.statusText);
-    }
-    const responseData = await response.json();
-    logger.log("ward updates response", responseData);
+
+    await pbResponeErrorTrap(response)
     if (rawEvent.event_id) {
       await db
         .update(wardEvents)
@@ -112,9 +111,10 @@ export async function sendAnEvent({ rawEvent }: SendAnEventProps) {
       error: null,
     };
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : JSON.stringify(error);
     logger.log(
       `something went wrong syncing ${rawEvent.event_type} event ${rawEvent.event_id}`,
-      error
+      errorMessage
     );
     if (rawEvent.event_id) {
       await db
@@ -128,7 +128,7 @@ export async function sendAnEvent({ rawEvent }: SendAnEventProps) {
     }
     return {
       result: null,
-      error: error instanceof Error ? error.message : JSON.stringify(error),
+      error: errorMessage,
     };
   }
 }
