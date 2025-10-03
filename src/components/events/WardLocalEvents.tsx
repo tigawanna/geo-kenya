@@ -1,32 +1,28 @@
 import { getWardEventsQueryOptions } from "@/data-access-layer/ward-events-queries";
-import { db } from "@/lib/drizzle/client";
-import { wardEvents } from "@/lib/drizzle/schema";
 import { sendAnEvent, SendAnEventProps } from "@/lib/expo-spatialite/sync/push_events";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { eq } from "drizzle-orm";
 import { ActivityIndicator, FlatList, StyleSheet, View } from "react-native";
 import { Button, Card, Text } from "react-native-paper";
 import { getMaterialIconName } from "../default/ui/icon-symbol";
-import { NoDataScreen } from "../state-screens/NoDataScreen";
-import { WardMiniCard } from "./WardMiniCard";
-import { RefreshWardEvents, WardsEventsHheaders } from "./WardsEventsHheaders";
 import { DiffView } from "../shared/DiffView";
+import { NoDataScreen } from "../state-screens/NoDataScreen";
+import { RefreshWardEvents, WardsEventsHeaders } from "./WardsEventsHheaders";
 
-export function WardEventsList() {
+export function WardLocalEvents() {
   const { data, isLoading, error, isRefetching, refetch } = useQuery(getWardEventsQueryOptions());
-  const unsyncMutation = useMutation({
-    mutationFn: async ({ id }: { id: string }) => {
-      return db
-        .update(wardEvents)
-        .set({
-          syncStatus: "PENDING",
-        })
-        .where(eq(wardEvents.id, id));
-    },
-    meta: {
-      invalidates: [["ward-events"]],
-    },
-  });
+  // const unsyncMutation = useMutation({
+  //   mutationFn: async ({ id }: { id: string }) => {
+  //     return db
+  //       .update(wardEvents)
+  //       .set({
+  //         syncStatus: "PENDING",
+  //       })
+  //       .where(eq(wardEvents.id, id));
+  //   },
+  //   meta: {
+  //     invalidates: [["ward-events"]],
+  //   },
+  // });
   const pushEventMutation = useMutation({
     mutationFn: async (vars: SendAnEventProps) => {
       sendAnEvent(vars);
@@ -96,6 +92,9 @@ export function WardEventsList() {
     );
   }
 
+  const pending_syncs = data.result.some(
+    (event) => event.syncStatus === "PENDING" || event.syncStatus === "FAILED"
+  );
   return (
     <View style={styles.container}>
       <FlatList
@@ -103,7 +102,7 @@ export function WardEventsList() {
         keyExtractor={(item) => item.id}
         ListHeaderComponent={() => (
           <View style={{ marginBottom: 8 }}>
-            <WardsEventsHheaders />
+            <WardsEventsHeaders pendingSyncs={pending_syncs}/>
           </View>
         )}
         renderItem={({ item }) => (
@@ -117,29 +116,31 @@ export function WardEventsList() {
                   {item.wardCode ? <Text>Ward: {item.wardCode}</Text> : null}
                 </View>
                 <View>
-                  <Button
+                  {/* <Button
                     icon={getMaterialIconName("undo")}
                     loading={unsyncMutation.isPending}
                     onPress={() => unsyncMutation.mutate({ id: item.id })}>
                     unsync
-                  </Button>
-                  <Button
-                    icon={getMaterialIconName("publish")}
-                    loading={pushEventMutation.isPending}
-                    onPress={() =>
-                      pushEventMutation.mutate({
-                        rawEvent: {
-                          event_id: item.id,
-                          event_type: item.eventType,
-                          old_data: item.oldData,
-                          new_data: item.newData,
-                          ward_id: item.wardId,
-                          eventSource: item.eventSource,
-                        },
-                      })
-                    }>
-                    push
-                  </Button>
+                  </Button> */}
+                  {item.syncStatus === "PENDING" || item.syncStatus === "FAILED" ? (
+                    <Button
+                      icon={getMaterialIconName("publish")}
+                      loading={pushEventMutation.isPending}
+                      onPress={() =>
+                        pushEventMutation.mutate({
+                          rawEvent: {
+                            event_id: item.id,
+                            event_type: item.eventType,
+                            old_data: item.oldData,
+                            new_data: item.newData,
+                            ward_id: item.wardId,
+                            eventSource: item.eventSource,
+                          },
+                        })
+                      }>
+                      push
+                    </Button>
+                  ) : null}
                 </View>
               </View>
               <DiffView

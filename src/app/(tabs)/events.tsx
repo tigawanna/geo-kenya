@@ -1,4 +1,4 @@
-import { WardEventsList } from "@/components/events/WardEventsList";
+import { WardLocalEvents } from "@/components/events/WardLocalEvents";
 import { StyleSheet } from "react-native";
 import { Surface } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -7,7 +7,7 @@ export default function WardEventsScreen() {
   const { top } = useSafeAreaInsets();
   return (
     <Surface style={{ ...styles.container, paddingTop: top }}>
-      <WardEventsList />
+      <WardLocalEvents />
     </Surface>
   );
 }
