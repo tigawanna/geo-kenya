@@ -27,7 +27,7 @@ export class ExpoSpatialiteDrizzle {
         sqlInput.startsWith("insert") ||
         sqlInput.startsWith("delete")
       ) {
-        logger.log(" sqlInput.includes(update) :: executeStatement");
+        // logger.log(" sqlInput.includes(update) :: executeStatement");
 
         await ExpoSpatialiteModule.executeStatement(sql, params);
         return { rows: [], columns: [] };
@@ -35,12 +35,12 @@ export class ExpoSpatialiteDrizzle {
 
       switch (method) {
         case "run":
-          logger.log("RUN :: executeStatement");
+          // logger.log("RUN :: executeStatement");
           await ExpoSpatialiteModule.executeStatement(sql, params);
           return { rows: [], columns: [] };
 
         case "get":
-          logger.log("GET :: executeQuery");
+          // logger.log("GET :: executeQuery");
           const getResult = await ExpoSpatialiteModule.executeQuery(sql, params);
           const sampleRow = getResult?.data?.[0];
           if(!sampleRow) return { rows: [], columns: [] };
@@ -51,7 +51,7 @@ export class ExpoSpatialiteDrizzle {
         case "all":
         case "values":
         default:
-          logger.log("DEAFULT :: executeQuery");
+          // logger.log("DEAFULT :: executeQuery");
           const allResult = await ExpoSpatialiteModule.executeQuery(sql, params);
           const allRows = allResult.data.map((row: { [key: string]: any }) => Object.values(row));
           const sampleAllRow = allResult?.data?.[0];
