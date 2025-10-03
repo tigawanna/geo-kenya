@@ -6,7 +6,7 @@ import { getMaterialIconName } from "../default/ui/icon-symbol";
 import { pullUpdates } from "@/lib/expo-spatialite/sync/pull_updates";
 import { timestampTolaclTime } from "@/lib/pb/utils/dates";
 
-export function CheckRemoteUpdates() {
+export function WardRemoteUpdates() {
   const theme = useTheme();
   const { data, refetch, isRefetching } = useQuery({
     queryKey: ["ward-updates"],
@@ -29,11 +29,11 @@ export function CheckRemoteUpdates() {
             <Text variant="titleMedium">Version: {update.version}</Text>
             <Text variant="bodyMedium">Created: {timestampTolaclTime(update.created)}</Text>
             {update.description && <Text variant="bodySmall">{update.description}</Text>}
-            <ScrollView style={{backgroundColor: theme.colors.surface}}>
-              <Text variant="bodySmall" style={{fontWeight: "bold"}}>
+            <ScrollView style={{ backgroundColor: theme.colors.surface }}>
+              <Text variant="bodySmall" style={{ fontWeight: "bold" }}>
                 Data:
               </Text>
-              <Text variant="bodySmall" style={{fontFamily: "monospace",padding:12}}>
+              <Text variant="bodySmall" style={{ fontFamily: "monospace", padding: 12 }}>
                 {JSON.stringify(update.data, null, 2)}
               </Text>
             </ScrollView>
