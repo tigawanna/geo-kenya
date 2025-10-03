@@ -2,7 +2,7 @@ import { Tabs } from "expo-router";
 import React from "react";
 
 import { HapticTab } from "@/components/default/haptic-tab";
-import { IconSymbol, MaterialIcon } from "@/components/default/ui/icon-symbol";
+import { IconSymbol, MaterialCommunityIcon, MaterialIcon } from "@/components/default/ui/icon-symbol";
 import { Platform } from "react-native";
 import { useTheme } from "react-native-paper";
 
@@ -34,14 +34,18 @@ export default function TabLayout() {
         options={{
           title: "Home",
           headerShown: false,
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcon size={28} name="home-map-marker" color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="explore"
         options={{
           title: "Explore",
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcon size={28} name="view-list" color={color} />
+          ),
         }}
       />
       <Tabs.Screen
