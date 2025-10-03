@@ -21,11 +21,11 @@ export const unstable_settings = {
 };
 
 
-// let resolver: (() => void) | null;
-// let initilializerPromise = new Promise<void>((resolve) => {
-//   resolver = resolve;
-// });
-// initializePushEventsBackgroundTask(initilializerPromise);
+let resolver: (() => void) | null;
+let initilializerPromise = new Promise<void>((resolve) => {
+  resolver = resolve;
+});
+initializePushEventsBackgroundTask(initilializerPromise);
 
 function onAppStateChange(status: AppStateStatus) {
   // React Query already supports in web browser refetch on window focus by default
@@ -39,13 +39,13 @@ export default function RootLayout() {
   useAppState(onAppStateChange);
   const { dynamicColors } = useSettingsStore();
   const { colorScheme, paperTheme } = useThemeSetup(dynamicColors);
-    // useEffect(() => {
-    //   resolver?.();
-    //   TaskManager.getRegisteredTasksAsync().then((tasks) => {
-    //     console.log("tasks", tasks);
-    //   });
+    useEffect(() => {
+      resolver?.();
+      TaskManager.getRegisteredTasksAsync().then((tasks) => {
+        console.log("tasks", tasks);
+      });
 
-    // }, []);
+    }, []);
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>

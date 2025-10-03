@@ -15,6 +15,7 @@ export async function initializePushEventsBackgroundTask(innerMountedpromise: Pr
     logger.log("background pish events task finished");
   });
   if (!(await TaskManager.isTaskDefined(SYNC_EVENTS_BACKGROUND_TASK_IDENTIFIER))) {
+    logger.log("registering background task");
     await BackgroundTask.registerTaskAsync(SYNC_EVENTS_BACKGROUND_TASK_IDENTIFIER, {
       minimumInterval: MINIMUM_INTERVAL,
     });
