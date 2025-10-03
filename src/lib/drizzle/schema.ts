@@ -1,8 +1,9 @@
 import { sqliteTable, integer, text, blob, real } from "drizzle-orm/sqlite-core";
-import { type InferSelectModel, sql } from "drizzle-orm";
+import { InferInsertModel, type InferSelectModel, sql } from "drizzle-orm";
 import { multiPolygon } from "./drizzlespatialite-types";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+import { WardChangesType } from "../pb/types/extra-types";
 
 export const kenyaWards = sqliteTable("kenya_wards", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -66,7 +67,7 @@ export const wardEvents = sqliteTable("kenya_ward_events", {
 export const wardUpdates = sqliteTable("kenya_ward_updates", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   version: integer("version").notNull(),
-  data: text("data").$type<WardUpdateData[]>().notNull(), // Custom type for JSON array
+  data: text("data").$type<WardChangesType>().notNull(), // Custom type for JSON array
   createdAt: text("created_at")
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
@@ -89,6 +90,8 @@ export type KenyaWardsSelect = InferSelectModel<typeof kenyaWards>;
 export type KenyaWardsInsert = InferSelectModel<typeof kenyaWards>;
 export type WardEventsSelect = InferSelectModel<typeof wardEvents>;
 export type WardUpdatesSelect = InferSelectModel<typeof wardUpdates>;
+
+export type WardUpdatesInsert = InferInsertModel<typeof wardUpdates>;
 
 export const WardsZodSchema = createInsertSchema(kenyaWards).extend({
   id: z.number().int().positive().optional(),

@@ -14,18 +14,24 @@ import { queryClient } from "@/lib/tanstack/query/client";
 import React, { useEffect } from "react";
 import { PaperProvider } from "react-native-paper";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { initializePushEventsBackgroundTask } from "@/lib/expo-spatialite/sync/background-task";
-import * as TaskManager from "expo-task-manager"
+import {
+  initializePullEventsBackgroundTask,
+  initializePushEventsBackgroundTask,
+} from "@/lib/expo-spatialite/sync/background-task";
+import * as TaskManager from "expo-task-manager";
 export const unstable_settings = {
   anchor: "(tabs)",
 };
 
-
 let resolver: (() => void) | null;
 let initilializerPromise = new Promise<void>((resolve) => {
-  resolver = resolve;
+  resolver = () => {
+    console.log("Initializer promise resolved");
+    resolve();
+  };
 });
 initializePushEventsBackgroundTask(initilializerPromise);
+initializePullEventsBackgroundTask(initilializerPromise);
 
 function onAppStateChange(status: AppStateStatus) {
   // React Query already supports in web browser refetch on window focus by default
@@ -39,13 +45,12 @@ export default function RootLayout() {
   useAppState(onAppStateChange);
   const { dynamicColors } = useSettingsStore();
   const { colorScheme, paperTheme } = useThemeSetup(dynamicColors);
-    useEffect(() => {
-      resolver?.();
-      TaskManager.getRegisteredTasksAsync().then((tasks) => {
-        console.log("tasks", tasks);
-      });
-
-    }, []);
+  useEffect(() => {
+    resolver?.();
+    TaskManager.getRegisteredTasksAsync().then((tasks) => {
+      console.log("tasks", tasks);
+    });
+  }, []);
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
