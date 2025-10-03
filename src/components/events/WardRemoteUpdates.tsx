@@ -1,7 +1,7 @@
 import { logger } from "@/utils/logger";
 import { useQuery } from "@tanstack/react-query";
-import { StyleSheet, View, ScrollView } from "react-native";
-import { Text, IconButton, Card, useTheme } from "react-native-paper";
+import { StyleSheet, View, FlatList } from "react-native";
+import { Text, IconButton, Card, useTheme, Divider } from "react-native-paper";
 import { getMaterialIconName } from "../default/ui/icon-symbol";
 import { pullUpdates } from "@/lib/expo-spatialite/sync/pull_updates";
 import { timestampTolaclTime } from "@/lib/pb/utils/dates";
@@ -12,63 +12,138 @@ export function WardRemoteUpdates() {
     queryKey: ["ward-updates"],
     queryFn: pullUpdates,
   });
-  // logger.log("CheckUpdates::", data);
-  return (
-    <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <Text variant="titleLarge">Ward Updates</Text>
-        <IconButton
-          loading={isRefetching}
-          icon={getMaterialIconName("refresh")}
-          onPress={refetch}
-        />
-      </View>
-      {data?.result?.items.map((update, index) => (
-        <Card key={index} style={styles.card}>
-          <Card.Content>
-            <Text variant="titleMedium">Version: {update.version}</Text>
-            <Text variant="bodyMedium">Created: {timestampTolaclTime(update.created)}</Text>
-            {update.description && <Text variant="bodySmall">{update.description}</Text>}
-            <ScrollView style={{ backgroundColor: theme.colors.surface }}>
-              <Text variant="bodySmall" style={{ fontWeight: "bold" }}>
-                Data:
-              </Text>
-              <Text variant="bodySmall" style={{ fontFamily: "monospace", padding: 12 }}>
-                {JSON.stringify(update.data, null, 2)}
-              </Text>
-            </ScrollView>
-          </Card.Content>
-        </Card>
-      ))}
-      {/* {data?.result.} */}
-      {data?.error && (
-        <Card style={styles.errorCard}>
-          <Card.Content>
-            <Text variant="titleMedium" style={{ color: theme.colors.error }}>
-              Error
+
+  const renderUpdateItem = ({ item: update, index }: { item: any; index: number }) => (
+    <Card key={index} style={styles.card} elevation={2}>
+      <Card.Content>
+        <View style={styles.updateHeader}>
+          <Text variant="titleMedium" style={styles.version}>v{update.version}</Text>
+          <Text variant="bodySmall" style={styles.date}>
+            {timestampTolaclTime(update.created)}
+          </Text>
+        </View>
+        
+        {update.description && (
+          <>
+            <Divider style={styles.divider} />
+            <Text variant="bodyMedium" style={styles.description}>
+              {update.description}
             </Text>
-            <Text variant="bodyMedium">{data.error}</Text>
-          </Card.Content>
-        </Card>
-      )}
-    </ScrollView>
+          </>
+        )}
+        
+        <Divider style={styles.divider} />
+        <View style={styles.dataSection}>
+          <Text variant="labelMedium" style={styles.dataLabel}>Update Data:</Text>
+          <View style={[styles.dataContainer, { backgroundColor: theme.colors.surfaceVariant }]}>
+            <Text variant="bodySmall" style={styles.dataText}>
+              {JSON.stringify(update.data, null, 2)}
+            </Text>
+          </View>
+        </View>
+      </Card.Content>
+    </Card>
+  );
+
+  const renderHeader = () => (
+    <View style={styles.header}>
+      <View>
+        <Text variant="headlineSmall" style={styles.title}>Ward Updates</Text>
+        <Text variant="bodyMedium" style={styles.subtitle}>
+          Remote updates available for your ward data
+        </Text>
+      </View>
+      <IconButton
+        loading={isRefetching}
+        icon={getMaterialIconName("refresh")}
+        onPress={refetch}
+        mode="contained-tonal"
+      />
+    </View>
+  );
+
+  const renderError = () => (
+    <Card style={styles.errorCard} elevation={1}>
+      <Card.Content>
+        <Text variant="titleMedium" style={{ color: theme.colors.error }}>
+          Error Loading Updates
+        </Text>
+        <Text variant="bodyMedium">{data?.error}</Text>
+      </Card.Content>
+    </Card>
+  );
+
+  return (
+    <View style={styles.container}>
+      <FlatList
+        data={data?.result?.items || []}
+        renderItem={renderUpdateItem}
+        keyExtractor={(item, index) => `${item.version}-${index}`}
+        ListHeaderComponent={renderHeader}
+        ListFooterComponent={data?.error ? renderError : null}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.listContent}
+      />
+    </View>
   );
 }
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  listContent: {
     padding: 16,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 16,
+    marginBottom: 20,
+  },
+  title: {
+    fontWeight: 'bold',
+  },
+  subtitle: {
+    opacity: 0.7,
+    marginTop: 4,
   },
   card: {
+    marginBottom: 12,
+  },
+  updateHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  version: {
+    fontWeight: 'bold',
+  },
+  date: {
+    opacity: 0.6,
+  },
+  divider: {
+    marginVertical: 12,
+  },
+  description: {
+    lineHeight: 20,
+  },
+  dataSection: {
+    marginTop: 8,
+  },
+  dataLabel: {
     marginBottom: 8,
+    fontWeight: 'bold',
+  },
+  dataContainer: {
+    padding: 12,
+    borderRadius: 8,
+  },
+  dataText: {
+    fontFamily: "monospace",
+    fontSize: 12,
+    lineHeight: 16,
   },
   errorCard: {
-    marginBottom: 8,
+    margin: 16,
   },
 });
