@@ -16,7 +16,7 @@ interface CurretWardProps {
   backButton?: boolean;
 }
 
-export function CurrentWard({ lat, lng,actions,backButton }: CurretWardProps) {
+export function CurrentWard({ lat, lng, actions, backButton }: CurretWardProps) {
   const theme = useTheme();
   const qc = useQueryClient();
   const { data, isPending, refetch, isRefetching } = useQuery(
@@ -27,7 +27,7 @@ export function CurrentWard({ lat, lng,actions,backButton }: CurretWardProps) {
   );
   //  logger.log(" == CurrentWard ==", { data });
   if (isPending) {
-    return <LoadingFallback />
+    return <LoadingFallback />;
   }
   if (!data?.result) {
     return (
@@ -89,7 +89,7 @@ export function CurrentWard({ lat, lng,actions,backButton }: CurretWardProps) {
   }
   return (
     <View style={{ ...styles.container }}>
-      <SingleWardCard ward={data.result} backButton={backButton} actions={actions}/>
+      <SingleWardCard ward={data.result} backButton={backButton} actions={actions} />
       <WardWithNeighborsMap wardId={data.result.id} />
     </View>
   );

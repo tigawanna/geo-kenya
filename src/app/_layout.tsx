@@ -6,13 +6,16 @@ import "react-native-reanimated";
 import { AppStateStatus, Platform } from "react-native";
 import { focusManager, QueryClientProvider } from "@tanstack/react-query";
 import { useAppState, useOnlineManager } from "@/lib/tanstack/query/react-native-setup-hooks";
-import { useSettingsStore } from "@/store/settings-store";
-import { useThemeSetup } from "@/hooks/theme/use-theme-setup";
+
 import { ExpoSpatialiteWrapper } from "@/lib/expo-spatialite/app-wrapper";
 import { GlobalSnackbar } from "@/lib/react-native-paper/snackbar/GlobalSnackbar";
 import { queryClient } from "@/lib/tanstack/query/client";
 import React, { useEffect } from "react";
+
+import { useSettingsStore } from "@/store/settings-store";
+import { useThemeSetup } from "@/hooks/theme/use-theme-setup";
 import { PaperProvider } from "react-native-paper";
+
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {
   initializePullEventsBackgroundTask,

@@ -48,7 +48,7 @@ export default function TabLayout() {
           ),
         }}
       />
-      <Tabs.Screen
+      {/* <Tabs.Screen
         name="events"
         options={{
           title: "Events",
@@ -63,7 +63,7 @@ export default function TabLayout() {
           title: "Updates",
           tabBarIcon: ({ color }) => <MaterialIcon size={28} name="network-ping" color={color} />,
         }}
-      />
+      /> */}
       <Tabs.Screen
         name="settings"
         options={{

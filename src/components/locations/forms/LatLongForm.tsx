@@ -12,15 +12,14 @@ interface LatLongFormProps {
 export function LatLongForm({ action, initLat, initLng }: LatLongFormProps) {
   const theme = useTheme();
   const { location, manuallySetLocation } = useDeviceLocation();
+  const [inputValue, setInputValue] = React.useState("");
 
-  const lat = location?.coords.latitude ?? initLat ?? 0;
-  const lng = location?.coords.longitude ?? initLng ?? 0;
-  const defaultValue = `${lat}, ${lng}`;
-
-  // const debouncedSearchTerm = useDebounce(inputValue, 3000);
+  const lat = location?.coords.latitude ?? initLat ?? -1.2921;
+  const lng = location?.coords.longitude ?? initLng ?? 36.8219;
+  const placeholder = `${lat.toFixed(3)}, ${lng.toFixed(3)}`;
 
   const [searchTerm, setSearchTerm, debouncer] = useDebouncedState(
-    defaultValue,
+    "",
     { wait: 3000 },
     (state) => ({
       isPending: state.isPending,
@@ -29,9 +28,10 @@ export function LatLongForm({ action, initLat, initLng }: LatLongFormProps) {
   );
 
   const handleInputChange = (text: string) => {
-    // setImmediateValue(text);
+    setInputValue(text);
     setSearchTerm(text);
   };
+
   useEffect(() => {
     if (searchTerm.includes(",")) {
       const [lat, lng] = searchTerm.split(",").map((val) => parseFloat(val.trim()) || 0);
@@ -42,12 +42,16 @@ export function LatLongForm({ action, initLat, initLng }: LatLongFormProps) {
   return (
     <View style={{ width: "100%", height: "100%", flex: 1 }}>
       <Searchbar
-        placeholder="-1.2921, 36.8219"
+        placeholder={placeholder}
         clearIcon={"close"}
         style={{ flex: 1 }}
         loading={debouncer.state.isPending}
         onChangeText={handleInputChange}
-        value={debouncer.state.lastArgs ?? defaultValue}
+        onClearIconPress={() => {
+          setInputValue("");
+          setSearchTerm("");
+        }}
+        value={inputValue}
       />
 
       <View
