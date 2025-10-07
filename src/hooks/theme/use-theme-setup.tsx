@@ -14,10 +14,12 @@ import { MaterialDynamicTheme, useMaterialDynamicColors } from "@/modules/expo-m
 // import { useThemeStore } from "@/stores/app-settings-store";
 import merge from "deepmerge";
 import { adaptNavigationTheme, MD3DarkTheme, MD3LightTheme } from "react-native-paper";
+import { logger } from "@/utils/logger";
 
 export function useThemeSetup(dynamicColors?: boolean) {
   // Get device-generated Material You theme
   const { theme: material3Theme } = useMaterialDynamicColors();
+  logger.log("material3Theme", material3Theme);
     // {fallbackSourceColor: Colors.light.primary},
   // Get stored theme preference
   const { theme: userThemePreference, isDarkMode } = useThemeStore();
