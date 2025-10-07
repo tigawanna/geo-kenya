@@ -57,55 +57,31 @@ export function getWardByLocation({ lat, lng }: GetWardByLocationProps) {
     queryKey: ["current-ward", lat, lng],
     queryFn: async () => {
       try {
-        //         const result = await executeQuery<KenyaWardsSelect>(`
-        // SELECT
-        //   "id",
-        //   "ward_code",
-        //   "ward",
-        //   "county",
-        //   "county_code",
-        //   "sub_county",
-        //   "constituency",
-        //   "constituency_code",
-        //   "minx",
-        //   "miny",
-        //   "maxx",
-        //   "maxy"
-        // FROM "kenya_wards" AS "kenyaWards"
-        // WHERE (
-        //   "kenyaWards"."minx" <= ${lng}
-        //   AND "kenyaWards"."maxx" >= ${lng}
-        //   AND "kenyaWards"."miny" <= ${lat}
-        //   AND "kenyaWards"."maxy" >= ${lat}
-        //   AND ST_Contains(
-        //     "kenyaWards"."geom",
-        //     MakePoint(36.8219, ${lat}, 4326)
-        //   )
-        // )
-        // LIMIT 1;
-        // `);
-        const result = await db.query.kenyaWards.findFirst({
-          columns: {
-            geom: false,
-          },
-          where: (fields, { and, sql, or }) =>
-            and(
-              // Fast bbox pre-filter
-              sql`${fields.minX} <= ${lng}`,
-              sql`${fields.maxX} >= ${lng}`,
-              sql`${fields.minY} <= ${lat}`,
-              sql`${fields.maxY} >= ${lat}`,
-              // Precise spatial match
-              sql`ST_Contains(${fields.geom}, MakePoint(${lng}, ${lat}, 4326))`
-            ),
-        });
+        const result = await executeQuery<KenyaWardsSelect & { geometry: string }>(
+          `
+            SELECT 
+              id, 
+              ward_code as wardCode, 
+              ward, 
+              county, 
+              county_code as countyCode, 
+              sub_county as subCounty, 
+              constituency, 
+              constituency_code as constituencyCode,
+              AsGeoJSON(geom) as geometry 
+            FROM kenya_wards
+            WHERE ST_Contains(geom, MakePoint(${lng}, ${lat}, 4326))
+            LIMIT 1
+          `
+        );
 
-        if (!result) {
+        const ward = result?.data?.[0];
+        if (!ward) {
           throw new Error("Ward not found");
         }
 
         return {
-          result,
+          result: ward,
           error: null,
         };
       } catch (e) {
@@ -115,6 +91,7 @@ export function getWardByLocation({ lat, lng }: GetWardByLocationProps) {
         };
       }
     },
+    enabled: lat !== 0 && lng !== 0,
     placeholderData: (prevData) => prevData,
   });
 }
