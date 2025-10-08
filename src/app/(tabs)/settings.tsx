@@ -1,10 +1,21 @@
 import { useSettingsStore, useThemeStore } from "@/store/settings-store";
-import { ScrollView, StyleSheet } from "react-native";
-import { Divider, List, Surface, Switch } from "react-native-paper";
+import { customTheme, type CustomThemeKey } from "@/constants/Colors";
+import { ScrollView, StyleSheet, View, TouchableOpacity } from "react-native";
+import { Divider, List, Surface, Switch, Icon, useTheme } from "react-native-paper";
 
 export default function Settings() {
+  const theme = useTheme()
   const { isDarkMode, toggleTheme } = useThemeStore();
-  const { dynamicColors, toggleDynamicColors } = useSettingsStore();
+  const { dynamicColors, toggleDynamicColors, colorScheme, setColorScheme } = useSettingsStore();
+
+  const colorSchemeOptions: Array<{ key: CustomThemeKey | null; color: string }> = [
+    { key: "default", color: "#6750A4" },
+    { key: "greenish", color: "#4CAF50" },
+    { key: "marronish", color: "#8D6E63" },
+    { key: "purplePinkish", color: "#E91E63" },
+    { key: "violetish", color: "#9C27B0" },
+    { key: "yellowish", color: "#FFC107" },
+  ];
 
   return (
     <Surface style={{ flex: 1, }}>
@@ -20,8 +31,34 @@ export default function Settings() {
             title="Dynamic Colors"
             description="Use Material You color palette"
             left={(props) => <List.Icon {...props} icon="palette" />}
-            right={() => <Switch value={dynamicColors} onValueChange={toggleDynamicColors} />}
+            right={() => <Switch value={dynamicColors} 
+            onValueChange={toggleDynamicColors} 
+            />}
           />
+          <List.Item
+            title="Color Scheme"
+            left={(props) => <List.Icon {...props} icon="palette-swatch" />}
+          />
+          <View style={styles.colorContainer}>
+            {colorSchemeOptions.map((option) => (
+              <TouchableOpacity
+                key={option.key || "system"}
+                onPress={() => setColorScheme(option.key)}
+                style={styles.colorDot}
+              >
+                <View
+                  style={[
+                    styles.colorCircle,
+                    { backgroundColor: option.color },
+                  ]}
+                >
+                  {colorScheme === option.key && (
+                    <Icon source="check" size={20} color={theme.colors.onPrimary} />
+                  )}
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
           <Divider />
         </List.Section>
 
@@ -66,5 +103,22 @@ const styles = StyleSheet.create({
   listSubHeader: {
     fontSize: 16,
     fontWeight: "bold",
+  },
+  colorContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    gap: 12,
+  },
+  colorDot: {
+    marginBottom: 4,
+  },
+  colorCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
