@@ -1,9 +1,10 @@
 import {
     Colors,
+    customTheme,
     defaultMaterial3PrimaryDarkTheme,
     defaultMaterial3PrimaryLightTheme,
 } from "@/constants/Colors";
-import { useThemeStore } from "@/store/settings-store";
+import { useSettingsStore, useThemeStore } from "@/store/settings-store";
 import {
   DarkTheme as NavigationDarkTheme,
   DefaultTheme as NavigationDefaultTheme,
@@ -16,28 +17,36 @@ import merge from "deepmerge";
 import { adaptNavigationTheme, MD3DarkTheme, MD3LightTheme } from "react-native-paper";
 import { logger } from "@/utils/logger";
 
-export function useThemeSetup(dynamicColors?: boolean) {
+export function useThemeSetup() {
   // Get device-generated Material You theme
   const { theme: material3Theme } = useMaterialDynamicColors();
   logger.log("material3Theme", material3Theme);
-    // {fallbackSourceColor: Colors.light.primary},
-  // Get stored theme preference
+  
+  // Get stored theme and color scheme preferences
   const { theme: userThemePreference, isDarkMode } = useThemeStore();
+  const { dynamicColors, colorScheme } = useSettingsStore();
 
   const { DarkTheme, LightTheme } = adaptNavigationTheme({
     reactNavigationLight: NavigationDefaultTheme,
     reactNavigationDark: NavigationDarkTheme,
   });
 
-  // Use Material You theme if available, otherwise fall back to custom theme
-  const lightThemeColors = dynamicColors
-    ? materialYouThemeOrMyTheme(material3Theme).light
-    : Colors.light;
-  const darkThemeColors = dynamicColors
-    ? materialYouThemeOrMyTheme(material3Theme).dark
-    : Colors.dark;
-  // const lightThemeColors = Colors.light;
-  // const darkThemeColors = Colors.dark;
+  // Determine theme colors based on colorScheme and dynamicColors
+  let lightThemeColors = Colors.light;
+  let darkThemeColors = Colors.dark;
+
+  if (colorScheme) {
+    // Use custom theme when colorScheme is selected
+    const customLight = customTheme[colorScheme].light;
+    const customDark = customTheme[colorScheme].dark;
+    lightThemeColors = { ...customLight, tint: customLight.tertiary, icon: customLight.onBackground };
+    darkThemeColors = { ...customDark, tint: customDark.tertiary, icon: customDark.onBackground };
+  } else if (dynamicColors) {
+    // Use Material You theme when System Default and dynamic colors enabled
+    const materialTheme = materialYouThemeOrMyTheme(material3Theme);
+    lightThemeColors = materialTheme.light;
+    darkThemeColors = materialTheme.dark;
+  }
 
   // Create combined themes (Material You or fallback)
   const lightBasedTheme = merge(LightTheme, {
@@ -71,8 +80,8 @@ function materialYouThemeOrMyTheme(theme: MaterialDynamicTheme) {
     };
   } else {
     return {
-      light: theme.light,
-      dark: theme.dark,
+      light: { ...theme.light, tint: theme.light.tertiary, icon: theme.light.onBackground },
+      dark: { ...theme.dark, tint: theme.dark.tertiary, icon: theme.dark.onBackground },
     };
   }
 }
