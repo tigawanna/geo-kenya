@@ -20,7 +20,7 @@ import { logger } from "@/utils/logger";
 export function useThemeSetup() {
   // Get device-generated Material You theme
   const { theme: material3Theme } = useMaterialDynamicColors();
-  logger.log("material3Theme", material3Theme);
+  // logger.log("material3Theme", material3Theme);
   
   // Get stored theme and color scheme preferences
   const { theme: userThemePreference, isDarkMode } = useThemeStore();
