@@ -12,7 +12,7 @@ export default function crash() {
         Press the button below to deliberately crash the app and test Firebase Crashlytics
         reporting.
       </Text>
-      <Button mode="contained" onPress={testCrash} icon="alert" style={styles.button}>
+      <Button mode="contained" onPress={()=>testCrash()} icon="alert" style={styles.button}>
         Crash App
       </Button>
     </Surface>

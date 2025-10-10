@@ -55,12 +55,12 @@ export default function RootLayout() {
   
   useEffect(() => {
     // Initialize Firebase Crashlytics
-    crashlytics().setCrashlyticsCollectionEnabled(true);
-    crashlytics().setAttribute("framework", "expo");
-    crashlytics().setAttribute("platform", Platform.OS);
-    crashlytics().setAttribute("environment", __DEV__ ? "development" : "production");
+    // crashlytics().setCrashlyticsCollectionEnabled(true);
+    // crashlytics().setAttribute("framework", "expo");
+    // crashlytics().setAttribute("platform", Platform.OS);
+    // crashlytics().setAttribute("environment", __DEV__ ? "development" : "production");
     
-    resolver?.();
+    // resolver?.();
     // TaskManager.getRegisteredTasksAsync().then((tasks) => {
     //   console.log("tasks", tasks);
     // });
