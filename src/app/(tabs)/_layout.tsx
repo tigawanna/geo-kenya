@@ -68,6 +68,14 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="crash"
+        options={{
+          // href: null,
+          title: "Updates",
+          tabBarIcon: ({ color }) => <MaterialIcon size={28} name="phone-bluetooth-speaker" color={color} />,
+        }}
+      />
+      <Tabs.Screen
         name="settings"
         options={{
           title: "Settings",

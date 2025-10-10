@@ -43,5 +43,4 @@ app-example
 /android
 *.apk
 .secrets
-google-services.json
-google-services.dev.json
+
