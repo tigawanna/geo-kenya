@@ -1,8 +1,8 @@
-import { checkIsPointInKenyaQueryOptions, getWardByIdQueryOptions } from "@/data-access-layer/wards-query-options";
+import { getWardByIdQueryOptions } from "@/data-access-layer/wards-query-options";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { Button, IconButton, useTheme } from "react-native-paper";
+import { Button, useTheme } from "react-native-paper";
 import { MaterialIcon } from "../../default/ui/icon-symbol";
 import { LoadingFallback } from "../../state-screens/LoadingFallback";
 import { NoDataScreen } from "../../state-screens/NoDataScreen";

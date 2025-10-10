@@ -11,6 +11,7 @@ import { ExpoSpatialiteWrapper } from "@/lib/expo-spatialite/app-wrapper";
 import { GlobalSnackbar } from "@/lib/react-native-paper/snackbar/GlobalSnackbar";
 import { queryClient } from "@/lib/tanstack/query/client";
 import React, { useEffect } from "react";
+import crashlytics from "@react-native-firebase/crashlytics";
 
 import { useThemeSetup } from "@/hooks/theme/use-theme-setup";
 import { useSettingsStore } from "@/store/settings-store";
@@ -51,11 +52,18 @@ export default function RootLayout() {
   const { dynamicColors } = useSettingsStore();
 
   const { colorScheme, paperTheme } = useThemeSetup();
+  
   useEffect(() => {
+    // Initialize Firebase Crashlytics
+    crashlytics().setCrashlyticsCollectionEnabled(true);
+    crashlytics().setAttribute("framework", "expo");
+    crashlytics().setAttribute("platform", Platform.OS);
+    crashlytics().setAttribute("environment", __DEV__ ? "development" : "production");
+    
     resolver?.();
-    TaskManager.getRegisteredTasksAsync().then((tasks) => {
-      console.log("tasks", tasks);
-    });
+    // TaskManager.getRegisteredTasksAsync().then((tasks) => {
+    //   console.log("tasks", tasks);
+    // });
   }, []);
 
   return (

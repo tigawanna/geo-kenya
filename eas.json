@@ -9,7 +9,8 @@
       "env": {
         "EXPO_NO_CACHE": "true",
         "EXPO_NO_GIT_STATUS": "true",
-        "APP_VARIANT": "development"
+        "APP_VARIANT": "development",
+        "EXPO_PUBLIC_USE_FIREBASE": "true"
       }
     },
     "preview": {
@@ -18,6 +19,7 @@
         "buildType": "apk"
       },
       "env": {
+        "EXPO_PUBLIC_USE_FIREBASE": "true",
         "EXPO_NO_CACHE": "true",
         "EXPO_NO_GIT_STATUS": "true",
         "APP_VARIANT": "preview",
@@ -41,8 +43,9 @@
         }
       }
     },
-    "production-apk": {
-      "distribution": "store"
+    "production": {
+      "distribution": "store",
+      "EXPO_PUBLIC_USE_FIREBASE": "true"
     }
   },
   "submit": {
