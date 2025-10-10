@@ -28,8 +28,7 @@ const getAppName = () => {
 
 export default ({ config }: ConfigContext): ExpoConfig => {
   const { name, slug } = getAppName();
-  console.log("APP NAME :: ",name)
-  console.log("APP SLUG :: ", slug)
+
   return {
     ...config,
     name: name,
@@ -76,7 +75,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
           image: "./assets/icons/splash-icon-light.png",
           imageWidth: 200,
           resizeMode: "contain",
-          backgroundColor: "#693535ff",
+          backgroundColor: "#534545ff",
           dark: {
             image: "./assets/icons/splash-icon-dark.png",
             backgroundColor: "#390F0F",
