@@ -1,4 +1,4 @@
-import { getWardByIdQueryOptions } from "@/data-access-layer/wards-query-options";
+import { checkIsPointInKenyaQueryOptions, getWardByIdQueryOptions } from "@/data-access-layer/wards-query-options";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { ScrollView, StyleSheet, View } from "react-native";
@@ -55,7 +55,7 @@ export function SingleWardById({ wardId }: SingleWardByIdProps) {
       <View style={styles.container}>
         <View style={{ height: "80%", justifyContent: "center", gap: 8 }}>
           <NoDataScreen
-            listName="Ward"
+            listName="Wards"
             message="Ward not found"
             hint="Please check the ward ID and try again"
             icon={<MaterialIcon color={theme.colors.primary} name="location-city" size={64} />}

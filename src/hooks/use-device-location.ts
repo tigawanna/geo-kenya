@@ -1,5 +1,5 @@
 import { isPointInkenya } from "@/data-access-layer/location-query";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { QueryCache, QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as Location from "expo-location";
 
 async function getCurrentLocation() {
@@ -14,6 +14,23 @@ async function getCurrentLocation() {
     timeInterval: 1000 * 1 * 5, // 1 minutes
   });
 }
+
+  export async function manuallySetLocation({ lat, lng, qc }: { lat: number; lng: number , qc:QueryClient }) {
+    const oldlocation = qc.getQueryData<Location.LocationObject>(["device-location"]);
+    // logger.log("oldlocation", oldlocation);
+    const is_valid_point = await isPointInkenya({ lat, lng });
+    qc.setQueryData(["device-location"], {
+      ...oldlocation,
+      mocked: true,
+      coords: {
+        ...oldlocation?.coords,
+        latitude: lat,
+        longitude: lng,
+      },
+    });
+    if (is_valid_point.results === "in_kenya") {
+    }
+  }
 
 export function useDeviceLocation() {
   const queryClient = useQueryClient();
@@ -38,29 +55,13 @@ export function useDeviceLocation() {
     },
   });
 
-  async function manuallySetLocation({ lat, lng }: { lat: number; lng: number }) {
-    const oldlocation = queryClient.getQueryData<Location.LocationObject>(["device-location"]);
-    // logger.log("oldlocation", oldlocation);
-    const is_valid_point = await isPointInkenya({ lat, lng });
-    if (is_valid_point.results) {
-      queryClient.setQueryData(["device-location"], {
-        ...oldlocation,
-        mocked: true,
-        coords: {
-          ...oldlocation?.coords,
-          latitude: lat,
-          longitude: lng,
-        },
-      }
-    );
-    }
-  }
+
 
   return {
     location,
     errorMsg: error?.message || null,
     requestLocationAgain,
-    manuallySetLocation,
+    manuallySetLocation: (lat: number, lng: number) => manuallySetLocation({ lat, lng, qc: queryClient }),
     isLoading,
     isRefreshing: isRefreshing || isRefetching,
     refetch,

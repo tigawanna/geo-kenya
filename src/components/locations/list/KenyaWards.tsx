@@ -1,4 +1,7 @@
-import { wardsQueryOptions } from "@/data-access-layer/wards-query-options";
+import {
+  checkIsPointInKenyaQueryOptions,
+  wardsQueryOptions,
+} from "@/data-access-layer/wards-query-options";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, View } from "react-native";
@@ -7,15 +10,21 @@ import { MaterialIcon } from "../../default/ui/icon-symbol";
 import { LoadingFallback } from "../../state-screens/LoadingFallback";
 import { NoDataScreen } from "../../state-screens/NoDataScreen";
 import { WardListItem } from "./WardListItem";
+import { useDeviceLocation } from "@/hooks/use-device-location";
+import { NotInKenyaComponent } from "../proximity/NotInKenyaBottomSheet";
 
 export function KenyaWards() {
   const theme = useTheme();
+  const { location } = useDeviceLocation();
   const [searchQuery, setSearchQuery] = useState("");
   const { data, isPending, refetch, isRefetching } = useQuery(
     wardsQueryOptions({
       searchQuery,
     })
   );
+
+
+  // console.log("is InKe")
 
   if (isPending) {
     return <LoadingFallback />;
@@ -42,7 +51,8 @@ export function KenyaWards() {
             hint="No wards found"
             icon={<MaterialIcon color={theme.colors.primary} name="location-city" size={64} />}
           />
-
+          {/* {isInKenyaQuery.data?.results === "outside_kenya" && <NotInKenyaComponent />}
+          <NotInKenyaComponent /> */}
           <Button
             style={{ marginHorizontal: "20%" }}
             disabled={isRefetching}

@@ -11,7 +11,8 @@ export const queryKeyPrefixes = {
   closestWardsByNeom:"closest-wards-by-geom",
   inKenya:"in-kenya",
   wardEvents:"ward-events",
-  wardUpdates:"ward-updates"
+  wardUpdates:"ward-updates",
+  isPointInKenya:"is-point-in-kenya"
 } as const;
 
 

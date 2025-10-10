@@ -306,8 +306,8 @@ export function getClosestWardsByGeomQueryOptions({ wardId }: GetClosestWardsByG
 }
 
 interface CheckIsPointInKenyaQueryOptionsProps {
-  lat: number;
-  lng: number;
+  lat: number | undefined;
+  lng: number | undefined;
 }
 
 export function checkIsPointInKenyaQueryOptions({

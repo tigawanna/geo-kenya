@@ -3,25 +3,27 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 
-import { AppStateStatus, Platform } from "react-native";
-import { focusManager, QueryClientProvider } from "@tanstack/react-query";
 import { useAppState, useOnlineManager } from "@/lib/tanstack/query/react-native-setup-hooks";
+import { focusManager, QueryClientProvider } from "@tanstack/react-query";
+import { AppStateStatus, Platform } from "react-native";
 
 import { ExpoSpatialiteWrapper } from "@/lib/expo-spatialite/app-wrapper";
 import { GlobalSnackbar } from "@/lib/react-native-paper/snackbar/GlobalSnackbar";
 import { queryClient } from "@/lib/tanstack/query/client";
 import React, { useEffect } from "react";
 
-import { useSettingsStore } from "@/store/settings-store";
 import { useThemeSetup } from "@/hooks/theme/use-theme-setup";
+import { useSettingsStore } from "@/store/settings-store";
 import { PaperProvider } from "react-native-paper";
 
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {
   initializePullEventsBackgroundTask,
   initializePushEventsBackgroundTask,
 } from "@/lib/expo-spatialite/sync/background-task";
 import * as TaskManager from "expo-task-manager";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+
+
 export const unstable_settings = {
   anchor: "(tabs)",
 };
@@ -47,7 +49,8 @@ export default function RootLayout() {
   useOnlineManager();
   useAppState(onAppStateChange);
   const { dynamicColors } = useSettingsStore();
-  const { colorScheme, paperTheme } = useThemeSetup(dynamicColors);
+
+  const { colorScheme, paperTheme } = useThemeSetup();
   useEffect(() => {
     resolver?.();
     TaskManager.getRegisteredTasksAsync().then((tasks) => {

@@ -1,27 +1,27 @@
 import { useDeviceLocation } from "@/hooks/use-device-location";
 import * as Clipboard from "expo-clipboard";
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { Card, IconButton, useTheme } from "react-native-paper";
-import { MaterialIcon } from "../default/ui/icon-symbol";
 
+import { LoadingFallback } from "../state-screens/LoadingFallback";
 import { LatLongForm } from "./forms/LatLongForm";
 import { SingleWardByLatLng } from "./single-ward/SingleWardByLatLng";
-import { logger } from "@/utils/logger";
 
 export function CurrentLocation() {
   const theme = useTheme();
+
   const { errorMsg, location, isRefreshing, refetch, isLoading } = useDeviceLocation();
 
   if (isLoading) {
     return (
       <View style={{ ...styles.container, flex: 1 }} testID="current-location-loading">
-        <View style={[styles.errorContainer, { gap: 16 }]}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
-          <MaterialIcon color={theme.colors.primary} name="location-city" size={64} />
-          <Text style={[styles.errorText, { color: theme.colors.onSurface }]}>
-            Getting your location...
-          </Text>
-        </View>
+        <LoadingFallback
+          action={
+            <Text style={[styles.errorText, { color: theme.colors.primary }]}>
+              Getting your location
+            </Text>
+          }
+        />
       </View>
     );
   }
@@ -29,13 +29,10 @@ export function CurrentLocation() {
   const lat = location?.coords.latitude ?? 0;
   const lng = location?.coords.longitude ?? 0;
 
-
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.scrollContent}
-      >
-      <Card style={styles.banner} elevation={4} >
+    <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
+
+      <Card style={styles.banner} elevation={4}>
         <Card.Content
           style={{
             alignItems: "center",
@@ -58,7 +55,7 @@ export function CurrentLocation() {
               {(errorMsg || !location) && (
                 <View
                   style={{ flexDirection: "row", alignItems: "center", gap: 4, marginVertical: 4 }}>
-                  <Text style={{ fontSize: 12, color: theme.colors.error,textAlign:"center" }}>
+                  <Text style={{ fontSize: 12, color: theme.colors.error, textAlign: "center" }}>
                     Device location unavailable ,
                     <Text style={{ fontSize: 10, color: theme.colors.error }}>
                       Try typing in tne coordinates manually
