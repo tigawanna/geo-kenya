@@ -94,9 +94,16 @@ export default ({ config }: ConfigContext): ExpoConfig => {
           },
         },
       ],
-      "@react-native-firebase/app",
       "@maplibre/maplibre-react-native",
       "expo-background-task",
+      [
+        "@react-native-firebase/app",
+        {
+          android: {
+            googleServicesFile: IS_DEV ? "./google-services.dev.json" : "./google-services.json",
+          },
+        },
+      ],
     ],
     experiments: {
       typedRoutes: true,
