@@ -3,27 +3,28 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 
-import { useAppState, useOnlineManager } from "@/lib/tanstack/query/react-native-setup-hooks";
-import { focusManager, QueryClientProvider } from "@tanstack/react-query";
-import { AppStateStatus, Platform } from "react-native";
+import {
+  onAppStateChange,
+  useAppState,
+  useOnlineManager,
+} from "@/lib/tanstack/query/react-native-setup-hooks";
+import { QueryClientProvider } from "@tanstack/react-query";
 
 import { ExpoSpatialiteWrapper } from "@/lib/expo-spatialite/app-wrapper";
 import { GlobalSnackbar } from "@/lib/react-native-paper/snackbar/GlobalSnackbar";
 import { queryClient } from "@/lib/tanstack/query/client";
 import React, { useEffect } from "react";
-import crashlytics from "@react-native-firebase/crashlytics";
 
 import { useThemeSetup } from "@/hooks/theme/use-theme-setup";
-import { useSettingsStore } from "@/store/settings-store";
 import { PaperProvider } from "react-native-paper";
 
 import {
   initializePullEventsBackgroundTask,
   initializePushEventsBackgroundTask,
 } from "@/lib/expo-spatialite/sync/background-task";
-import * as TaskManager from "expo-task-manager";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 
+import { useRegisterCrashalytics } from "@/lib/firebase/crashalytics/use-register-crashalytics";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export const unstable_settings = {
   anchor: "(tabs)",
@@ -39,32 +40,14 @@ let initilializerPromise = new Promise<void>((resolve) => {
 initializePushEventsBackgroundTask(initilializerPromise);
 initializePullEventsBackgroundTask(initilializerPromise);
 
-function onAppStateChange(status: AppStateStatus) {
-  // React Query already supports in web browser refetch on window focus by default
-  if (Platform.OS !== "web") {
-    focusManager.setFocused(status === "active");
-  }
-}
-
 export default function RootLayout() {
   useOnlineManager();
   useAppState(onAppStateChange);
-  const { dynamicColors } = useSettingsStore();
-
   const { colorScheme, paperTheme } = useThemeSetup();
-  
   useEffect(() => {
-    // Initialize Firebase Crashlytics
-    // crashlytics().setCrashlyticsCollectionEnabled(true);
-    // crashlytics().setAttribute("framework", "expo");
-    // crashlytics().setAttribute("platform", Platform.OS);
-    // crashlytics().setAttribute("environment", __DEV__ ? "development" : "production");
-    
-    // resolver?.();
-    // TaskManager.getRegisteredTasksAsync().then((tasks) => {
-    //   console.log("tasks", tasks);
-    // });
+    resolver?.();
   }, []);
+  useRegisterCrashalytics();
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>

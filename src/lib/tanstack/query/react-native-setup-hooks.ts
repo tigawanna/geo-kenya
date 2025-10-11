@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { AppState, AppStateStatus, Platform } from "react-native";
-import { onlineManager } from "@tanstack/react-query";
+import { focusManager, onlineManager } from "@tanstack/react-query";
 import * as Network from "expo-network";
 
 export function useOnlineManager() {
@@ -64,3 +64,9 @@ export function useRefreshByUser(refetch: () => Promise<unknown>) {
 }
 
 
+export function onAppStateChange(status: AppStateStatus) {
+  // React Query already supports in web browser refetch on window focus by default
+  if (Platform.OS !== "web") {
+    focusManager.setFocused(status === "active");
+  }
+}
