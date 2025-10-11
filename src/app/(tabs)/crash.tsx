@@ -1,4 +1,4 @@
-import { testCrash } from "@/lib/firebase/crashalytics/crashlytics";
+import { testCrash } from "@/lib/firebase/crashalytics/helpers";
 import { StyleSheet } from "react-native";
 import { Text, Surface, Button } from "react-native-paper";
 
