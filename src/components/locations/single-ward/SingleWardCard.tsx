@@ -5,7 +5,7 @@ import { StyleSheet, View } from "react-native";
 import { Card, IconButton, Text, useTheme } from "react-native-paper";
 
 interface SingleWardCardProps {
-  ward: Partial<KenyaWardsSelect>;
+  ward?: Partial<KenyaWardsSelect>;
   loc?: { lat: number; lng: number };
   backButton?: boolean;
   actions?: ReactNode;
@@ -22,18 +22,18 @@ export function SingleWardCard({ ward, loc, backButton, actions }: SingleWardCar
           variant="headlineMedium"
           style={[styles.wardName, { color: theme.colors.onSurface }]}
           testID="single-ward-card-ward-name">
-          {ward.ward}
+          {ward?.ward}
         </Text>
         <Text
           variant="titleMedium"
           style={[styles.idText, { color: theme.colors.onPrimaryContainer }]}>
-          #{ward.id}
+          #{ward?.id}
         </Text>
         <IconButton
           icon="pencil"
           onPress={() => {
-            console.log("Edit ward:", ward.id);
-            router.push(`/ward-by-id/${ward.id}/edit`);
+            console.log("Edit ward:", ward?.id);
+            router.push(`/ward-by-id/${ward?.id}/edit`);
           }}
         />
       </View>
@@ -44,23 +44,23 @@ export function SingleWardCard({ ward, loc, backButton, actions }: SingleWardCar
             <Text
               variant="bodyMedium"
               style={[styles.compactValue, { color: theme.colors.onSurface }]}>
-              {ward.county} county
+              {ward?.county} county
             </Text>
-            {ward.constituency && (
+            {ward?.constituency && (
               <Text
                 variant="bodyMedium"
                 style={[styles.compactValue, { color: theme.colors.onSurface }]}>
-                {ward.constituency} constituency
+                {ward?.constituency} constituency
               </Text>
             )}
           </View>
           {actions}
         </View>
-        {ward.subCounty && (
+        {ward?.subCounty && (
           <Text
             variant="bodySmall"
             style={[styles.subCounty, { color: theme.colors.onSurfaceVariant }]}>
-            Sub-County: {ward.subCounty}
+            Sub-County: {ward?.subCounty}
           </Text>
         )}
       </View>

@@ -25,11 +25,11 @@ import {
   isValidGeoJSONGeometry,
 } from "@/lib/map-libre/geom-parse";
 import { logger } from "@/utils/logger";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter, usePathname } from "expo-router";
 
 interface WardWithNeighborsMapProps {
-  wardId: number;
+  wardId?: number;
 }
 
 export function WardWithNeighborsMap({ wardId }: WardWithNeighborsMapProps) {
@@ -38,6 +38,7 @@ export function WardWithNeighborsMap({ wardId }: WardWithNeighborsMapProps) {
   const { location, manuallySetLocation } = useDeviceLocation();
   const router = useRouter();
   const pathname = usePathname();
+  const qc = useQueryClient();
 
   // 👇 Camera state
   const [camera, setCamera] = useState({
@@ -47,14 +48,16 @@ export function WardWithNeighborsMap({ wardId }: WardWithNeighborsMapProps) {
   });
 
   // 👇 Fetch main ward
-  const { data: mainWardData, isPending: isMainWardPending } = useQuery(
-    getWardByIdQueryOptions({ id: wardId })
-  );
+  const { data: mainWardData, isPending: isMainWardPending } = useQuery({
+    ...getWardByIdQueryOptions({ id: wardId! }),
+    enabled: wardId !== undefined,
+  });
 
   // 👇 Fetch closest wards
-  const { data: closestWardsData, isPending: isClosestWardsPending } = useQuery(
-    getClosestWardsByGeomQueryOptions({ wardId })
-  );
+  const { data: closestWardsData, isPending: isClosestWardsPending } = useQuery({
+    ...getClosestWardsByGeomQueryOptions({ wardId: wardId! }),
+    enabled: wardId !== undefined,
+  });
 
   // 👇 Parse main ward geometry
   const mainWardFeature = React.useMemo(() => {
@@ -63,7 +66,7 @@ export function WardWithNeighborsMap({ wardId }: WardWithNeighborsMapProps) {
     const geomStr = mainWardData.result.geom as string | undefined;
     const parsed = geomParse(geomStr);
     if (!parsed || !isValidGeoJSONGeometry(parsed)) {
-      logger.warn("Invalid geometry for main ward:", wardId);
+      // logger.warn("Invalid geometry for main ward:", wardId);
       return null;
     }
 
@@ -111,9 +114,17 @@ export function WardWithNeighborsMap({ wardId }: WardWithNeighborsMapProps) {
     return features;
   }, [mainWardFeature, closestWardFeatures]);
 
-  // 👇 Auto-zoom to fit all wards
+
   useEffect(() => {
-    if (allFeatures.length === 0) return;
+    if (allFeatures.length === 0) {
+      // Zoom to Kenya bounds
+      setCamera({
+        centerCoordinate: [37.9, 0.2],
+        zoomLevel: 5,
+        animationDuration: 1000,
+      });
+      return;
+    }
 
     let minLng = Infinity,
       minLat = Infinity,
@@ -167,15 +178,15 @@ export function WardWithNeighborsMap({ wardId }: WardWithNeighborsMapProps) {
         // console.log(" pathname == ",pathname)
         if (pathname.startsWith("/ward-by-id/") || pathname.startsWith("/ward-by-lat-long/")) {
           router.push(`/ward-by-lat-long/${lat},${lng}`);
-        };
-        manuallySetLocation({ lat, lng });
+        }
+        manuallySetLocation(lat, lng);
       }
     } catch (error) {
       logger.error("Error handling map press:", error);
     }
   };
 
-  const isPending = isMainWardPending || isClosestWardsPending;
+  const isPending = wardId !== undefined && (isMainWardPending || isClosestWardsPending);
 
   return (
     <View style={styles.container}>

@@ -12,19 +12,19 @@ export function CurrentLocation() {
 
   const { errorMsg, location, isRefreshing, refetch, isLoading } = useDeviceLocation();
 
-  if (isLoading) {
-    return (
-      <View style={{ ...styles.container, flex: 1 }} testID="current-location-loading">
-        <LoadingFallback
-          action={
-            <Text style={[styles.errorText, { color: theme.colors.primary }]}>
-              Getting your location
-            </Text>
-          }
-        />
-      </View>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <View style={{ ...styles.container, flex: 1 }} testID="current-location-loading">
+  //       <LoadingFallback
+  //         action={
+  //           <Text style={[styles.errorText, { color: theme.colors.primary }]}>
+  //             Getting your location
+  //           </Text>
+  //         }
+  //       />
+  //     </View>
+  //   );
+  // }
 
   const lat = location?.coords.latitude ?? 0;
   const lng = location?.coords.longitude ?? 0;
