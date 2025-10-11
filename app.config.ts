@@ -97,11 +97,17 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       "@maplibre/maplibre-react-native",
       "expo-background-task",
       "@react-native-firebase/app",
-      "@react-native-firebase/crashlytics"
+      "@react-native-firebase/crashlytics",
     ],
     experiments: {
       typedRoutes: true,
       reactCompiler: true,
+    },
+    updates: {
+      url: "https://u.expo.dev/2ce4a1f5-0fe3-4728-8c3b-a8101b97f5fa",
+    },
+    runtimeVersion: {
+      policy: "appVersion",
     },
     extra: {
       router: {},

@@ -11,7 +11,8 @@
         "EXPO_NO_GIT_STATUS": "true",
         "APP_VARIANT": "development",
         "EXPO_PUBLIC_USE_FIREBASE": "true"
-      }
+      },
+      "channel": "development"
     },
     "preview:local": {
       "distribution": "internal",
@@ -20,7 +21,6 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_USE_FIREBASE": "true",
         "EXPO_NO_CACHE": "true",
         "EXPO_NO_GIT_STATUS": "true",
         "APP_VARIANT": "preview",
@@ -36,7 +36,6 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_USE_FIREBASE": "true",
         "EXPO_NO_CACHE": "true",
         "EXPO_NO_GIT_STATUS": "true",
         "APP_VARIANT": "preview"
@@ -55,12 +54,12 @@
           "TMPDIR": "/home/dennis/tmp-build",
           "GRADLE_USER_HOME": "/home/dennis/.gradle-tmp-build"
         }
-      }
+      },
+      "channel": "preview-arm64"
     },
     "production": {
       "distribution": "store",
-      "channel": "production",
-      "EXPO_PUBLIC_USE_FIREBASE": "true"
+      "channel": "production"
     }
   },
   "submit": {
