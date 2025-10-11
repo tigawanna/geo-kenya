@@ -13,7 +13,7 @@
         "EXPO_PUBLIC_USE_FIREBASE": "true"
       }
     },
-    "preview": {
+    "preview:local": {
       "distribution": "internal",
       "android": {
         "buildType": "apk"
@@ -26,6 +26,18 @@
         "GRADLE_OPTS": "-Xmx4g -XX:MaxMetaspaceSize=1g",
         "TMPDIR": "/home/dennis/tmp-build",
         "GRADLE_USER_HOME": "/home/dennis/.gradle-tmp-build"
+      }
+    },    
+    "preview:eas": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_USE_FIREBASE": "true",
+        "EXPO_NO_CACHE": "true",
+        "EXPO_NO_GIT_STATUS": "true",
+        "APP_VARIANT": "preview"
       }
     },
     "preview-arm64": {
