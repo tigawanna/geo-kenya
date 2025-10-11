@@ -15,6 +15,7 @@
     },
     "preview:local": {
       "distribution": "internal",
+      "channel": "preview",
       "android": {
         "buildType": "apk"
       },
@@ -27,9 +28,10 @@
         "TMPDIR": "/home/dennis/tmp-build",
         "GRADLE_USER_HOME": "/home/dennis/.gradle-tmp-build"
       }
-    },    
+    },
     "preview:eas": {
       "distribution": "internal",
+      "channel": "preview",
       "android": {
         "buildType": "apk"
       },
@@ -57,6 +59,7 @@
     },
     "production": {
       "distribution": "store",
+      "channel": "production",
       "EXPO_PUBLIC_USE_FIREBASE": "true"
     }
   },
