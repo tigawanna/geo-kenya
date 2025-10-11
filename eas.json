@@ -14,22 +14,7 @@
       },
       "channel": "development"
     },
-    "preview:local": {
-      "distribution": "internal",
-      "channel": "preview",
-      "android": {
-        "buildType": "apk"
-      },
-      "env": {
-        "EXPO_NO_CACHE": "true",
-        "EXPO_NO_GIT_STATUS": "true",
-        "APP_VARIANT": "preview",
-        "GRADLE_OPTS": "-Xmx4g -XX:MaxMetaspaceSize=1g",
-        "TMPDIR": "/home/dennis/tmp-build",
-        "GRADLE_USER_HOME": "/home/dennis/.gradle-tmp-build"
-      }
-    },
-    "preview:eas": {
+    "preview": {
       "distribution": "internal",
       "channel": "preview",
       "android": {
@@ -40,6 +25,17 @@
         "EXPO_NO_GIT_STATUS": "true",
         "APP_VARIANT": "preview"
       }
+    },
+    "preview:local": {
+      "extends": "preview",
+      "env": {
+        "GRADLE_OPTS": "-Xmx4g -XX:MaxMetaspaceSize=1g",
+        "TMPDIR": "/home/dennis/tmp-build",
+        "GRADLE_USER_HOME": "/home/dennis/.gradle-tmp-build"
+      }
+    },
+    "preview:eas": {
+      "extends": "preview"
     },
     "preview-arm64": {
       "extends": "preview",
