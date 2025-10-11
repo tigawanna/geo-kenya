@@ -23,8 +23,8 @@ import {
   initializePushEventsBackgroundTask,
 } from "@/lib/expo-spatialite/sync/background-task";
 
-import { useRegisterCrashalytics } from "@/lib/firebase/crashalytics/use-register-crashalytics";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { useRegisterCrashalytics } from "@/lib/react-native-firebase/crashalytics/use-register-crashalytics";
 
 export const unstable_settings = {
   anchor: "(tabs)",
