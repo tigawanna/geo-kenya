@@ -59,7 +59,9 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         foregroundImage: "./assets/icons/adaptive-icon.png",
         monochromeImage: "./assets/icons/adaptive-icon.png",
       },
-      googleServicesFile: IS_DEV ? "./google-services.dev.json" : "./google-services.json",
+      googleServicesFile: IS_DEV
+        ? "./google-services.dev.json"
+        : process.env.GOOGLE_SERVICES_JSON ?? "./google-services.json",
       edgeToEdgeEnabled: true,
       predictiveBackGestureEnabled: false,
       package: getUniqueIdentifier(),
