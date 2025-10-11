@@ -97,8 +97,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       "@maplibre/maplibre-react-native",
       "expo-background-task",
       "@react-native-firebase/app",
-      "@react-native-firebase/crashlytics",
-      "@react-native-firebase/analytics",
+      "@react-native-firebase/crashlytics"
     ],
     experiments: {
       typedRoutes: true,

@@ -24,7 +24,6 @@
     "@material/material-color-utilities": "^0.3.0",
     "@pietile-native-kit/keyboard-aware-scrollview": "^1.5.0",
     "@react-native-async-storage/async-storage": "2.2.0",
-    "@react-native-firebase/analytics": "^23.4.0",
     "@react-native-firebase/app": "^23.4.0",
     "@react-native-firebase/crashlytics": "^23.4.0",
     "@react-navigation/bottom-tabs": "^7.4.0",
