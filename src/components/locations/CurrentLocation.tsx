@@ -12,26 +12,11 @@ export function CurrentLocation() {
 
   const { errorMsg, location, isRefreshing, refetch, isLoading } = useDeviceLocation();
 
-  // if (isLoading) {
-  //   return (
-  //     <View style={{ ...styles.container, flex: 1 }} testID="current-location-loading">
-  //       <LoadingFallback
-  //         action={
-  //           <Text style={[styles.errorText, { color: theme.colors.primary }]}>
-  //             Getting your location
-  //           </Text>
-  //         }
-  //       />
-  //     </View>
-  //   );
-  // }
-
   const lat = location?.coords.latitude ?? 0;
   const lng = location?.coords.longitude ?? 0;
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
-
       <Card style={styles.banner} elevation={4}>
         <Card.Content
           style={{
@@ -52,7 +37,7 @@ export function CurrentLocation() {
             <View style={{ gap: 0, width: "100%" }}>
               <LatLongForm initLat={lat} initLng={lng} />
 
-              {(errorMsg || !location) && (
+              {/* {(errorMsg || !location) && (
                 <View
                   style={{ flexDirection: "row", alignItems: "center", gap: 4, marginVertical: 4 }}>
                   <Text style={{ fontSize: 12, color: theme.colors.error, textAlign: "center" }}>
@@ -62,7 +47,7 @@ export function CurrentLocation() {
                     </Text>
                   </Text>
                 </View>
-              )}
+              )} */}
             </View>
           </View>
         </Card.Content>

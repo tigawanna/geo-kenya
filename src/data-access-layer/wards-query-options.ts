@@ -214,9 +214,8 @@ export function getClosestWardsByCorrdsQueryOptions({
                   constituency,
                   constituency_code AS "constituencyCode",
                   AsGeoJSON(geom) AS geometry,
-                  ST_Distance(geom, MakePoint(${lng}, ${lat}, 4326), 1) AS distance
+                  ST_Distance(ST_Centroid(geom), MakePoint(${lng}, ${lat}, 4326), 1) AS distance
                 FROM kenya_wards
-                WHERE ST_Distance(geom, MakePoint(${lng}, ${lat}, 4326), 1) < 5000
                 ORDER BY distance
                 LIMIT 10
               `
