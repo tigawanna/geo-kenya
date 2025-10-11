@@ -1,13 +1,13 @@
 import { getWardByLocation } from "@/data-access-layer/wards-query-options";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
-import { Button, useTheme } from "react-native-paper";
-import { getMaterialIconName, MaterialIcon } from "../default/ui/icon-symbol";
-import { LoadingFallback } from "../state-screens/LoadingFallback";
-import { NoDataScreen } from "../state-screens/NoDataScreen";
-import { SingleWardCard } from "./single-ward/SingleWardCard";
+import { useRouter } from "expo-router";
+import { Pressable, StyleSheet, View } from "react-native";
+import { Text, useTheme } from "react-native-paper";
+import { getMaterialIconName, MaterialCommunityIcon } from "../default/ui/icon-symbol";
+import { LoadingIndicatorDots } from "../state-screens/LoadingIndicatorDots";
 import { WardWithNeighborsMap } from "./maps/WardWithNeighborsMap.tsx";
-import { logger } from "@/utils/logger";
+import { SingleWardCard } from "./single-ward/SingleWardCard";
 
 interface CurretWardProps {
   lat: number;
@@ -19,79 +19,68 @@ interface CurretWardProps {
 export function CurrentWard({ lat, lng, actions, backButton }: CurretWardProps) {
   const theme = useTheme();
   const qc = useQueryClient();
+  const router = useRouter();
   const { data, isPending, refetch, isRefetching } = useQuery(
     getWardByLocation({
       lat,
       lng,
     })
   );
-  //  logger.log(" == CurrentWard ==", { data });
-  // if (isPending) {
-  //   return <LoadingFallback />;
-  // }
-  // if (!data?.result) {
-  //   return (
-  //     <View
-  //       style={{ height: "100%", gap: 6, paddingHorizontal: 10, justifyContent: "center" }}
-  //       testID="current-ward-not-found">
-  //       {isRefetching ? (
-  //         <ActivityIndicator
-  //           style={{
-  //             position: "absolute",
-  //             top: "50%",
-  //             left: "50%",
-  //             zIndex: 1000,
-  //             transform: [{ translateX: -20 }, { translateY: -20 }],
-  //           }}
-  //         />
-  //       ) : null}
-  //       <View style={{ height: "auto", paddingBottom: 40 }}>
-  //         <NoDataScreen
-  //           listName="Wards"
-  //           message="No ward found at that location"
-  //           hint="Make sure the location is within Kenya"
-  //           icon={<MaterialIcon color={theme.colors.primary} name="location-city" size={64} />}
-  //         />
 
-  //         <View
-  //           style={{
-  //             flexDirection: "row",
-  //             gap: 2,
-  //             justifyContent: "center",
-  //             alignItems: "center",
-  //           }}>
-  //           <Button
-  //             style={{}}
-  //             disabled={isRefetching}
-  //             loading={isRefetching}
-  //             icon="reload"
-  //             mode="contained-tonal"
-  //             onPress={() => {
-  //               refetch();
-  //             }}>
-  //             Reload
-  //           </Button>
-  //           <Button
-  //             style={{}}
-  //             disabled={isRefetching}
-  //             loading={isRefetching}
-  //             icon={getMaterialIconName("map-marker-multiple")}
-  //             mode="contained-tonal"
-  //             onPress={() => {
-  //               qc.invalidateQueries({ queryKey: ["device-location"] });
-  //             }}>
-  //             Reset Location
-  //           </Button>
-  //         </View>
-  //       </View>
-  //     </View>
-  //   );
-  // }
   return (
     <View style={{ ...styles.container }}>
-      {data?.result && (
+      {data?.result ? (
         <SingleWardCard ward={data?.result} backButton={backButton} actions={actions} />
+      ) : (
+        <View style={{ padding: 20, gap: 12, alignItems: "center" }}>
+          {isPending ? (
+            <View
+              style={{
+                gap: 6,
+                paddingBottom: 8,
+                alignItems: "center",
+              }}>
+              <Text
+                variant="titleMedium"
+                style={{ textAlign: "center", color: theme.colors.primary, gap: 8 }}>
+                Checking your location
+                <LoadingIndicatorDots />
+              </Text>
+              <Text
+                variant="labelSmall"
+                style={{ textAlign: "center", color: theme.colors.primary }}>
+                Jump to any ward by tapping on the map
+              </Text>
+            </View>
+          ) : (
+            <View
+              style={{
+                gap: 4,
+                alignItems: "center",
+              }}>
+              <MaterialCommunityIcon
+                name={getMaterialIconName("map-marker-off")}
+                size={18}
+                color={theme.colors.primary}
+              />
+              <Text
+                variant="bodyMedium"
+                style={{ textAlign: "center", color: theme.colors.onSurfaceVariant }}>
+                You may be outside Kenya. Tap anywhere on the map below to search, or
+              </Text>
+              <Pressable
+                onPress={() => router.push("/(tabs)/explore")}
+                style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                <Text style={{ color: theme.colors.primary }}>
+                  Visit the Explore tab to browse all wards
+                </Text>
+                <MaterialIcons size={25} name="arrow-right-alt" color={theme.colors.primary} />
+              </Pressable>
+            </View>
+          )}
+        </View>
       )}
+
       <WardWithNeighborsMap wardId={data?.result?.id} />
     </View>
   );
