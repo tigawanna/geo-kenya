@@ -2,11 +2,14 @@ import { customTheme, type CustomThemeKey } from "@/constants/Colors";
 import { useSettingsStore, useThemeStore } from "@/store/settings-store";
 import { Linking, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Divider, Icon, List, Surface, Switch, useTheme } from "react-native-paper";
+import * as Application from "expo-application";
+
 
 export default function Settings() {
   const theme = useTheme();
   const { isDarkMode, toggleTheme } = useThemeStore();
   const { dynamicColors, toggleDynamicColors, colorScheme, setColorScheme } = useSettingsStore();
+  const developerFacingBuildVersion = Application.nativeBuildVersion;
 
   const colorSchemeOptions = Object.entries(customTheme).map(([key, value]) => ({
     key: key as CustomThemeKey,
@@ -80,7 +83,7 @@ export default function Settings() {
           />
           <List.Item
             title="Version"
-            description="1.0.0"
+            description={developerFacingBuildVersion??"??"}
             left={(props) => <List.Icon {...props} icon="information" />}
           />
         </List.Section>
