@@ -4,7 +4,6 @@ import { Linking, ScrollView, StyleSheet, TouchableOpacity, View } from "react-n
 import { Divider, Icon, List, Surface, Switch, useTheme } from "react-native-paper";
 import * as Application from "expo-application";
 
-
 export default function Settings() {
   const theme = useTheme();
   const { isDarkMode, toggleTheme } = useThemeStore();
@@ -83,7 +82,7 @@ export default function Settings() {
           />
           <List.Item
             title="Version"
-            description={developerFacingBuildVersion??"??"}
+            description={developerFacingBuildVersion ?? "??"}
             left={(props) => <List.Icon {...props} icon="information" />}
           />
         </List.Section>
