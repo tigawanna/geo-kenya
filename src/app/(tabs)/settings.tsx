@@ -1,19 +1,24 @@
-import { useSettingsStore, useThemeStore } from "@/store/settings-store";
 import { customTheme, type CustomThemeKey } from "@/constants/Colors";
-import { ScrollView, StyleSheet, View, TouchableOpacity } from "react-native";
-import { Divider, List, Surface, Switch, Icon, useTheme } from "react-native-paper";
-import { useExpoSpatialiteContext } from "@/lib/expo-spatialite/ExpoSpatialiteProvider";
+import { useSettingsStore, useThemeStore } from "@/store/settings-store";
+import { Linking, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Divider, Icon, List, Surface, Switch, useTheme } from "react-native-paper";
 
 export default function Settings() {
   const theme = useTheme();
   const { isDarkMode, toggleTheme } = useThemeStore();
   const { dynamicColors, toggleDynamicColors, colorScheme, setColorScheme } = useSettingsStore();
 
-
   const colorSchemeOptions = Object.entries(customTheme).map(([key, value]) => ({
     key: key as CustomThemeKey,
     color: value.light.primary,
   }));
+
+  const authorInfo = {
+    name: "tigawanna",
+    github: "https://github.com/tigawanna",
+    website: "https://tigawanna-portfolio.vercel.app",
+    email: "denniskinuthiawaweru@gmail.com",
+  };
 
   return (
     <Surface style={{ flex: 1 }}>
@@ -59,35 +64,26 @@ export default function Settings() {
           <Divider />
         </List.Section>
 
-        {/* <List.Section>
-        <List.Subheader style={[styles.listSubHeader]}>API Integration</List.Subheader>
-        <List.Item
-          title="API Key"
-          description="Configure your Wakatime API key"
-          left={(props) => <List.Icon {...props} icon="key" />}
-          onPress={() => router.push("/api-keys")}
-        />
-        <Divider />
-      </List.Section> */}
-
-        {/* <List.Section>
-        <List.Subheader style={[styles.listSubHeader]}>About</List.Subheader>
-        <List.Item
-          title="Version"
-          description="1.0.0"
-          left={(props) => <List.Icon {...props} icon="information" />}
-        />
-        <List.Item
-          title="Terms of Service"
-          left={(props) => <List.Icon {...props} icon="file-document" />}
-          onPress={() => router.push("/terms-of-service")}
-        />
-        <List.Item
-          title="Privacy Policy"
-          left={(props) => <List.Icon {...props} icon="shield-account" />}
-          onPress={() => router.push("/privacy-policy")}
-        />
-      </List.Section> */}
+        <List.Section>
+          <List.Subheader style={[styles.listSubHeader]}>About</List.Subheader>
+          <List.Item
+            title="Author"
+            description={authorInfo.name}
+            left={(props) => <List.Icon {...props} icon="account" />}
+            onPress={() => Linking.openURL(authorInfo.website)}
+          />
+          <List.Item
+            title="Github"
+            description={authorInfo.github}
+            left={(props) => <List.Icon {...props} icon="github" />}
+            onPress={() => Linking.openURL(authorInfo.github)}
+          />
+          <List.Item
+            title="Version"
+            description="1.0.0"
+            left={(props) => <List.Icon {...props} icon="information" />}
+          />
+        </List.Section>
       </ScrollView>
     </Surface>
   );
