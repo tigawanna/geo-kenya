@@ -9,6 +9,8 @@ import { LoadingFallback } from "../../state-screens/LoadingFallback";
 import { NoDataScreen } from "../../state-screens/NoDataScreen";
 import { WardListItem } from "./WardListItem";
 import Animated, {
+  FadeIn,
+  FadeOut,
   LinearTransition,
   useAnimatedStyle,
   useSharedValue,
@@ -51,8 +53,6 @@ export function KenyaWards() {
             hint="No wards found"
             icon={<MaterialIcon color={theme.colors.primary} name="location-city" size={64} />}
           />
-          {/* {isInKenyaQuery.data?.results === "outside_kenya" && <NotInKenyaComponent />}
-          <NotInKenyaComponent /> */}
           <Button
             style={{ marginHorizontal: "20%" }}
             disabled={isRefetching}
