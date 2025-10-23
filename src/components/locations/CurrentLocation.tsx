@@ -11,7 +11,6 @@ export function CurrentLocation() {
   const theme = useTheme();
 
   const { errorMsg, location, isRefreshing, refetch, isLoading } = useDeviceLocation();
-
   const lat = location?.coords.latitude ?? 0;
   const lng = location?.coords.longitude ?? 0;
 
@@ -36,18 +35,6 @@ export function CurrentLocation() {
             {/* Left Side: Icon + Title */}
             <View style={{ gap: 0, width: "100%" }}>
               <LatLongForm initLat={lat} initLng={lng} />
-
-              {/* {(errorMsg || !location) && (
-                <View
-                  style={{ flexDirection: "row", alignItems: "center", gap: 4, marginVertical: 4 }}>
-                  <Text style={{ fontSize: 12, color: theme.colors.error, textAlign: "center" }}>
-                    Device location unavailable ,
-                    <Text style={{ fontSize: 10, color: theme.colors.error }}>
-                      Try typing in tne coordinates manually
-                    </Text>
-                  </Text>
-                </View>
-              )} */}
             </View>
           </View>
         </Card.Content>
@@ -84,16 +71,6 @@ const styles = StyleSheet.create({
   scrollContent: {
     // gap: 16,
     // paddingBottom: 16,
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 32,
-  },
-  errorText: {
-    marginTop: 16,
-    textAlign: "center",
   },
   banner: {
     marginHorizontal: 16,
