@@ -1,7 +1,5 @@
-import {
-  checkIsPointInKenyaQueryOptions,
-  wardsQueryOptions,
-} from "@/data-access-layer/wards-query-options";
+import { wardsQueryOptions } from "@/data-access-layer/wards-query-options";
+import { useDeviceLocation } from "@/hooks/use-device-location";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, View } from "react-native";
@@ -10,8 +8,11 @@ import { MaterialIcon } from "../../default/ui/icon-symbol";
 import { LoadingFallback } from "../../state-screens/LoadingFallback";
 import { NoDataScreen } from "../../state-screens/NoDataScreen";
 import { WardListItem } from "./WardListItem";
-import { useDeviceLocation } from "@/hooks/use-device-location";
-import { NotInKenyaComponent } from "../proximity/NotInKenyaBottomSheet";
+import Animated, {
+  LinearTransition,
+  useAnimatedStyle,
+  useSharedValue,
+} from "react-native-reanimated";
 
 export function KenyaWards() {
   const theme = useTheme();
@@ -22,7 +23,6 @@ export function KenyaWards() {
       searchQuery,
     })
   );
-
 
   // console.log("is InKe")
 
@@ -71,11 +71,14 @@ export function KenyaWards() {
 
   return (
     <View style={styles.container}>
-      <FlatList
+      <Animated.FlatList
         data={data.result}
         keyExtractor={(item) => item.id.toString()}
         stickyHeaderIndices={[0]}
-        renderItem={({ item }) => <WardListItem key={item.id} item={item} theme={theme} />}
+        itemLayoutAnimation={LinearTransition}
+        renderItem={({ item }) => {
+          return <WardListItem key={item.id} item={item} theme={theme} />;
+        }}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.listContent}
         viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}

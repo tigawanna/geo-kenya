@@ -18,14 +18,10 @@ export function LatLongForm({ action, initLat, initLng }: LatLongFormProps) {
   const lng = location?.coords.longitude ?? initLng ?? 36.8219;
   const placeholder = `${lat.toFixed(3)}, ${lng.toFixed(3)}`;
 
-  const [searchTerm, setSearchTerm, debouncer] = useDebouncedState(
-    "",
-    { wait: 3000 },
-    (state) => ({
-      isPending: state.isPending,
-      lastArgs: state.lastArgs?.[0] as string,
-    })
-  );
+  const [searchTerm, setSearchTerm, debouncer] = useDebouncedState("", { wait: 3000 }, (state) => ({
+    isPending: state.isPending,
+    lastArgs: state.lastArgs?.[0] as string,
+  }));
 
   const handleInputChange = (text: string) => {
     setInputValue(text);
@@ -35,7 +31,7 @@ export function LatLongForm({ action, initLat, initLng }: LatLongFormProps) {
   useEffect(() => {
     if (searchTerm.includes(",")) {
       const [lat, lng] = searchTerm.split(",").map((val) => parseFloat(val.trim()) || 0);
-      manuallySetLocation({ lat, lng });
+      manuallySetLocation(lat, lng);
     }
   }, [manuallySetLocation, searchTerm]);
 
