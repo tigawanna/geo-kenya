@@ -1,6 +1,5 @@
 import { Tabs } from "expo-router";
 import React from "react";
-
 import { HapticTab } from "@/components/default/haptic-tab";
 import { MaterialCommunityIcon, MaterialIcon } from "@/components/default/ui/icon-symbol";
 import { Platform } from "react-native";
