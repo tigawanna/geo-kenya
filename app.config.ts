@@ -29,6 +29,7 @@ const getAppName = () => {
 
 const getPlugins = (idt: UniqueIDT) => {
   const is_production = idt === "com.tigawanna.geokenya";
+  const is_not_dev = idt === "com.tigawanna.geokenya" || idt === "com.tigawanna.geokenya.preview";
   const plugins: ConfigContext["config"]["plugins"] = [
     "expo-router",
     "@maplibre/maplibre-react-native",
@@ -39,10 +40,10 @@ const getPlugins = (idt: UniqueIDT) => {
         image: "./assets/icons/splash-icon-light.png",
         imageWidth: 200,
         resizeMode: "contain",
-        backgroundColor: "#534545ff",
+        backgroundColor: "#F3EDEB",
         dark: {
           image: "./assets/icons/splash-icon-dark.png",
-          backgroundColor: "#390F0F",
+          backgroundColor: "#8B685C",
         },
       },
     ],
@@ -66,7 +67,10 @@ export default ({ config }: ConfigContext): ExpoConfig => {
   const appIdentifier = getUniqueIdentifier();
   const plugins = getPlugins(appIdentifier);
   const is_production = appIdentifier === "com.tigawanna.geokenya";
-  if (is_production) {
+  const is_not_dev =
+    appIdentifier === "com.tigawanna.geokenya" ||
+    appIdentifier === "com.tigawanna.geokenya.preview";
+  if (is_not_dev) {
     plugins.push("@react-native-firebase/app");
     plugins.push("@react-native-firebase/crashlytics");
   }
@@ -96,11 +100,11 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     android: {
       ...config.android,
       adaptiveIcon: {
-        // backgroundColor: "#693535ff",
+        backgroundColor: "#8B685C",
         foregroundImage: "./assets/icons/adaptive-icon.png",
         monochromeImage: "./assets/icons/adaptive-icon.png",
       },
-      googleServicesFile: is_production ? "./google-services.json" : undefined,
+      googleServicesFile: is_not_dev ? "./google-services.json" : undefined,
       edgeToEdgeEnabled: true,
       predictiveBackGestureEnabled: false,
       package: appIdentifier,
