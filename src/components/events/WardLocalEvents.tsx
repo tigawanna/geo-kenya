@@ -1,5 +1,5 @@
 import { getWardEventsQueryOptions } from "@/data-access-layer/ward-events-queries";
-import { sendAnEvent, SendAnEventProps } from "@/lib/expo-spatialite/sync/push_events";
+import { sendAnEvent, SendAnEventProps } from "@/lib/sync/push-events";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { ActivityIndicator, FlatList, StyleSheet, View } from "react-native";
 import { Button, Card, Text } from "react-native-paper";

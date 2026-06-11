@@ -7,12 +7,25 @@ interface SingleWardByLatLngProps {
   lng: number;
   actions?: React.ReactNode;
   backButton?: boolean;
+  preferBottomSheet?: boolean;
 }
 
-export function SingleWardByLatLng({ lat, lng, actions, backButton }: SingleWardByLatLngProps) {
+export function SingleWardByLatLng({
+  lat,
+  lng,
+  actions,
+  backButton,
+  preferBottomSheet,
+}: SingleWardByLatLngProps) {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
-      <CurrentWard lat={lat} lng={lng} actions={actions} backButton={backButton} />
+      <CurrentWard
+        lat={lat}
+        lng={lng}
+        actions={actions}
+        backButton={backButton}
+        preferBottomSheet={preferBottomSheet}
+      />
       <ClosestWards lat={lat} lng={lng} />
     </ScrollView>
   );

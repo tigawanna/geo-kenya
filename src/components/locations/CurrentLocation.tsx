@@ -44,6 +44,7 @@ export function CurrentLocation() {
         lat={lat}
         lng={lng}
         backButton={false}
+        preferBottomSheet
         actions={
           <View style={{ flexDirection: "row", justifyContent: "center" }}>
             <IconButton

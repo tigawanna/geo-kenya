@@ -1,12 +1,13 @@
 import { getWardByLocation } from "@/data-access-layer/wards-query-options";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "expo-router";
-import { Pressable, StyleSheet, View } from "react-native";
+import { useDynamicBottomSheet } from "@/lib/react-native-bottom-sheet/use-dynamic-bottom-sheet";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { StyleSheet, View } from "react-native";
 import { Text, useTheme } from "react-native-paper";
-import { getMaterialIconName, MaterialCommunityIcon } from "../default/ui/icon-symbol";
 import { LoadingIndicatorDots } from "../state-screens/LoadingIndicatorDots";
+import { WardDetailBottomSheet } from "./WardDetailBottomSheet";
 import { WardWithNeighborsMap } from "./maps/WardWithNeighborsMap.tsx";
+import { NotInKenyaBottomSheet } from "./proximity/NotInKenyaBottomSheet";
 import { SingleWardCard } from "./single-ward/SingleWardCard";
 
 interface CurretWardProps {
@@ -14,13 +15,15 @@ interface CurretWardProps {
   lng: number;
   actions?: React.ReactNode;
   backButton?: boolean;
+  preferBottomSheet?: boolean;
 }
 
-export function CurrentWard({ lat, lng, actions, backButton }: CurretWardProps) {
+export function CurrentWard({ lat, lng, actions, backButton, preferBottomSheet }: CurretWardProps) {
   const theme = useTheme();
-  const qc = useQueryClient();
-  const router = useRouter();
-  const { data, isPending, refetch, isRefetching } = useQuery(
+  const sheetOptions = useDynamicBottomSheet();
+  const detailSheetOptions = useDynamicBottomSheet({ minSnapindex: 1, maxSnapindex: 5 });
+  const [sheetCoords, setSheetCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const { data, isPending } = useQuery(
     getWardByLocation({
       lat,
       lng,
@@ -53,35 +56,35 @@ export function CurrentWard({ lat, lng, actions, backButton }: CurretWardProps) 
               </Text>
             </View>
           ) : (
-            <View
-              style={{
-                gap: 4,
-                alignItems: "center",
-              }}>
-              <MaterialCommunityIcon
-                name={getMaterialIconName("map-marker-off")}
-                size={18}
-                color={theme.colors.primary}
-              />
-              <Text
-                variant="bodyMedium"
-                style={{ textAlign: "center", color: theme.colors.onSurfaceVariant }}>
-                You may be outside Kenya. Tap anywhere on the map below to search, or
-              </Text>
-              <Pressable
-                onPress={() => router.push("/(tabs)/explore")}
-                style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-                <Text style={{ color: theme.colors.primary }}>
-                  Visit the Explore tab to browse all wards
-                </Text>
-                <MaterialIcons size={25} name="arrow-right-alt" color={theme.colors.primary} />
-              </Pressable>
-            </View>
+            <Text
+              variant="bodyMedium"
+              style={{ textAlign: "center", color: theme.colors.onSurfaceVariant }}>
+              No ward found here. Tap the map or open the sheet for options.
+            </Text>
           )}
         </View>
       )}
 
-      <WardWithNeighborsMap wardId={data?.result?.id} />
+      <WardWithNeighborsMap
+        wardId={data?.result?.id}
+        onMapPress={
+          preferBottomSheet
+            ? (coords) => {
+                setSheetCoords(coords);
+                detailSheetOptions.handleSnapPress(2);
+              }
+            : undefined
+        }
+      />
+      <NotInKenyaBottomSheet location={{ lat, lng }} sheetOptions={sheetOptions} />
+      {preferBottomSheet ? (
+        <WardDetailBottomSheet
+          lat={sheetCoords?.lat ?? null}
+          lng={sheetCoords?.lng ?? null}
+          sheetOptions={detailSheetOptions}
+          onClose={() => setSheetCoords(null)}
+        />
+      ) : null}
     </View>
   );
 }

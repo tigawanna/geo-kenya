@@ -1,72 +1,62 @@
-// components/locations/WardWithNeighborsMap.tsx
 import {
   getClosestWardsByGeomQueryOptions,
   getWardByIdQueryOptions,
 } from "@/data-access-layer/wards-query-options";
-import {
-  Camera,
-  FillLayer,
-  Images,
-  LineLayer,
-  MapView,
-  ShapeSource,
-  SymbolLayer,
-} from "@maplibre/maplibre-react-native";
-import React, { useEffect, useState } from "react";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
-import { useTheme } from "react-native-paper";
-
-import countiesGeoJSON from "@/assets/counties.json";
+import { KENYA_CENTER, KENYA_DEFAULT_ZOOM } from "@/geo/kenya-bounds";
 import { useDeviceLocation } from "@/hooks/use-device-location";
+import { useMapBasemapPreference } from "@/hooks/use-map-basemap-preference";
 import {
   calculateBBox,
   GeoJSONFeature,
   geomParse,
   isValidGeoJSONGeometry,
 } from "@/lib/map-libre/geom-parse";
-import { logger } from "@/utils/logger";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useRouter, usePathname } from "expo-router";
+import { normalizeMapColorScheme, resolveMapStyle } from "@/lib/map-libre/map-style";
+import { MapBasemapToggle } from "@/components/map/map-basemap-toggle";
+import { Camera, GeoJSONSource, Layer, Map } from "@maplibre/maplibre-react-native";
+import { useQuery } from "@tanstack/react-query";
+import { usePathname, useRouter } from "expo-router";
+import React, { useEffect, useMemo, useState } from "react";
+import { ActivityIndicator, StyleSheet, Text, useColorScheme, View } from "react-native";
+import { useTheme } from "react-native-paper";
 
 interface WardWithNeighborsMapProps {
   wardId?: number;
+  onMapPress?: (coords: { lat: number; lng: number }) => void;
 }
 
-export function WardWithNeighborsMap({ wardId }: WardWithNeighborsMapProps) {
+export function WardWithNeighborsMap({ wardId, onMapPress }: WardWithNeighborsMapProps) {
   const theme = useTheme();
+  const colorScheme = normalizeMapColorScheme(useColorScheme());
+  const { preset, setPreset, isReady: basemapReady } = useMapBasemapPreference();
+  const mapStyle = resolveMapStyle(preset, colorScheme);
   const [isZooming, setIsZooming] = useState(false);
   const { location, manuallySetLocation } = useDeviceLocation();
   const router = useRouter();
   const pathname = usePathname();
-  const qc = useQueryClient();
 
-  // 👇 Camera state
   const [camera, setCamera] = useState({
-    centerCoordinate: [36.8087, -1.1728] as [number, number],
-    zoomLevel: 1,
-    animationDuration: 2000,
+    center: KENYA_CENTER,
+    zoom: KENYA_DEFAULT_ZOOM,
+    duration: 1000,
   });
 
-  // 👇 Fetch main ward
   const { data: mainWardData, isPending: isMainWardPending } = useQuery({
     ...getWardByIdQueryOptions({ id: wardId! }),
     enabled: wardId !== undefined,
   });
 
-  // 👇 Fetch closest wards
   const { data: closestWardsData, isPending: isClosestWardsPending } = useQuery({
     ...getClosestWardsByGeomQueryOptions({ wardId: wardId! }),
     enabled: wardId !== undefined,
   });
 
-  // 👇 Parse main ward geometry
-  const mainWardFeature = React.useMemo(() => {
+  const mainWardFeature = useMemo(() => {
     if (!mainWardData?.result) return null;
 
     const geomStr = mainWardData.result.geom as string | undefined;
     const parsed = geomParse(geomStr);
     if (!parsed || !isValidGeoJSONGeometry(parsed)) {
-      // logger.warn("Invalid geometry for main ward:", wardId);
       return null;
     }
 
@@ -76,20 +66,18 @@ export function WardWithNeighborsMap({ wardId }: WardWithNeighborsMapProps) {
       properties: {
         id: mainWardData.result.id,
         name: mainWardData.result.ward,
-        type: "main", // 👈 Flag for styling
+        type: "main",
       },
     };
   }, [mainWardData, wardId]);
 
-  // 👇 Parse closest wards geometries
-  const closestWardFeatures = React.useMemo(() => {
+  const closestWardFeatures = useMemo(() => {
     if (!closestWardsData?.results || !Array.isArray(closestWardsData.results)) return [];
 
     return closestWardsData.results
       .map((ward) => {
         const parsedGeom = geomParse(ward.geometry as string | undefined);
         if (!parsedGeom || !isValidGeoJSONGeometry(parsedGeom)) {
-          logger.warn("Invalid geometry for closest ward:", ward.id);
           return null;
         }
         return {
@@ -98,7 +86,7 @@ export function WardWithNeighborsMap({ wardId }: WardWithNeighborsMapProps) {
           properties: {
             id: ward.id,
             name: ward.ward,
-            type: "neighbor", // 👈 Flag for styling
+            type: "neighbor",
             distance: ward.distance,
           },
         } as const;
@@ -106,22 +94,27 @@ export function WardWithNeighborsMap({ wardId }: WardWithNeighborsMapProps) {
       .filter((f) => f !== null);
   }, [closestWardsData]);
 
-  // 👇 Combine all features for bbox calculation
-  const allFeatures = React.useMemo(() => {
+  const allFeatures = useMemo(() => {
     const features: GeoJSONFeature[] = [];
-    if (mainWardFeature) features.push(mainWardFeature as any);
-    features.push(...(closestWardFeatures as any));
+    if (mainWardFeature) features.push(mainWardFeature as GeoJSONFeature);
+    features.push(...(closestWardFeatures as GeoJSONFeature[]));
     return features;
   }, [mainWardFeature, closestWardFeatures]);
 
+  const wardsCollection = useMemo(
+    (): GeoJSON.FeatureCollection => ({
+      type: "FeatureCollection",
+      features: allFeatures as GeoJSON.Feature[],
+    }),
+    [allFeatures],
+  );
 
   useEffect(() => {
     if (allFeatures.length === 0) {
-      // Zoom to Kenya bounds
       setCamera({
-        centerCoordinate: [37.9, 0.2],
-        zoomLevel: 5,
-        animationDuration: 1000,
+        center: KENYA_CENTER,
+        zoom: KENYA_DEFAULT_ZOOM,
+        duration: 1000,
       });
       return;
     }
@@ -150,211 +143,139 @@ export function WardWithNeighborsMap({ wardId }: WardWithNeighborsMapProps) {
       const lngDelta = maxLng - minLng;
       const maxDelta = Math.max(latDelta, lngDelta);
 
-      let zoomLevel = 12;
-      if (maxDelta > 0.1) zoomLevel = 10;
-      if (maxDelta > 0.25) zoomLevel = 9;
-      if (maxDelta > 0.5) zoomLevel = 8;
-      if (maxDelta > 1) zoomLevel = 7;
-      if (maxDelta > 2) zoomLevel = 6;
+      let zoom = 12;
+      if (maxDelta > 0.1) zoom = 10;
+      if (maxDelta > 0.25) zoom = 9;
+      if (maxDelta > 0.5) zoom = 8;
+      if (maxDelta > 1) zoom = 7;
+      if (maxDelta > 2) zoom = 6;
 
       setCamera({
-        centerCoordinate: [centerLng, centerLat],
-        zoomLevel,
-        animationDuration: 1000,
+        center: [centerLng, centerLat],
+        zoom,
+        duration: 1000,
       });
       setIsZooming(true);
       setTimeout(() => setIsZooming(false), 1000);
     }
   }, [allFeatures]);
 
-  const handleMapPress = (feature: GeoJSON.Feature) => {
-    try {
-      logger.log("Tapped ward:", feature);
-      const coords = (feature as GeoJSONFeature)?.geometry?.coordinates as
-        | [number, number]
-        | undefined;
-      if (coords) {
-        const [lng, lat] = coords;
-        // console.log(" pathname == ",pathname)
-        if (pathname.startsWith("/ward-by-id/") || pathname.startsWith("/ward-by-lat-long/")) {
-          router.push(`/ward-by-lat-long/${lat},${lng}`);
-        }
-        manuallySetLocation(lat, lng);
-      }
-    } catch (error) {
-      logger.error("Error handling map press:", error);
+  const handleMapPress = (event: { coordinates?: { longitude: number; latitude: number } }) => {
+    const lng = event.coordinates?.longitude;
+    const lat = event.coordinates?.latitude;
+    if (lng == null || lat == null) {
+      return;
     }
+
+    if (onMapPress) {
+      onMapPress({ lat, lng });
+    } else if (pathname.startsWith("/ward-by-id/") || pathname.startsWith("/ward-by-lat-long/")) {
+      router.push(`/ward-by-lat-long/${lat},${lng}`);
+    }
+    manuallySetLocation(lat, lng);
   };
 
   const isPending = wardId !== undefined && (isMainWardPending || isClosestWardsPending);
 
   return (
     <View style={styles.container}>
-      {(isPending || isZooming) && (
+      {(isPending || isZooming || !basemapReady) && (
         <View style={styles.loadingOverlay}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
           <Text style={[styles.loadingText, { color: theme.colors.onSurface }]}>
-            {isPending ? "Finding wards..." : "Zooming to wards..."}
+            {!basemapReady ? "Loading map…" : isPending ? "Finding wards..." : "Zooming to wards..."}
           </Text>
         </View>
       )}
-      {/* <ExpoImage source={require("@/assets/icons/location-pin.png")} style={{height:300,width:300}} /> */}
-      <MapView style={styles.map} onPress={handleMapPress}>
-        <Camera
-          zoomLevel={camera.zoomLevel}
-          centerCoordinate={camera.centerCoordinate}
-          animationDuration={camera.animationDuration}
-        />
-        <Images
-          images={{
-            "marker-15": require("@/assets/icons/location-pin.png"), // ✅ Use require directly
-          }}
-        />
 
-        {/* 1️⃣ Kenya Mask — dims the world outside Kenya */}
-        <ShapeSource
-          id="kenya-mask"
-          shape={{
-            type: "Feature",
-            geometry: {
-              type: "Polygon",
-              coordinates: [
-                [
-                  [33.501, -5.202],
-                  [42.283, -5.202],
-                  [42.283, 5.61],
-                  [33.501, 5.61],
-                  [33.501, -5.202],
-                ],
-              ],
-            },
-            properties: {},
-          }}>
-          <FillLayer
-            id="mask-fill"
-            style={{
-              fillColor: "#000",
-              fillOpacity: 0.4,
-            }}
-          />
-        </ShapeSource>
-        {/* Labels for all the counties */}
-        <ShapeSource id="kenya-counties" shape={countiesGeoJSON as any}>
-          <FillLayer
-            id="county-fill"
-            style={{
-              fillColor: theme.colors.surface,
-              fillOpacity: 1,
-            }}
-          />
-          <LineLayer
-            id="county-outline"
-            style={{
-              lineColor: theme.colors.onSurface,
-              lineWidth: 1,
-              lineDasharray: [2, 2],
-            }}
-          />
+      {basemapReady ? (
+        <Map style={styles.map} mapStyle={mapStyle} onPress={handleMapPress}>
+          <Camera center={camera.center} zoom={camera.zoom} duration={camera.duration} />
 
-          <SymbolLayer
-            id="county-labels"
-            style={{
-              textField: ["get", "COUNTY_NAM"], // ← Uses COUNTY_NAM property
-              textSize: 12,
-              textColor: theme.colors.onBackground,
-              textHaloColor: theme.colors.background,
-              textHaloWidth: 2,
-              textHaloBlur: 1,
-              textAnchor: "center",
-              textJustify: "center",
-              textAllowOverlap: false,
-              textIgnorePlacement: false,
-              textTransform: "uppercase",
-            }}
-          />
-        </ShapeSource>
-        {/* 3️⃣ 👇 ALL WARDS — Your custom data on TOP */}
-        {allFeatures.length > 0 && (
-          <ShapeSource
-            id="all-wards"
-            shape={{
-              type: "FeatureCollection",
-              features: allFeatures,
-            }}>
-            {/* Fill for neighbouring wards */}
-            <FillLayer
-              id="wards-fill"
-              style={{
-                fillColor: [
-                  "match",
-                  ["get", "type"],
-                  "main",
-                  theme.colors.errorContainer,
-                  theme.colors.surfaceDisabled,
+          {wardsCollection.features.length > 0 ? (
+            <GeoJSONSource id="all-wards" data={wardsCollection}>
+              <Layer
+                type="fill"
+                id="wards-fill"
+                paint={{
+                  "fill-color": [
+                    "match",
+                    ["get", "type"],
+                    "main",
+                    theme.colors.errorContainer,
+                    theme.colors.surfaceDisabled,
+                  ],
+                  "fill-opacity": ["match", ["get", "type"], "main", 0.35, 0.18],
+                }}
+              />
+              <Layer
+                type="line"
+                id="wards-outline"
+                paint={{
+                  "line-color": [
+                    "match",
+                    ["get", "type"],
+                    "main",
+                    theme.colors.error,
+                    theme.colors.onSurfaceDisabled,
+                  ],
+                  "line-width": ["match", ["get", "type"], "main", 4, 2],
+                }}
+              />
+              <Layer
+                type="symbol"
+                id="wards-label"
+                layout={{
+                  "text-field": ["get", "name"],
+                  "text-size": 14,
+                  "text-anchor": "center",
+                  "text-allow-overlap": false,
+                }}
+                paint={{
+                  "text-color": theme.colors.onBackground,
+                  "text-halo-color": theme.colors.background,
+                  "text-halo-width": 2,
+                }}
+              />
+            </GeoJSONSource>
+          ) : null}
+
+          {location ? (
+            <GeoJSONSource
+              id="user-location"
+              data={{
+                type: "FeatureCollection",
+                features: [
+                  {
+                    type: "Feature",
+                    geometry: {
+                      type: "Point",
+                      coordinates: [location.coords.longitude, location.coords.latitude],
+                    },
+                    properties: { name: "Your Location" },
+                  },
                 ],
-                fillOpacity: ["match", ["get", "type"], "main", 0.3, 0.15],
-              }}
-            />
-            {/* Outline for neighbouring wards  */}
-            <LineLayer
-              id="wards-outline"
-              style={{
-                lineColor: [
-                  "match",
-                  ["get", "type"],
-                  "main",
-                  theme.colors.error,
-                  theme.colors.onSurfaceDisabled,
-                ],
-                lineWidth: ["match", ["get", "type"], "main", 4, 2],
-              }}
-            />
-            {/* Labels — now on top of city labels, which is correct */}
-            <SymbolLayer
-              id="wards-label"
-              style={{
-                textField: ["get", "name"],
-                textSize: 14,
-                textColor: theme.colors.onBackground,
-                textHaloColor: theme.colors.background,
-                textHaloWidth: 2,
-                textHaloBlur: 1,
-                textAnchor: "center",
-                textJustify: "center",
-                textAllowOverlap: false,
-                textIgnorePlacement: false,
-              }}
-            />
-          </ShapeSource>
-        )}
-        {/* 4️⃣ User Location Pin */}
-        {location && (
-          <ShapeSource
-            id="user-location"
-            shape={{
-              type: "Feature",
-              geometry: {
-                type: "Point",
-                coordinates: [location.coords.longitude, location.coords.latitude],
-              },
-              properties: {
-                name: "Your Location",
-              },
-            }}>
-            <SymbolLayer
-              id="user-location-pin"
-              style={{
-                iconImage: "marker-15",
-                iconSize: 0.1,
-                iconColor: theme.colors.error,
-                iconAnchor: "bottom",
-                iconAllowOverlap: true,
-                iconIgnorePlacement: true,
-              }}
-            />
-          </ShapeSource>
-        )}
-      </MapView>
+              }}>
+              <Layer
+                type="circle"
+                id="user-location-dot"
+                paint={{
+                  "circle-radius": 8,
+                  "circle-color": theme.colors.error,
+                  "circle-stroke-width": 2,
+                  "circle-stroke-color": theme.colors.surface,
+                }}
+              />
+            </GeoJSONSource>
+          ) : null}
+        </Map>
+      ) : null}
+
+      {basemapReady ? (
+        <View style={styles.mapOverlay} pointerEvents="box-none">
+          <MapBasemapToggle preset={preset} onPresetChange={setPreset} />
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -368,6 +289,11 @@ const styles = StyleSheet.create({
   map: {
     flex: 1,
     height: "100%",
+  },
+  mapOverlay: {
+    ...StyleSheet.absoluteFill,
+    zIndex: 20,
+    elevation: 20,
   },
   loadingOverlay: {
     position: "absolute",

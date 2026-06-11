@@ -1,11 +1,5 @@
-// jest.setup.js
 import 'react-native-gesture-handler/jestSetup';
 
-// Mock native modules
-jest.mock('./modules/expo-spatialite', () => require('./__mocks__/expo-spatialite'));
-jest.mock('./modules/expo-material-dynamic-colors', () => require('./__mocks__/expo-material-dynamic-colors'));
-
-// Mock Expo modules
 jest.mock('expo-location', () => ({
   requestForegroundPermissionsAsync: jest.fn(() => Promise.resolve({ status: 'granted' })),
   getCurrentPositionAsync: jest.fn(() => Promise.resolve({
@@ -35,25 +29,18 @@ jest.mock('expo-file-system', () => ({
   Paths: { document: '/mock/document/path' },
 }));
 
-// Mock MapLibre React Native
 jest.mock('@maplibre/maplibre-react-native', () => ({
-  MapView: 'MapView',
+  Map: 'Map',
   Camera: 'Camera',
-  FillLayer: 'FillLayer',
-  Images: 'Images',
-  ShapeSource: 'ShapeSource',
-  SymbolLayer: 'SymbolLayer',
-  LineLayer: 'LineLayer',
-  UserLocation: 'UserLocation',
+  GeoJSONSource: 'GeoJSONSource',
+  Layer: 'Layer',
   Logger: { setLogLevel: jest.fn() },
 }));
 
-// Mock AsyncStorage
 jest.mock('@react-native-async-storage/async-storage', () =>
   require('@react-native-async-storage/async-storage/jest/async-storage-mock')
 );
 
-// Mock expo-font and vector icons
 jest.mock('expo-font', () => ({
   loadAsync: jest.fn(() => Promise.resolve()),
   isLoaded: jest.fn(() => true),
@@ -65,7 +52,6 @@ jest.mock('@expo/vector-icons', () => ({
   Ionicons: 'Ionicons',
 }));
 
-// Mock material color utilities
 jest.mock('@material/material-color-utilities', () => ({
   argbFromHex: jest.fn(() => 0xff6750a4),
   themeFromSourceColor: jest.fn(() => ({
@@ -90,26 +76,24 @@ jest.mock('@material/material-color-utilities', () => ({
   })),
 }));
 
-// Mock ExpoSpatialiteProvider to avoid database initialization
-jest.mock('@/lib/expo-spatialite/ExpoSpatialiteProvider', () => ({
-  ExpoSpatialiteProvider: ({ children }) => children,
+jest.mock('@/lib/drizzle/InitDatabase', () => ({
+  InitDatabase: ({ children }) => children,
 }));
 
-// Mock MaterialIcon component
 jest.mock('@/components/default/ui/icon-symbol', () => ({
   MaterialIcon: 'MaterialIcon',
 }));
 
-// Mock Expo native modules at the requireNativeModule level
 jest.mock('expo', () => ({
   ...jest.requireActual('expo'),
   requireNativeModule: jest.fn((moduleName) => {
-    console.log('\n\n\n\ test moduleName', moduleName,"\n\n\n");
-    if (moduleName === 'ExpoMaterialDynamicColors') {
-      return require('./__mocks__/ExpoMaterialDynamicColors').default;
-    }
-    if (moduleName === 'ExpoSpatialite') {
-      return require('./__mocks__/ExpoSpatialite').default;
+    if (moduleName === 'ExpoRouter') {
+      return {
+        Material3DynamicColor: {
+          isSupported: jest.fn(() => false),
+          getTheme: jest.fn(() => null),
+        },
+      };
     }
     return {};
   }),

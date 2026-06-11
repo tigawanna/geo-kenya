@@ -3,6 +3,9 @@
 # dependencies
 node_modules/
 
+plugins/opsqlite-spatialite/spatialite-libs/
+.cache/spatialite-downloads/
+
 # Expo
 .expo/
 dist/

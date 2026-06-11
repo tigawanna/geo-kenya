@@ -1,87 +1,62 @@
-import {
-    Colors,
-    customTheme,
-    defaultMaterial3PrimaryDarkTheme,
-    defaultMaterial3PrimaryLightTheme,
-} from "@/constants/Colors";
+import { Colors, customTheme } from "@/constants/Colors";
 import { useSettingsStore, useThemeStore } from "@/store/settings-store";
 import {
-  DarkTheme as NavigationDarkTheme,
-  DefaultTheme as NavigationDefaultTheme,
-} from "@react-navigation/native";
-
-import { MaterialDynamicTheme, useMaterialDynamicColors } from "@/modules/expo-material-dynamic-colors/src/index";
-// import { MaterialDynamicTheme, useMaterialDynamicColors } from "@/modules/expo-material-dynamic-colors/src/index";
-// import { useThemeStore } from "@/stores/app-settings-store";
+  getMaterialDynamicTheme,
+  isDynamicColorSupported,
+} from "@/theme/material-dynamic-colors";
 import merge from "deepmerge";
-import { adaptNavigationTheme, MD3DarkTheme, MD3LightTheme } from "react-native-paper";
-import { logger } from "@/utils/logger";
+import { useMemo } from "react";
+import { MD3DarkTheme, MD3LightTheme, type MD3Theme } from "react-native-paper";
 
 export function useThemeSetup() {
-  // Get device-generated Material You theme
-  const { theme: material3Theme } = useMaterialDynamicColors();
-  // logger.log("material3Theme", material3Theme);
-  
-  // Get stored theme and color scheme preferences
   const { theme: userThemePreference, isDarkMode } = useThemeStore();
   const { dynamicColors, colorScheme } = useSettingsStore();
 
-  const { DarkTheme, LightTheme } = adaptNavigationTheme({
-    reactNavigationLight: NavigationDefaultTheme,
-    reactNavigationDark: NavigationDarkTheme,
-  });
+  const paperTheme = useMemo(() => {
+    let lightThemeColors: MD3Theme["colors"] = Colors.light;
+    let darkThemeColors: MD3Theme["colors"] = Colors.dark;
 
-  // Determine theme colors based on colorScheme and dynamicColors
-  let lightThemeColors = Colors.light;
-  let darkThemeColors = Colors.dark;
+    if (colorScheme) {
+      const customLight = customTheme[colorScheme].light;
+      const customDark = customTheme[colorScheme].dark;
+      lightThemeColors = {
+        ...customLight,
+        tint: customLight.tertiary,
+        icon: customLight.onBackground,
+      } as unknown as MD3Theme["colors"];
+      darkThemeColors = {
+        ...customDark,
+        tint: customDark.tertiary,
+        icon: customDark.onBackground,
+      } as unknown as MD3Theme["colors"];
+    } else if (dynamicColors && isDynamicColorSupported()) {
+      const materialTheme = getMaterialDynamicTheme();
+      lightThemeColors = {
+        ...materialTheme.light,
+        tint: materialTheme.light.tertiary,
+        icon: materialTheme.light.onBackground,
+      } as unknown as MD3Theme["colors"];
+      darkThemeColors = {
+        ...materialTheme.dark,
+        tint: materialTheme.dark.tertiary,
+        icon: materialTheme.dark.onBackground,
+      } as unknown as MD3Theme["colors"];
+    }
 
-  if (colorScheme) {
-    // Use custom theme when colorScheme is selected
-    const customLight = customTheme[colorScheme].light;
-    const customDark = customTheme[colorScheme].dark;
-    lightThemeColors = { ...customLight, tint: customLight.tertiary, icon: customLight.onBackground };
-    darkThemeColors = { ...customDark, tint: customDark.tertiary, icon: customDark.onBackground };
-  } else if (dynamicColors) {
-    // Use Material You theme when System Default and dynamic colors enabled
-    const materialTheme = materialYouThemeOrMyTheme(material3Theme);
-    lightThemeColors = materialTheme.light;
-    darkThemeColors = materialTheme.dark;
-  }
+    const lightBasedTheme = merge(MD3LightTheme, {
+      colors: lightThemeColors,
+    });
 
-  // Create combined themes (Material You or fallback)
-  const lightBasedTheme = merge(LightTheme, {
-    ...MD3LightTheme,
-    colors: lightThemeColors,
-  });
+    const darkBasedTheme = merge(MD3DarkTheme, {
+      colors: darkThemeColors,
+    });
 
-  const darkBasedTheme = merge(DarkTheme, {
-    ...MD3DarkTheme,
-    colors: darkThemeColors,
-  });
-
-  // Use the appropriate theme based on user preference
-  const paperTheme = isDarkMode ? darkBasedTheme : lightBasedTheme;
+    return isDarkMode ? darkBasedTheme : lightBasedTheme;
+  }, [colorScheme, dynamicColors, isDarkMode]);
 
   return {
     paperTheme,
     colorScheme: userThemePreference,
     isDarkMode,
   };
-}
-
-function materialYouThemeOrMyTheme(theme: MaterialDynamicTheme) {
-  if (
-    theme.dark.primary === defaultMaterial3PrimaryDarkTheme &&
-    theme.light.primary === defaultMaterial3PrimaryLightTheme
-  ) {
-    return {
-      light: Colors.light,
-      dark: Colors.dark,
-    };
-  } else {
-    return {
-      light: { ...theme.light, tint: theme.light.tertiary, icon: theme.light.onBackground },
-      dark: { ...theme.dark, tint: theme.dark.tertiary, icon: theme.dark.onBackground },
-    };
-  }
 }

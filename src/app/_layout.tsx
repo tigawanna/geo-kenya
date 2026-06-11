@@ -1,12 +1,9 @@
 import { useThemeSetup } from "@/hooks/theme/use-theme-setup";
-import { ExpoSpatialiteWrapper } from "@/lib/expo-spatialite/app-wrapper";
+import { InitDatabase } from "@/lib/drizzle/InitDatabase";
 import {
   initializePullEventsBackgroundTask,
   initializePushEventsBackgroundTask,
-} from "@/lib/expo-spatialite/sync/background-task";
-import {
-  registerCrashalytics
-} from "@/lib/react-native-firebase/crashalytics/use-register-crashalytics";
+} from "@/lib/sync/background-task";
 import { GlobalSnackbar } from "@/lib/react-native-paper/snackbar/GlobalSnackbar";
 import { queryClient } from "@/lib/tanstack/query/client";
 import {
@@ -14,7 +11,7 @@ import {
   useAppState,
   useOnlineManager,
 } from "@/lib/tanstack/query/react-native-setup-hooks";
-import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
+import { DarkTheme, DefaultTheme, ThemeProvider } from "expo-router/react-navigation";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -28,9 +25,8 @@ export const unstable_settings = {
 };
 
 let resolver: (() => void) | null;
-let initilializerPromise = new Promise<void>((resolve) => {
+const initilializerPromise = new Promise<void>((resolve) => {
   resolver = () => {
-    console.log("Initializer promise resolved");
     resolve();
   };
 });
@@ -41,46 +37,42 @@ export default function RootLayout() {
   useOnlineManager();
   useAppState(onAppStateChange);
   const { colorScheme, paperTheme } = useThemeSetup();
+
   useEffect(() => {
     resolver?.();
-    // comment out during dev because we're not setupfor a dev profile on firebase
-      // registerCrashalytics();
   }, []);
-  // useRegisterCrashalytics();
 
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <PaperProvider theme={paperTheme}>
           <GestureHandlerRootView style={{ flex: 1 }}>
-            <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-              <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
-              <ExpoSpatialiteWrapper>
-                <Stack>
-                  <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                  <Stack.Screen
-                    name="ward-by-id/[ward]/index"
-                    options={{
-                      headerShown: false,
-                    }}
-                  />
-                  <Stack.Screen
-                    name="ward-by-id/[ward]/edit"
-                    options={{
-                      headerShown: false,
-                    }}
-                  />
-                  <Stack.Screen
-                    name="ward-by-lat-long/[coords]"
-                    options={{
-                      headerShown: false,
-                    }}
-                  />
-                  <Stack.Screen name="+not-found" />
-                </Stack>
-              </ExpoSpatialiteWrapper>
-              <GlobalSnackbar />
-            </ThemeProvider>
+            <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
+            <InitDatabase>
+              <Stack>
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen
+                  name="ward-by-id/[ward]/index"
+                  options={{
+                    headerShown: false,
+                  }}
+                />
+                <Stack.Screen
+                  name="ward-by-id/[ward]/edit"
+                  options={{
+                    headerShown: false,
+                  }}
+                />
+                <Stack.Screen
+                  name="ward-by-lat-long/[coords]"
+                  options={{
+                    headerShown: false,
+                  }}
+                />
+                <Stack.Screen name="+not-found" />
+              </Stack>
+            </InitDatabase>
+            <GlobalSnackbar />
           </GestureHandlerRootView>
         </PaperProvider>
       </ThemeProvider>

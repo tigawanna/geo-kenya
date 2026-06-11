@@ -64,6 +64,26 @@ export const wardEvents = sqliteTable("kenya_ward_events", {
 });
 
 // Drizzle table schema with custom type for data array
+export const syncEvents = sqliteTable("sync_events", {
+  id: text("id").primaryKey(),
+  deviceId: text("device_id").notNull(),
+  tableName: text("table_name").notNull(),
+  rowId: text("row_id").notNull(),
+  action: text("action", { enum: ["create", "update", "delete"] }).notNull(),
+  payloadJson: text("payload_json").notNull(),
+  createdAt: text("created_at").notNull(),
+  verified: integer("verified", { mode: "boolean" }).notNull().default(true),
+  verifiedAt: text("verified_at"),
+  verifiedBy: text("verified_by"),
+});
+
+export const appliedSyncEvents = sqliteTable("applied_sync_events", {
+  eventId: text("event_id").primaryKey(),
+  appliedAt: text("applied_at")
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
+});
+
 export const wardUpdates = sqliteTable("kenya_ward_updates", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   version: integer("version").notNull(),

@@ -29,11 +29,11 @@ const getAppName = () => {
 
 const getPlugins = (idt: UniqueIDT) => {
   const is_production = idt === "com.tigawanna.geokenya";
-  const is_not_dev = idt === "com.tigawanna.geokenya" || idt === "com.tigawanna.geokenya.preview";
   const plugins: ConfigContext["config"]["plugins"] = [
     "expo-router",
     "@maplibre/maplibre-react-native",
     "expo-background-task",
+    "./plugins/opsqlite-spatialite/with-spatialite",
     [
       "expo-splash-screen",
       {
@@ -51,10 +51,7 @@ const getPlugins = (idt: UniqueIDT) => {
       "expo-build-properties",
       {
         android: {
-          usesCleartextTraffic: is_production ? false : true, // ? enable HTTP requests
-        },
-        ios: {
-          flipper: true,
+          usesCleartextTraffic: is_production ? false : true,
         },
       },
     ],
@@ -83,12 +80,11 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     orientation: "portrait",
     icon: "./assets/icons/splash-icon-dark.png",
     userInterfaceStyle: "automatic",
-    newArchEnabled: true,
     ios: {
       ...config.ios,
       supportsTablet: true,
       infoPlist: {
-        NSAppTransportSecurity: { NSAllowsArbitraryLoads: is_production ? false : true }, // ? enable HTTP requests
+        NSAppTransportSecurity: { NSAllowsArbitraryLoads: is_production ? false : true },
       },
       icon: {
         light: "./assets/icons/ios-light.png",
@@ -105,7 +101,6 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         monochromeImage: "./assets/icons/adaptive-icon.png",
       },
       googleServicesFile: is_not_dev ? "./google-services.json" : undefined,
-      edgeToEdgeEnabled: true,
       predictiveBackGestureEnabled: false,
       package: appIdentifier,
     },

@@ -10,6 +10,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "exclude": ["node_modules", "babel.config.js", "metro.config.js", "jest.config.js"],
+  "exclude": ["node_modules", "babel.config.js", "metro.config.js", "jest.config.js", "modules/expo-spatialite", "modules/expo-material-dynamic-colors"],
   "include": ["**/*.ts", "**/*.tsx", "drizzle", "./lib", ".expo/types/**/*.ts", "expo-env.d.ts"]
 }

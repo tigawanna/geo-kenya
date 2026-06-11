@@ -1,4 +1,4 @@
-import { pushAllEvents } from "@/lib/expo-spatialite/sync/push_events";
+import { pushAllEvents } from "@/lib/sync/push-events";
 import { useSnackbar } from "@/lib/react-native-paper/snackbar/global-snackbar-store";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { StyleSheet, View } from "react-native";

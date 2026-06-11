@@ -1,7 +1,7 @@
 import { useThemeSetup } from "@/hooks/theme/use-theme-setup";
 import { useSettingsStore } from "@/store/settings-store";
 import {PaperProvider } from "react-native-paper";
-import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
+import { DarkTheme, DefaultTheme, ThemeProvider } from "expo-router/react-navigation";
 
 export function AboveContextThemeProvider({ children }: { children: React.ReactNode }) {
   const { colorScheme, paperTheme } = useThemeSetup();

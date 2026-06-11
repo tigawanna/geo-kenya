@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect } from "expo-router/react-navigation";
 import { AppState, AppStateStatus, Platform } from "react-native";
 import { focusManager, onlineManager } from "@tanstack/react-query";
 import * as Network from "expo-network";

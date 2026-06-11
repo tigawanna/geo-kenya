@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { StyleSheet, View, FlatList } from "react-native";
 import { Text, IconButton, Card, useTheme, Divider } from "react-native-paper";
 import { getMaterialIconName } from "../default/ui/icon-symbol";
-import { pullUpdates } from "@/lib/expo-spatialite/sync/pull_updates";
+import { pullUpdates } from "@/lib/sync/pull-pocketbase-updates";
 import { timestampTolaclTime } from "@/lib/pb/utils/dates";
 
 export function WardRemoteUpdates() {
