@@ -13,7 +13,8 @@ export default function SingleWardAtLatLong() {
       <SingleWardByLatLng
         lat={Number(lat)}
         lng={Number(lng)}
-        backButton={true}
+        backButton
+        homeButton
         // actions={
         //   <View style={{ flexDirection: "row", justifyContent: "center" }}>
         //     <IconButton

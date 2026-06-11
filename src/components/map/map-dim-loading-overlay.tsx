@@ -3,12 +3,20 @@ import { StyleSheet, View } from "react-native";
 
 interface MapDimLoadingOverlayProps {
   spinnerSize?: number;
+  showSpinner?: boolean;
+  dimOpacity?: number;
 }
 
-export function MapDimLoadingOverlay({ spinnerSize = 110 }: MapDimLoadingOverlayProps) {
+export function MapDimLoadingOverlay({
+  spinnerSize = 110,
+  showSpinner = true,
+  dimOpacity = 0.42,
+}: MapDimLoadingOverlayProps) {
   return (
-    <View style={styles.overlay} pointerEvents="none">
-      <KenyaShapeSpinner size={spinnerSize} />
+    <View
+      style={[styles.overlay, { backgroundColor: `rgba(0, 0, 0, ${dimOpacity})` }]}
+      pointerEvents="none">
+      {showSpinner ? <KenyaShapeSpinner size={spinnerSize} /> : null}
     </View>
   );
 }
@@ -18,7 +26,6 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.42)",
     zIndex: 10,
     elevation: 10,
   },

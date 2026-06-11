@@ -12,7 +12,8 @@ import {
   isValidGeoJSONGeometry,
 } from "@/lib/map-libre/geom-parse";
 import { normalizeMapColorScheme, resolveMapStyle } from "@/lib/map-libre/map-style";
-import { MapBasemapToggle } from "@/components/map/map-basemap-toggle";
+import { MapBasemapPicker } from "@/components/map/map-basemap-picker";
+import { MapHomeButton } from "@/components/map/map-home-button";
 import { Camera, GeoJSONSource, Layer, Map, type CameraRef } from "@maplibre/maplibre-react-native";
 import { useQuery } from "@tanstack/react-query";
 import { usePathname, useRouter } from "expo-router";
@@ -26,6 +27,7 @@ interface WardWithNeighborsMapProps {
   onMapPress?: (coords: { lat: number; lng: number }) => void;
   fillHeight?: boolean;
   locationLoading?: boolean;
+  homeButton?: boolean;
 }
 
 function bboxFromWardFields(ward: {
@@ -75,14 +77,18 @@ export function WardWithNeighborsMap({
   onMapPress,
   fillHeight = false,
   locationLoading = false,
+  homeButton = false,
 }: WardWithNeighborsMapProps) {
   const theme = useTheme();
   const colorScheme = normalizeMapColorScheme(useColorScheme());
-  const { preset, setPreset, isReady: basemapReady } = useMapBasemapPreference();
-  const mapStyle = resolveMapStyle(preset, colorScheme);
-  const mapStyleKey = `${preset}-${colorScheme}`;
+  const { preset, setPreset } = useMapBasemapPreference();
+  const mapStyle = useMemo(() => resolveMapStyle(preset, colorScheme), [preset, colorScheme]);
   const [mapLoaded, setMapLoaded] = useState(false);
+  const [mapHeight, setMapHeight] = useState(0);
+  const [styleTransitioning, setStyleTransitioning] = useState(false);
   const [mapStyleFailed, setMapStyleFailed] = useState(false);
+  const styleIdentity = `${preset}-${colorScheme}`;
+  const styleIdentityRef = useRef(styleIdentity);
   const { location, manuallySetLocation } = useDeviceLocation();
   const router = useRouter();
   const pathname = usePathname();
@@ -177,9 +183,17 @@ export function WardWithNeighborsMap({
   };
 
   useEffect(() => {
-    setMapLoaded(false);
-    setMapStyleFailed(false);
-  }, [mapStyleKey]);
+    if (!mapLoaded) {
+      styleIdentityRef.current = styleIdentity;
+      return;
+    }
+
+    if (styleIdentityRef.current !== styleIdentity) {
+      styleIdentityRef.current = styleIdentity;
+      setStyleTransitioning(true);
+      setMapStyleFailed(false);
+    }
+  }, [mapLoaded, styleIdentity]);
 
   useEffect(() => {
     if (allFeatures.length > 0) {
@@ -241,10 +255,14 @@ export function WardWithNeighborsMap({
       isClosestWardsPending ||
       isMainWardFetching ||
       isClosestWardsFetching);
-  const showLoadingOverlay = !basemapReady || locationLoading || isWardDataLoading;
+  const showLoadingOverlay = !mapLoaded || locationLoading || isWardDataLoading;
+  const showStyleTransitionOverlay = styleTransitioning && mapLoaded && !showLoadingOverlay;
+  const compassTop = Math.max(12, Math.round(mapHeight / 2) - 28);
 
   return (
-    <View style={[styles.container, fillHeight && styles.containerFill]}>
+    <View
+      style={[styles.container, fillHeight && styles.containerFill]}
+      onLayout={(event) => setMapHeight(event.nativeEvent.layout.height)}>
       {mapStyleFailed ? (
         <View style={styles.errorBanner}>
           <Text variant="bodySmall" style={{ color: theme.colors.onErrorContainer }}>
@@ -253,21 +271,25 @@ export function WardWithNeighborsMap({
         </View>
       ) : null}
 
-      {basemapReady ? (
-        <Map
-          key={mapStyleKey}
-          style={styles.map}
-          mapStyle={mapStyle}
-          touchZoom
-          dragPan
-          doubleTapZoom
-          androidView={Platform.OS === "android" ? "texture" : undefined}
-          onPress={handleMapPress}
-          onDidFinishLoadingMap={() => {
-            setMapLoaded(true);
-            setMapStyleFailed(false);
-          }}
-          onDidFailLoadingMap={() => setMapStyleFailed(true)}>
+      <Map
+        style={styles.map}
+        mapStyle={mapStyle}
+        touchZoom
+        dragPan
+        doubleTapZoom
+        compass
+        compassPosition={{ top: compassTop, right: 12 }}
+        androidView={Platform.OS === "android" ? "texture" : undefined}
+        onPress={handleMapPress}
+        onDidFinishLoadingMap={() => {
+          setMapLoaded(true);
+          setStyleTransitioning(false);
+          setMapStyleFailed(false);
+        }}
+        onDidFailLoadingMap={() => {
+          setStyleTransitioning(false);
+          setMapStyleFailed(true);
+        }}>
           <Camera
             ref={cameraRef}
             initialViewState={{ center: KENYA_CENTER, zoom: KENYA_DEFAULT_ZOOM }}
@@ -350,16 +372,20 @@ export function WardWithNeighborsMap({
               />
             </GeoJSONSource>
           ) : null}
-        </Map>
-      ) : null}
+      </Map>
 
       {showLoadingOverlay ? <MapDimLoadingOverlay /> : null}
+      {showStyleTransitionOverlay ? <MapDimLoadingOverlay showSpinner={false} dimOpacity={0.22} /> : null}
 
-      {basemapReady ? (
-        <View style={styles.mapToggleContainer} pointerEvents="box-none">
-          <MapBasemapToggle preset={preset} onPresetChange={setPreset} />
+      {homeButton ? (
+        <View style={styles.mapHomeContainer} pointerEvents="box-none">
+          <MapHomeButton />
         </View>
       ) : null}
+
+      <View style={styles.mapToggleContainer} pointerEvents="box-none">
+        <MapBasemapPicker preset={preset} onPresetChange={setPreset} />
+      </View>
     </View>
   );
 }
@@ -378,6 +404,13 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     height: "100%",
+  },
+  mapHomeContainer: {
+    position: "absolute",
+    top: 12,
+    left: 12,
+    zIndex: 20,
+    elevation: 20,
   },
   mapToggleContainer: {
     position: "absolute",

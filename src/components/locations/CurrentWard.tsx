@@ -22,9 +22,10 @@ interface CurretWardProps {
   lng: number;
   actions?: React.ReactNode;
   backButton?: boolean;
+  homeButton?: boolean;
 }
 
-export function CurrentWard({ lat, lng, actions, backButton }: CurretWardProps) {
+export function CurrentWard({ lat, lng, actions, backButton, homeButton }: CurretWardProps) {
   const theme = useTheme();
   const wardSheetRef = useRef<WardInfoSheetRef>(null);
   const [outsideKenyaDismissed, setOutsideKenyaDismissed] = useState(false);
@@ -67,6 +68,7 @@ export function CurrentWard({ lat, lng, actions, backButton }: CurretWardProps) 
         fillHeight
         wardId={data?.result?.id}
         locationLoading={locationLoading}
+        homeButton={homeButton}
         onMapPress={() => collapseWardInfoSheet(wardSheetRef)}
       />
 

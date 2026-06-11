@@ -94,6 +94,7 @@ export function SingleWardById({ wardId }: SingleWardByIdProps) {
       <WardWithNeighborsMap
         fillHeight
         wardId={data.result.id}
+        homeButton
         onMapPress={() => collapseWardInfoSheet(wardSheetRef)}
       />
 

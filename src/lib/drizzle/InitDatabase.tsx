@@ -30,6 +30,32 @@ interface InitDatabaseProps {
   children?: React.ReactNode;
 }
 
+let bootstrapPromise: Promise<void> | null = null;
+
+async function runDatabaseBootstrap(): Promise<void> {
+  if (process.env.EXPO_PUBLIC_RESET_DATABASE === "1") {
+    resetLocalDatabase();
+    bootstrapPromise = null;
+  }
+
+  if (bootstrapPromise) {
+    return bootstrapPromise;
+  }
+
+  bootstrapPromise = (async () => {
+    await ensureSpatialMetadata();
+    await runMigrations();
+    await registerGeometryColumn(db);
+    await bootstrapSyncData(db);
+    await ensureKenyaWardGeometriesReady(db);
+  })().catch((err) => {
+    bootstrapPromise = null;
+    throw err;
+  });
+
+  return bootstrapPromise;
+}
+
 export function InitDatabase({ children }: InitDatabaseProps) {
   const [ready, setReady] = useState(false);
   const [error, setError] = useState<Error | null>(null);
@@ -37,29 +63,17 @@ export function InitDatabase({ children }: InitDatabaseProps) {
   useEffect(() => {
     let cancelled = false;
 
-    async function bootstrap() {
-      try {
-        if (process.env.EXPO_PUBLIC_RESET_DATABASE === "1") {
-          resetLocalDatabase();
-        }
-
-        await ensureSpatialMetadata();
-        await runMigrations();
-        await registerGeometryColumn(db);
-        await bootstrapSyncData(db);
-        await ensureKenyaWardGeometriesReady(db);
-
+    void runDatabaseBootstrap()
+      .then(() => {
         if (!cancelled) {
           setReady(true);
         }
-      } catch (err) {
+      })
+      .catch((err) => {
         if (!cancelled) {
           setError(logBootstrapError(err));
         }
-      }
-    }
-
-    void bootstrap();
+      });
 
     return () => {
       cancelled = true;

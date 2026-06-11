@@ -6,6 +6,7 @@ interface SingleWardByLatLngProps {
   lng: number;
   actions?: React.ReactNode;
   backButton?: boolean;
+  homeButton?: boolean;
 }
 
 export function SingleWardByLatLng({
@@ -13,10 +14,17 @@ export function SingleWardByLatLng({
   lng,
   actions,
   backButton,
+  homeButton,
 }: SingleWardByLatLngProps) {
   return (
     <View style={styles.container}>
-      <CurrentWard lat={lat} lng={lng} actions={actions} backButton={backButton} />
+      <CurrentWard
+        lat={lat}
+        lng={lng}
+        actions={actions}
+        backButton={backButton}
+        homeButton={homeButton}
+      />
     </View>
   );
 }

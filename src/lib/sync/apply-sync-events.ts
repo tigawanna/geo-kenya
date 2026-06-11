@@ -248,6 +248,10 @@ export async function ensureKenyaWardGeometriesReady(database: DrizzleDB): Promi
   await registerGeometryColumn(database);
 
   let missing = await countMissingGeometries(database);
+  if (missing === 0) {
+    return;
+  }
+
   const registered = await isGeometryColumnRegistered(database);
 
   if (!registered || missing > 0) {

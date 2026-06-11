@@ -79,19 +79,26 @@ return (
             )}
           </View>
         </View>
-        <View style={styles.idContainer}>
-          <View style={[styles.idBadge, { backgroundColor: theme.colors.surfaceVariant }]}>
+        <View style={styles.trailing}>
+          <View style={styles.idContainer}>
+            <View style={[styles.idBadge, { backgroundColor: theme.colors.surfaceVariant }]}>
+              <Text
+                variant="titleMedium"
+                style={[styles.idText, { color: theme.colors.onSurfaceVariant }]}>
+                {item.id}
+              </Text>
+            </View>
             <Text
-              variant="titleMedium"
-              style={[styles.idText, { color: theme.colors.onSurfaceVariant }]}>
-              {item.id}
+              variant="labelSmall"
+              style={[styles.wardCode, { color: theme.colors.onSurfaceDisabled }]}>
+              {item.wardCode}
             </Text>
           </View>
-          <Text
-            variant="labelSmall"
-            style={[styles.wardCode, { color: theme.colors.onSurfaceDisabled }]}>
-            {item.wardCode}
-          </Text>
+          <MaterialIcon
+            name="chevron-right"
+            size={24}
+            color={theme.colors.onSurfaceVariant}
+          />
         </View>
       </Card.Content>
     </Card>
@@ -138,6 +145,11 @@ const styles = StyleSheet.create({
   },
   detailText: {
     // Color applied dynamically
+  },
+  trailing: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
   },
   idContainer: {
     alignItems: "center",

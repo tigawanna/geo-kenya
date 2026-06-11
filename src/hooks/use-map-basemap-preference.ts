@@ -1,18 +1,23 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useCallback, useEffect, useState } from "react";
-import type { MapBasemapPreset } from "@/lib/map-libre/map-style";
+import {
+  DEFAULT_MAP_BASEMAP_PRESET,
+  normalizeMapBasemapPreset,
+  type MapBasemapPreset,
+} from "@/lib/map-libre/map-style";
 
 const STORAGE_KEY = "geo-kenya:map-basemap-preset";
 
 export function useMapBasemapPreference() {
-  const [preset, setPresetState] = useState<MapBasemapPreset>("standard");
-  const [isReady, setIsReady] = useState(false);
+  const [preset, setPresetState] = useState<MapBasemapPreset>(DEFAULT_MAP_BASEMAP_PRESET);
+  const [isReady, setIsReady] = useState(true);
 
   useEffect(() => {
     AsyncStorage.getItem(STORAGE_KEY)
       .then((value) => {
-        if (value === "standard" || value === "minimal") {
-          setPresetState(value);
+        const next = normalizeMapBasemapPreset(value);
+        if (next) {
+          setPresetState(next);
         }
       })
       .finally(() => setIsReady(true));
