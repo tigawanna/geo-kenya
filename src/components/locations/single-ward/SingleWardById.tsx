@@ -1,6 +1,7 @@
 import { getWardByIdQueryOptions } from "@/data-access-layer/wards-query-options";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
+import { useRef } from "react";
 import { StyleSheet, View } from "react-native";
 import { Button, useTheme } from "react-native-paper";
 import { MaterialIcon } from "../../default/ui/icon-symbol";
@@ -8,7 +9,11 @@ import { LoadingFallback } from "../../state-screens/LoadingFallback";
 import { NoDataScreen } from "../../state-screens/NoDataScreen";
 import { WardWithNeighborsMap } from "../maps/WardWithNeighborsMap.tsx";
 import { ClosestWardsByGeom } from "../proximity/ClosestWardsByGeom";
-import { WardInfoBottomSheet } from "../sheets/ward-info-bottom-sheet";
+import {
+  collapseWardInfoSheet,
+  WardInfoBottomSheet,
+  type WardInfoSheetRef,
+} from "../sheets/ward-info-bottom-sheet";
 
 interface SingleWardByIdProps {
   wardId: string;
@@ -17,6 +22,7 @@ interface SingleWardByIdProps {
 export function SingleWardById({ wardId }: SingleWardByIdProps) {
   const theme = useTheme();
   const router = useRouter();
+  const wardSheetRef = useRef<WardInfoSheetRef>(null);
   const { data, isPending, refetch, isRefetching } = useQuery(
     getWardByIdQueryOptions({ id: Number(wardId) }),
   );
@@ -85,9 +91,14 @@ export function SingleWardById({ wardId }: SingleWardByIdProps) {
 
   return (
     <View style={styles.container}>
-      <WardWithNeighborsMap fillHeight wardId={data.result.id} />
+      <WardWithNeighborsMap
+        fillHeight
+        wardId={data.result.id}
+        onMapPress={() => collapseWardInfoSheet(wardSheetRef)}
+      />
 
       <WardInfoBottomSheet
+        ref={wardSheetRef}
         ward={data.result}
         backButton
         nearbyContent={<ClosestWardsByGeom wardId={data.result.id} />}

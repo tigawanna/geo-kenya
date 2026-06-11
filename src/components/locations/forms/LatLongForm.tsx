@@ -1,22 +1,22 @@
 import { useDeviceLocation } from "@/hooks/use-device-location";
 import { useDebouncedState } from "@tanstack/react-pacer";
 import React, { useEffect } from "react";
-import { View } from "react-native";
-import { Searchbar, Text, useTheme } from "react-native-paper";
+import { StyleSheet, View } from "react-native";
+import { Searchbar } from "react-native-paper";
 
 interface LatLongFormProps {
   action?: React.ReactNode;
   initLat?: number;
   initLng?: number;
 }
-export function LatLongForm({ action, initLat, initLng }: LatLongFormProps) {
-  const theme = useTheme();
+
+export function LatLongForm({ initLat, initLng }: LatLongFormProps) {
   const { location, manuallySetLocation } = useDeviceLocation();
   const [inputValue, setInputValue] = React.useState("");
 
   const lat = location?.coords.latitude ?? initLat ?? -1.2921;
   const lng = location?.coords.longitude ?? initLng ?? 36.8219;
-  const placeholder = `${lat.toFixed(3)}, ${lng.toFixed(3)}`;
+  const placeholder = `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
 
   const [searchTerm, setSearchTerm, debouncer] = useDebouncedState("", { wait: 3000 }, (state) => ({
     isPending: state.isPending,
@@ -30,17 +30,18 @@ export function LatLongForm({ action, initLat, initLng }: LatLongFormProps) {
 
   useEffect(() => {
     if (searchTerm.includes(",")) {
-      const [lat, lng] = searchTerm.split(",").map((val) => parseFloat(val.trim()) || 0);
-      manuallySetLocation(lat, lng);
+      const [nextLat, nextLng] = searchTerm.split(",").map((val) => parseFloat(val.trim()) || 0);
+      manuallySetLocation(nextLat, nextLng);
     }
   }, [manuallySetLocation, searchTerm]);
 
   return (
-    <View style={{ width: "100%", height: "100%", flex: 1 }}>
+    <View style={styles.container}>
       <Searchbar
         placeholder={placeholder}
-        clearIcon={"close"}
-        style={{ flex: 1 }}
+        inputStyle={styles.input}
+        style={styles.searchbar}
+        clearIcon="close"
         loading={debouncer.state.isPending}
         onChangeText={handleInputChange}
         onClearIconPress={() => {
@@ -49,22 +50,20 @@ export function LatLongForm({ action, initLat, initLng }: LatLongFormProps) {
         }}
         value={inputValue}
       />
-
-      <View
-        style={{
-          width: "100%",
-          justifyContent: "center",
-          alignItems: "center",
-        }}>
-        <Text
-          style={{
-            fontSize: 12,
-            color: theme.colors.onSurfaceVariant,
-            paddingBottom: 4,
-          }}>
-          latitude, longitude (comma separated)
-        </Text>
-      </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    width: "100%",
+  },
+  searchbar: {
+    minHeight: 52,
+    borderRadius: 12,
+  },
+  input: {
+    minHeight: 24,
+    fontSize: 15,
+  },
+});

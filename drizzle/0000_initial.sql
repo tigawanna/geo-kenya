@@ -1,4 +1,4 @@
-CREATE TABLE `kenya_wards` (
+CREATE TABLE IF NOT EXISTS `kenya_wards` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`ward_code` text,
 	`ward` text NOT NULL,
@@ -14,7 +14,7 @@ CREATE TABLE `kenya_wards` (
 	`geom` blob
 );
 --> statement-breakpoint
-CREATE TABLE `kenya_ward_events` (
+CREATE TABLE IF NOT EXISTS `kenya_ward_events` (
 	`id` text PRIMARY KEY NOT NULL,
 	`trigger_by` text,
 	`event_type` text NOT NULL,
@@ -32,7 +32,7 @@ CREATE TABLE `kenya_ward_events` (
 	`updated_at` text DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `kenya_ward_updates` (
+CREATE TABLE IF NOT EXISTS `kenya_ward_updates` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`version` integer NOT NULL,
 	`data` text NOT NULL,
@@ -42,7 +42,7 @@ CREATE TABLE `kenya_ward_updates` (
 	`description` text
 );
 --> statement-breakpoint
-CREATE TABLE `sync_events` (
+CREATE TABLE IF NOT EXISTS `sync_events` (
 	`id` text PRIMARY KEY NOT NULL,
 	`device_id` text NOT NULL,
 	`table_name` text NOT NULL,
@@ -55,7 +55,7 @@ CREATE TABLE `sync_events` (
 	`verified_by` text
 );
 --> statement-breakpoint
-CREATE TABLE `applied_sync_events` (
+CREATE TABLE IF NOT EXISTS `applied_sync_events` (
 	`event_id` text PRIMARY KEY NOT NULL,
 	`applied_at` text DEFAULT CURRENT_TIMESTAMP NOT NULL
 );

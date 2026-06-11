@@ -6,7 +6,6 @@ interface SingleWardByLatLngProps {
   lng: number;
   actions?: React.ReactNode;
   backButton?: boolean;
-  preferBottomSheet?: boolean;
 }
 
 export function SingleWardByLatLng({
@@ -14,17 +13,10 @@ export function SingleWardByLatLng({
   lng,
   actions,
   backButton,
-  preferBottomSheet,
 }: SingleWardByLatLngProps) {
   return (
     <View style={styles.container}>
-      <CurrentWard
-        lat={lat}
-        lng={lng}
-        actions={actions}
-        backButton={backButton}
-        preferBottomSheet={preferBottomSheet}
-      />
+      <CurrentWard lat={lat} lng={lng} actions={actions} backButton={backButton} />
     </View>
   );
 }

@@ -1,14 +1,21 @@
+import { KenyaWardsSelect } from "@/lib/drizzle/schema";
 import BottomSheet, {
   BottomSheetScrollView,
-  type BottomSheetMethods,
-} from "@expo/ui/community/bottom-sheet";
-import { KenyaWardsSelect } from "@/lib/drizzle/schema";
-import { forwardRef, ReactNode, useImperativeHandle, useRef } from "react";
+  type BottomSheet as BottomSheetType,
+} from "@gorhom/bottom-sheet";
+import { forwardRef, type RefObject, ReactNode, useImperativeHandle, useMemo, useRef } from "react";
+import { Platform } from "react-native";
 import { useTheme } from "react-native-paper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { WardSheetHeader } from "./ward-sheet-header";
 
 export const WARD_SHEET_SNAP_POINTS = ["10%", "30%", "50%", "70%", "90%"] as const;
+export const WARD_SHEET_MIN_INDEX = 0;
 export const WARD_SHEET_INITIAL_INDEX = 1;
+
+const TAB_BAR_HEIGHT = 56;
+
+export type WardInfoSheetRef = BottomSheetType;
 
 interface WardInfoBottomSheetProps {
   ward: Partial<KenyaWardsSelect> | null | undefined;
@@ -18,15 +25,18 @@ interface WardInfoBottomSheetProps {
   onSheetIndexChange?: (index: number) => void;
 }
 
-export const WardInfoBottomSheet = forwardRef<BottomSheetMethods, WardInfoBottomSheetProps>(
+export const WardInfoBottomSheet = forwardRef<WardInfoSheetRef, WardInfoBottomSheetProps>(
   function WardInfoBottomSheet(
     { ward, backButton, actions, nearbyContent, onSheetIndexChange },
     forwardedRef,
   ) {
     const theme = useTheme();
-    const sheetRef = useRef<BottomSheetMethods>(null);
+    const sheetRef = useRef<BottomSheetType>(null);
+    const insets = useSafeAreaInsets();
+    const bottomInset = Platform.OS === "ios" ? TAB_BAR_HEIGHT + insets.bottom : 0;
+    const snapPoints = useMemo(() => [...WARD_SHEET_SNAP_POINTS], []);
 
-    useImperativeHandle(forwardedRef, () => sheetRef.current as BottomSheetMethods);
+    useImperativeHandle(forwardedRef, () => sheetRef.current as BottomSheetType);
 
     if (!ward?.id) {
       return null;
@@ -34,19 +44,21 @@ export const WardInfoBottomSheet = forwardRef<BottomSheetMethods, WardInfoBottom
 
     return (
       <BottomSheet
-        key={ward.id}
         ref={sheetRef}
-        snapPoints={[...WARD_SHEET_SNAP_POINTS]}
+        snapPoints={snapPoints}
         index={WARD_SHEET_INITIAL_INDEX}
         enablePanDownToClose={false}
+        enableDynamicSizing={false}
+        bottomInset={bottomInset}
         onChange={(index) => {
           if (index >= 0) {
             onSheetIndexChange?.(index);
           }
         }}
-        backgroundStyle={{ backgroundColor: theme.colors.surface }}>
+        backgroundStyle={{ backgroundColor: theme.colors.surface }}
+        handleIndicatorStyle={{ backgroundColor: theme.colors.primary }}>
         <BottomSheetScrollView
-          contentContainerStyle={{ paddingBottom: 32 }}
+          contentContainerStyle={{ paddingBottom: 16 }}
           showsVerticalScrollIndicator={false}>
           <WardSheetHeader ward={ward} backButton={backButton} actions={actions} />
           {nearbyContent}
@@ -55,3 +67,7 @@ export const WardInfoBottomSheet = forwardRef<BottomSheetMethods, WardInfoBottom
     );
   },
 );
+
+export function collapseWardInfoSheet(ref: RefObject<WardInfoSheetRef | null>) {
+  ref.current?.snapToIndex(WARD_SHEET_MIN_INDEX);
+}
