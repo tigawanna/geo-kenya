@@ -4,7 +4,6 @@
   "version": "1.0.0",
   "scripts": {
     "start": "APP_VARIANT=development expo start",
-    "dev": "APP_VARIANT=development npx expo start",
     "dev:reset-db": "EXPO_PUBLIC_RESET_DATABASE=1 APP_VARIANT=development expo start --clear",
     "reset-project": "node ./scripts/reset-project.js",
     "fetch:spatialite": "node ./scripts/fetch-spatialite-libs.js",

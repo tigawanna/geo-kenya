@@ -1,4 +1,13 @@
-import { MapPin, MapPinned, RefreshCw, ShieldCheck, Smartphone, WifiOff } from "lucide-react";
+import {
+  Layers,
+  MapPin,
+  MapPinned,
+  RefreshCw,
+  ShieldCheck,
+  Smartphone,
+  Vote,
+  WifiOff,
+} from "lucide-react";
 
 export const landingNav = {
   status: "Offline maps · Ward lookup",
@@ -21,16 +30,19 @@ export const landingHero = {
     pathLabel: "/admin/divisions",
     coords: "-1.2921, 36.8219",
     legend: [
-      { label: "Ward", tone: "primary" },
-      { label: "Constituency", tone: "info" },
-      { label: "County", tone: "warning" },
+      { label: "Ward", tone: "green" },
+      { label: "Constituency", tone: "red" },
+      { label: "County", tone: "ink" },
     ],
   },
   navPanel: {
     title: "Kilimani Ward",
-    distance: "0.8 km",
-    elevation: "1,795 m",
-    eta: "Nairobi County",
+    context: "Nairobi County · Dagoretti North",
+    stats: [
+      { label: "Counties", value: "47", icon: Layers },
+      { label: "Constituencies", value: "290", icon: Vote },
+      { label: "Wards", value: "1,450+", icon: MapPin },
+    ],
   },
 } as const;
 

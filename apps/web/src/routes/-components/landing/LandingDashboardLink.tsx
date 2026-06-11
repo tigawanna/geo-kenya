@@ -8,7 +8,7 @@ export default function LandingDashboardLink() {
     return (
       <Link
         to="/dashboard"
-        className="flex h-full items-center bg-primary px-6 font-mono text-xs tracking-widest text-primary-content uppercase transition-opacity hover:opacity-90"
+        className="m-2 inline-flex items-center rounded-full bg-primary px-5 py-2 text-sm font-medium text-primary-content shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
       >
         Dashboard →
       </Link>
@@ -19,7 +19,7 @@ export default function LandingDashboardLink() {
     <Link
       to="/auth"
       search={{ returnTo: "/dashboard" }}
-      className="flex h-full items-center bg-primary px-6 font-mono text-xs tracking-widest text-primary-content uppercase transition-opacity hover:opacity-90"
+      className="m-2 inline-flex items-center rounded-full bg-primary px-5 py-2 text-sm font-medium text-primary-content shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
     >
       Get Started →
     </Link>

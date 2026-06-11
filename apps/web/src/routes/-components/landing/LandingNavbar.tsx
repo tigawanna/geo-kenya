@@ -35,35 +35,35 @@ export function LandingNavbar() {
       <div className="mx-auto flex h-14 max-w-360 items-center justify-between border-x border-border/50">
         <Link to="/" className="flex h-full items-center gap-2 border-r border-border/50 px-5">
           <Icon className="size-5 text-primary" />
-          <span className="font-mono text-xs font-bold tracking-widest text-base-content uppercase">
+          <span className="font-display text-lg font-bold tracking-tight text-base-content">
             {AppConfig.wordmark}
-            <span className="text-primary">.</span>
+            <span className="text-flag-red">.</span>
           </span>
         </Link>
 
-        <div className="hidden flex-1 items-center gap-6 border-r border-border/50 px-6 font-mono text-xs text-muted-foreground md:flex">
-          <div className="flex items-center gap-2">
-            <span className="size-1.5 animate-pulse rounded-full bg-primary" />
+        <div className="hidden flex-1 items-center gap-6 px-6 text-xs text-muted-foreground md:flex">
+          <div className="flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1.5 text-primary">
+            <span className="size-1.5 animate-pulse rounded-full bg-flag-red" />
             <span>{landingNav.status}</span>
           </div>
         </div>
 
-        <div className="flex h-full items-center">
+        <div className="flex h-full items-center gap-1 pr-2">
           <button
             onClick={toggleTheme}
-            className="hidden h-full border-l border-border/50 px-4 font-mono text-xs text-muted-foreground transition-colors hover:text-base-content sm:block"
+            className="hidden rounded-full px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-neutral hover:text-base-content sm:block"
             aria-label="Toggle theme"
           >
-            {theme === "light" ? "[ Dark ]" : "[ Light ]"}
+            {theme === "light" ? "Dark" : "Light"}
           </button>
 
           {landingNav.links.map((item) => (
             <a
               key={item.label}
               href={item.href}
-              className="hidden h-full items-center border-l border-border/50 px-4 font-mono text-xs text-muted-foreground transition-colors hover:text-base-content md:flex"
+              className="hidden items-center rounded-full px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-neutral hover:text-base-content md:flex"
             >
-              [ {item.label} ]
+              {item.label}
             </a>
           ))}
 
@@ -72,7 +72,7 @@ export function LandingNavbar() {
               <Link
                 to="/auth"
                 search={{ returnTo: "/dashboard" }}
-                className="flex h-full items-center bg-primary px-6 font-mono text-xs tracking-widest text-primary-content uppercase transition-opacity hover:opacity-90"
+                className="m-2 inline-flex items-center rounded-full bg-primary px-5 py-2 text-sm font-medium text-primary-content shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
                 Get Started →
               </Link>
@@ -83,40 +83,40 @@ export function LandingNavbar() {
 
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="flex h-full items-center border-l border-border/50 px-4 text-base-content md:hidden"
+            className="flex items-center rounded-full px-3 py-2 text-base-content md:hidden"
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
           >
-            {mobileOpen ? <X className="size-4" /> : <Menu className="size-4" />}
+            {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
           </button>
         </div>
       </div>
 
       {mobileOpen ? (
-        <div className="space-y-3 border-t border-border/50 bg-base-100/95 p-6 font-mono text-xs backdrop-blur-xl md:hidden">
+        <div className="space-y-2 border-t border-border/50 bg-base-100/95 p-6 text-sm backdrop-blur-xl md:hidden">
           <button
             onClick={() => {
               toggleTheme();
               setMobileOpen(false);
             }}
-            className="block text-muted-foreground transition-colors hover:text-base-content"
+            className="block w-full rounded-xl px-3 py-2 text-left text-muted-foreground transition-colors hover:bg-neutral hover:text-base-content"
           >
-            {theme === "light" ? "[ Dark mode ]" : "[ Light mode ]"}
+            {theme === "light" ? "Dark mode" : "Light mode"}
           </button>
           {landingNav.links.map((item) => (
             <a
               key={item.label}
               href={item.href}
               onClick={() => setMobileOpen(false)}
-              className="block text-muted-foreground transition-colors hover:text-base-content"
+              className="block rounded-xl px-3 py-2 text-muted-foreground transition-colors hover:bg-neutral hover:text-base-content"
             >
-              [ {item.label} ]
+              {item.label}
             </a>
           ))}
           <Link
             to="/auth"
             search={{ returnTo: pathname }}
             onClick={() => setMobileOpen(false)}
-            className="mt-3 block bg-primary px-4 py-2 text-center tracking-widest text-primary-content uppercase"
+            className="mt-2 block rounded-full bg-primary px-4 py-2.5 text-center font-medium text-primary-content"
           >
             Get Started →
           </Link>

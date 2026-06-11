@@ -1,56 +1,80 @@
-import { BackgroundRippleEffect } from "@/components/ui/background-ripple-effect";
+import { GpsRadarBackground } from "@/components/ui/gps-radar-background";
+import { FlagStripe } from "@/components/ui/kenya-marks";
+import { Blob, Dots, Ring, Sparkle, Squiggle } from "@/components/ui/playful-decor";
 import { landingHero } from "@/content/landing";
 import { Link } from "@tanstack/react-router";
-import { Mountain, Navigation, Route as RouteIcon, Timer } from "lucide-react";
+import { Crosshair, type LucideIcon } from "lucide-react";
+import type { CSSProperties } from "react";
 
 const LEGEND_TONE: Record<string, string> = {
-  primary: "bg-primary",
-  info: "bg-sky-500",
-  warning: "bg-amber-500",
+  green: "bg-primary",
+  red: "bg-flag-red",
+  ink: "bg-base-content",
 };
+
+const WARD_MARKERS: { cx: number; cy: number; tone: string; delay: string }[] = [
+  { cx: 150, cy: 150, tone: "fill-primary", delay: "0ms" },
+  { cx: 118, cy: 96, tone: "fill-flag-red", delay: "400ms" },
+  { cx: 196, cy: 120, tone: "fill-base-content", delay: "800ms" },
+  { cx: 96, cy: 138, tone: "fill-flag-red", delay: "1200ms" },
+  { cx: 178, cy: 74, tone: "fill-primary", delay: "600ms" },
+  { cx: 214, cy: 150, tone: "fill-base-content", delay: "1000ms" },
+];
+
+type DecorStyle = CSSProperties & { "--blob-rotate"?: string };
 
 export function LandingHero() {
   return (
     <section
       data-test="landing-hero"
-      className="relative mx-auto min-h-dvh max-w-360 border-x border-border/50"
+      className="relative mx-auto min-h-dvh max-w-360 overflow-hidden border-x border-border/50"
     >
-      <BackgroundRippleEffect
-        rows={10}
-        cols={40}
-        pulse
-        pulseTarget="random"
-        pulseInterval={2600}
-        className="mt-5"
-      />
+      <GpsRadarBackground />
 
-      <div className="relative z-10 border-b border-border/50 px-8 py-16 md:px-16 md:py-24">
-        <div className="flex max-w-3xl flex-col gap-8">
-          <div className="flex animate-fade-in items-center gap-3 font-mono">
-            <span className="border border-primary/30 bg-primary/5 px-2 py-1 text-xs tracking-widest text-primary uppercase">
+      <FlagStripe withSheen className="absolute inset-x-0 top-0 z-20 h-1" />
+
+      <div className="pointer-events-none absolute inset-0 z-0" aria-hidden>
+        <Blob
+          className="absolute top-24 -right-16 w-72 animate-blob-float text-primary/15"
+          style={{ "--blob-rotate": "8deg" } as DecorStyle}
+        />
+        <Sparkle
+          className="absolute top-28 right-[34%] w-9 animate-wiggle text-flag-red"
+          style={{ "--blob-rotate": "-8deg" } as DecorStyle}
+        />
+        <Ring className="absolute bottom-32 left-6 w-14 animate-blob-float text-flag-red/40" />
+        <Squiggle className="absolute top-14 left-[42%] w-24 text-primary/40" />
+        <Dots className="absolute right-10 bottom-24 w-20 text-base-content/15" />
+      </div>
+
+      <div className="relative z-10 px-8 pt-20 pb-12 md:px-16 md:pt-28">
+        <div className="flex max-w-3xl flex-col gap-7">
+          <div className="flex animate-fade-in items-center gap-3">
+            <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-medium tracking-wide text-primary">
+              <span className="size-1.5 animate-pulse rounded-full bg-flag-red" />
               {landingHero.eyebrow}
             </span>
           </div>
 
-          <h1 className="animate-fade-in text-5xl font-semibold tracking-tighter text-balance text-base-content md:text-7xl">
+          <h1 className="animate-fade-in font-display text-5xl leading-[1.02] font-semibold tracking-tight text-balance text-base-content md:text-7xl">
             {landingHero.title}
           </h1>
 
-          <p className="max-w-[52ch] animate-fade-in text-lg leading-relaxed text-pretty text-muted-foreground md:text-xl">
+          <p className="max-w-[54ch] animate-fade-in text-lg leading-relaxed text-pretty text-muted-foreground md:text-xl">
             {landingHero.description}
           </p>
 
-          <div className="mt-2 flex animate-fade-in flex-wrap gap-4">
+          <div className="mt-2 flex animate-fade-in flex-wrap items-center gap-4">
             <Link
               to="/auth"
               search={{ returnTo: "/dashboard" }}
-              className="bg-primary px-6 py-3 font-mono font-medium text-primary-content transition-opacity hover:opacity-90"
+              className="rounded-full bg-primary px-7 py-3.5 font-medium text-primary-content shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
             >
               {landingHero.primaryCta} →
             </Link>
             <Link
               to="/dashboard"
-              className="border border-border bg-base-100/60 px-6 py-3 font-mono text-base-content backdrop-blur-sm transition-colors hover:bg-neutral"
+              className="rounded-full border border-border bg-base-100/70 px-7 py-3.5 text-base-content backdrop-blur-sm transition-colors hover:bg-neutral"
             >
               {landingHero.secondaryCta}
             </Link>
@@ -58,9 +82,9 @@ export function LandingHero() {
         </div>
       </div>
 
-      <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12">
-        <div className="flex flex-col gap-4 border-b border-border/50 bg-base-100/60 p-6 backdrop-blur-sm md:p-12 lg:col-span-7 lg:border-r lg:border-b-0">
-          <div className="flex items-end justify-between border-b border-border pb-3 font-mono">
+      <div className="relative z-10 grid grid-cols-1 gap-6 px-8 pb-20 md:px-16 lg:grid-cols-12">
+        <div className="flex flex-col gap-4 rounded-3xl border border-border/60 bg-base-100/70 p-6 shadow-sm backdrop-blur-md md:p-8 lg:col-span-7">
+          <div className="flex items-end justify-between border-b border-border/70 pb-3 font-mono">
             <div className="flex gap-4">
               <span className="text-xs font-semibold text-base-content">
                 {landingHero.mapPanel.fileLabel}
@@ -72,11 +96,14 @@ export function LandingHero() {
             <span className="text-xs text-primary">{landingHero.mapPanel.coords}</span>
           </div>
 
-          <TrailMap />
+          <KenyaMap />
 
-          <div className="flex flex-wrap gap-5 font-mono text-xs text-muted-foreground">
+          <div className="flex flex-wrap gap-2">
             {landingHero.mapPanel.legend.map((item) => (
-              <span key={item.label} className="flex items-center gap-2">
+              <span
+                key={item.label}
+                className="flex items-center gap-2 rounded-full bg-base-200 px-3 py-1.5 text-xs text-base-content"
+              >
                 <span className={`size-2 rounded-full ${LEGEND_TONE[item.tone] ?? "bg-primary"}`} />
                 {item.label}
               </span>
@@ -84,22 +111,25 @@ export function LandingHero() {
           </div>
         </div>
 
-        <div className="relative flex flex-col gap-6 border-b border-border/50 bg-neutral/30 p-6 backdrop-blur-sm md:p-12 lg:col-span-5 lg:border-b-0">
-          <div className="flex items-center gap-3 border-b border-border pb-3">
-            <Navigation className="size-4 text-primary" />
-            <span className="font-mono text-xs tracking-widest text-muted-foreground uppercase">
-              Navigate
-            </span>
+        <div className="relative flex flex-col gap-6 rounded-3xl border border-border/60 bg-neutral/40 p-6 shadow-sm backdrop-blur-md md:p-8 lg:col-span-5">
+          <div className="flex items-center gap-2 self-start rounded-full bg-primary/10 px-3 py-1.5">
+            <Crosshair className="size-4 text-primary" />
+            <span className="text-xs font-medium tracking-wide text-primary">Locate</span>
           </div>
 
-          <div className="text-2xl font-semibold tracking-tight text-base-content">
-            {landingHero.navPanel.title}
+          <div>
+            <div className="font-display text-2xl font-semibold tracking-tight text-base-content">
+              {landingHero.navPanel.title}
+            </div>
+            <div className="mt-1 font-mono text-xs text-muted-foreground">
+              {landingHero.navPanel.context}
+            </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-px overflow-hidden border border-border bg-border">
-            <Stat icon={RouteIcon} label="Distance" value={landingHero.navPanel.distance} />
-            <Stat icon={Mountain} label="Elevation" value={landingHero.navPanel.elevation} />
-            <Stat icon={Timer} label="Est. time" value={landingHero.navPanel.eta} />
+          <div className="grid grid-cols-3 gap-px overflow-hidden rounded-2xl border border-border bg-border">
+            {landingHero.navPanel.stats.map((stat) => (
+              <Stat key={stat.label} icon={stat.icon} label={stat.label} value={stat.value} />
+            ))}
           </div>
 
           <div className="mt-auto space-y-1.5">
@@ -114,7 +144,7 @@ export function LandingHero() {
 }
 
 type StatProps = {
-  icon: typeof RouteIcon;
+  icon: LucideIcon;
   label: string;
   value: string;
 };
@@ -131,41 +161,71 @@ function Stat({ icon: Icon, label, value }: StatProps) {
   );
 }
 
-function TrailMap() {
+function KenyaMap() {
   return (
-    <div className="relative aspect-video w-full overflow-hidden border border-border bg-base-200">
+    <div className="relative aspect-video w-full overflow-hidden rounded-2xl border border-border bg-base-200">
       <svg
-        viewBox="0 0 320 180"
+        viewBox="0 0 320 220"
         className="size-full"
         fill="none"
-        preserveAspectRatio="xMidYMid slice"
+        preserveAspectRatio="xMidYMid meet"
         role="img"
-        aria-label="Stylized forest trail map"
+        aria-label="Stylized map of Kenya with county regions and ward markers"
       >
-        <g className="text-base-content/10" stroke="currentColor" strokeWidth="1">
-          <path d="M-10 40 C 70 10 150 70 230 30 S 360 40 360 40" />
-          <path d="M-10 80 C 80 50 160 110 240 70 S 360 80 360 80" />
-          <path d="M-10 120 C 70 95 150 150 230 115 S 360 125 360 125" />
-          <path d="M-10 160 C 90 140 170 185 250 155 S 360 165 360 165" />
+        <defs>
+          <clipPath id="kenya-clip">
+            <path d="M152 16 L214 44 L252 78 L257 120 L236 152 L205 178 L176 180 L166 161 L150 178 L106 169 L64 150 L50 126 L45 92 L72 54 L110 28 Z" />
+          </clipPath>
+        </defs>
+
+        <g clipPath="url(#kenya-clip)">
+          <rect
+            x="0"
+            y="0"
+            width="320"
+            height="220"
+            className="fill-primary/10 dark:fill-primary/15"
+          />
+          <g className="text-base-content/15" stroke="currentColor" strokeWidth="1.2">
+            <path d="M150 16 L150 178" />
+            <path d="M45 92 L150 100 L257 120" />
+            <path d="M110 28 L150 100 L205 178" />
+            <path d="M252 78 L150 100 L64 150" />
+          </g>
+          <ellipse cx="52" cy="138" rx="22" ry="16" className="fill-sky-500/35" />
         </g>
 
         <path
-          d="M30 150 C 70 120 60 90 100 80 S 150 60 170 95 S 220 110 250 70 290 35 300 30"
+          d="M152 16 L214 44 L252 78 L257 120 L236 152 L205 178 L176 180 L166 161 L150 178 L106 169 L64 150 L50 126 L45 92 L72 54 L110 28 Z"
           className="text-primary"
           stroke="currentColor"
           strokeWidth="2"
-          strokeLinecap="round"
-          strokeDasharray="6 7"
+          strokeLinejoin="round"
         />
 
-        <circle cx="30" cy="150" r="5" className="fill-primary" />
-        <circle cx="100" cy="80" r="4" className="fill-sky-500" />
-        <circle cx="170" cy="95" r="4" className="fill-sky-500" />
-        <circle cx="250" cy="70" r="4" className="fill-amber-500" />
-        <circle cx="300" cy="30" r="5" className="fill-primary" />
+        {WARD_MARKERS.map((marker) => (
+          <circle
+            key={`${marker.cx}-${marker.cy}`}
+            cx={marker.cx}
+            cy={marker.cy}
+            r="3.5"
+            className={`${marker.tone} animate-pulse`}
+            style={{ animationDelay: marker.delay }}
+          />
+        ))}
 
-        <circle cx="30" cy="150" r="11" className="fill-primary/15" />
-        <circle cx="300" cy="30" r="11" className="fill-primary/15" />
+        <g>
+          <circle cx="150" cy="150" r="12" className="fill-primary/15" />
+          <circle cx="150" cy="150" r="5" className="fill-primary" />
+          <text
+            x="150"
+            y="138"
+            textAnchor="middle"
+            className="fill-base-content font-mono text-[9px]"
+          >
+            Nairobi
+          </text>
+        </g>
       </svg>
     </div>
   );

@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -50,6 +51,22 @@
   --color-error-content: oklch(from #0b0f0d l c h);
 }
 
+:root,
+[data-theme="light"] {
+  --flag-red: #c5232b;
+  --flag-red-soft: color-mix(in oklch, #c5232b 12%, transparent);
+}
+
+[data-theme="dark"] {
+  --flag-red: #f0584a;
+  --flag-red-soft: color-mix(in oklch, #f0584a 16%, transparent);
+}
+
+@theme inline {
+  --color-flag-red: var(--flag-red);
+  --color-flag-red-soft: var(--flag-red-soft);
+}
+
 @layer base {
   html {
     font-family: "DM Sans", system-ui, sans-serif;
@@ -82,8 +99,14 @@
 }
 
 @theme inline {
+  --font-display: "Fraunces", "DM Sans", ui-serif, serif;
   --animate-cell-ripple: cell-ripple var(--duration, 200ms) ease-out none 1 var(--delay, 0ms);
   --animate-fade-in: fade-in 0.6s ease-out both;
+  --animate-radar-ping: radar-ping 4.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+  --animate-radar-blip: radar-blip 4.4s ease-out infinite;
+  --animate-flag-sheen: flag-sheen 5s ease-in-out infinite;
+  --animate-blob-float: blob-float 9s ease-in-out infinite;
+  --animate-wiggle: wiggle 6s ease-in-out infinite;
 
   @keyframes cell-ripple {
     0% {
@@ -105,6 +128,75 @@
     100% {
       opacity: 1;
       transform: translateY(0);
+    }
+  }
+
+  @keyframes radar-sweep {
+    to {
+      transform: translate(-50%, -50%) rotate(360deg);
+    }
+  }
+
+  @keyframes radar-ping {
+    0% {
+      transform: translate(-50%, -50%) scale(0.05);
+      opacity: 0;
+    }
+    12% {
+      opacity: 0.7;
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 0;
+    }
+  }
+
+  @keyframes blob-float {
+    0%,
+    100% {
+      transform: translate(0, 0) rotate(var(--blob-rotate, 0deg)) scale(1);
+    }
+    50% {
+      transform: translate(0, -14px) rotate(calc(var(--blob-rotate, 0deg) + 6deg)) scale(1.04);
+    }
+  }
+
+  @keyframes wiggle {
+    0%,
+    100% {
+      transform: rotate(var(--blob-rotate, -6deg));
+    }
+    50% {
+      transform: rotate(calc(var(--blob-rotate, -6deg) * -1));
+    }
+  }
+
+  @keyframes flag-sheen {
+    0% {
+      transform: translateX(-120%);
+    }
+    60%,
+    100% {
+      transform: translateX(320%);
+    }
+  }
+
+  @keyframes radar-blip {
+    0%,
+    55% {
+      opacity: 0;
+      transform: scale(0.4);
+    }
+    60% {
+      opacity: 1;
+      transform: scale(1.25);
+    }
+    80% {
+      opacity: 0.6;
+    }
+    100% {
+      opacity: 0;
+      transform: scale(0.8);
     }
   }
 }

@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vp dev --port 3050",
+    "dev": "vp dev --port 3070",
     "build": "vp build",
     "preview": "vp preview",
     "deploy": "pnpm run build && wrangler deploy --config dist/server/wrangler.json",
