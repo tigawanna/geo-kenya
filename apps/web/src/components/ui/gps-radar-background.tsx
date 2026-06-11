@@ -4,7 +4,7 @@ type Blip = {
   top: string;
   left: string;
   delay: string;
-  tone: "green" | "red" | "ink";
+  tone: "red" | "green" | "ink";
 };
 
 type GpsRadarBackgroundProps = {
@@ -16,8 +16,8 @@ type GpsRadarBackgroundProps = {
 };
 
 const BLIP_TONE: Record<Blip["tone"], string> = {
-  green: "bg-primary",
   red: "bg-flag-red",
+  green: "bg-flag-green",
   ink: "bg-base-content",
 };
 
@@ -42,8 +42,10 @@ export function GpsRadarBackground({
       aria-hidden
       className={cn(
         "pointer-events-none absolute inset-0 overflow-hidden",
-        "[--radar-color:color-mix(in_oklch,var(--color-primary)_60%,transparent)]",
-        "dark:[--radar-color:color-mix(in_oklch,var(--color-primary)_75%,transparent)]",
+        "[--radar-green:color-mix(in_oklch,var(--flag-green)_55%,transparent)]",
+        "[--radar-red:color-mix(in_oklch,var(--flag-red)_55%,transparent)]",
+        "dark:[--radar-green:color-mix(in_oklch,var(--flag-green)_70%,transparent)]",
+        "dark:[--radar-red:color-mix(in_oklch,var(--flag-red)_70%,transparent)]",
         className,
       )}
     >
@@ -60,7 +62,7 @@ export function GpsRadarBackground({
         style={{
           top: originY,
           left: originX,
-          background: `conic-gradient(from 0deg, transparent 0deg, transparent 300deg, var(--radar-color) 350deg, transparent 360deg)`,
+          background: `conic-gradient(from 0deg, transparent 0deg, transparent 290deg, var(--radar-green) 330deg, var(--radar-red) 350deg, transparent 360deg)`,
           maskImage: "radial-gradient(circle, black 0%, black 55%, transparent 70%)",
           WebkitMaskImage: "radial-gradient(circle, black 0%, black 55%, transparent 70%)",
           animation: "radar-sweep 7s linear infinite",
@@ -70,7 +72,10 @@ export function GpsRadarBackground({
       {Array.from({ length: rings }).map((_, index) => (
         <div
           key={index}
-          className="absolute aspect-square w-[80vw] -translate-x-1/2 -translate-y-1/2 animate-radar-ping rounded-full border border-(--radar-color)"
+          className={cn(
+            "absolute aspect-square w-[80vw] -translate-x-1/2 -translate-y-1/2 animate-radar-ping rounded-full border",
+            index % 2 === 0 ? "border-(--radar-green)" : "border-(--radar-red)",
+          )}
           style={{
             top: originY,
             left: originX,
@@ -80,7 +85,7 @@ export function GpsRadarBackground({
       ))}
 
       <div
-        className="absolute size-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary shadow-[0_0_24px_4px_var(--radar-color)]"
+        className="absolute size-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-flag-green shadow-[0_0_20px_3px_var(--radar-green),0_0_28px_6px_var(--radar-red)]"
         style={{ top: originY, left: originX }}
       />
 

@@ -1,5 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400..700&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -12,18 +12,18 @@
   name: "light";
   default: true;
   color-scheme: light;
-  --color-base-100: oklch(from #f4f7f4 l c h);
+  --color-base-100: oklch(from #f7f5f3 l c h);
   --color-base-200: oklch(from #ffffff l c h);
-  --color-base-300: oklch(from #e8ede8 l c h);
-  --color-base-content: oklch(from #142016 l c h);
-  --color-primary: oklch(from #267d42 l c h);
+  --color-base-300: oklch(from #ece8e4 l c h);
+  --color-base-content: oklch(from #1c1917 l c h);
+  --color-primary: oklch(from #2f8a4e l c h);
   --color-primary-content: oklch(from #ffffff l c h);
-  --color-secondary: oklch(from #e8f0e8 l c h);
-  --color-secondary-content: oklch(from #142016 l c h);
-  --color-accent: oklch(from #d4ead4 l c h);
-  --color-accent-content: oklch(from #142016 l c h);
-  --color-neutral: oklch(from #eef2ee l c h);
-  --color-neutral-content: oklch(from #4b5c4f l c h);
+  --color-secondary: oklch(from #eaf3ec l c h);
+  --color-secondary-content: oklch(from #1c1917 l c h);
+  --color-accent: oklch(from #f3e8e8 l c h);
+  --color-accent-content: oklch(from #1c1917 l c h);
+  --color-neutral: oklch(from #f1eeeb l c h);
+  --color-neutral-content: oklch(from #57534e l c h);
   --color-error: oklch(from #b54a4a l c h);
   --color-error-content: oklch(from #ffffff l c h);
   --radius-selector: 0.5rem;
@@ -35,36 +35,42 @@
   name: "dark";
   prefersdark: true;
   color-scheme: dark;
-  --color-base-100: oklch(from #0f1410 l c h);
-  --color-base-200: oklch(from #151c16 l c h);
-  --color-base-300: oklch(from #1a231c l c h);
-  --color-base-content: oklch(from #e8ede9 l c h);
+  --color-base-100: oklch(from #141110 l c h);
+  --color-base-200: oklch(from #1b1715 l c h);
+  --color-base-300: oklch(from #221d1b l c h);
+  --color-base-content: oklch(from #ece8e5 l c h);
   --color-primary: oklch(from #56bc7d l c h);
-  --color-primary-content: oklch(from #0b0f0d l c h);
-  --color-secondary: oklch(from #1c2620 l c h);
-  --color-secondary-content: oklch(from #e8ede9 l c h);
-  --color-accent: oklch(from #243028 l c h);
-  --color-accent-content: oklch(from #e8ede9 l c h);
-  --color-neutral: oklch(from #1a211c l c h);
-  --color-neutral-content: oklch(from #9aa89e l c h);
+  --color-primary-content: oklch(from #0b120e l c h);
+  --color-secondary: oklch(from #1a231c l c h);
+  --color-secondary-content: oklch(from #ece8e5 l c h);
+  --color-accent: oklch(from #2a1f1f l c h);
+  --color-accent-content: oklch(from #ece8e5 l c h);
+  --color-neutral: oklch(from #1f1a19 l c h);
+  --color-neutral-content: oklch(from #a8a09c l c h);
   --color-error: oklch(from #cf6b6b l c h);
-  --color-error-content: oklch(from #0b0f0d l c h);
+  --color-error-content: oklch(from #1a0b0b l c h);
 }
 
 :root,
 [data-theme="light"] {
   --flag-red: #c5232b;
   --flag-red-soft: color-mix(in oklch, #c5232b 12%, transparent);
+  --flag-green: #2f8a4e;
+  --flag-green-soft: color-mix(in oklch, #2f8a4e 12%, transparent);
 }
 
 [data-theme="dark"] {
   --flag-red: #f0584a;
   --flag-red-soft: color-mix(in oklch, #f0584a 16%, transparent);
+  --flag-green: #56bc7d;
+  --flag-green-soft: color-mix(in oklch, #56bc7d 16%, transparent);
 }
 
 @theme inline {
   --color-flag-red: var(--flag-red);
   --color-flag-red-soft: var(--flag-red-soft);
+  --color-flag-green: var(--flag-green);
+  --color-flag-green-soft: var(--flag-green-soft);
 }
 
 @layer base {
@@ -98,8 +104,31 @@
   z-index: 1;
 }
 
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+.reveal[data-revealed="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
 @theme inline {
-  --font-display: "Fraunces", "DM Sans", ui-serif, serif;
+  --font-display: "Space Grotesk", "DM Sans", system-ui, sans-serif;
   --animate-cell-ripple: cell-ripple var(--duration, 200ms) ease-out none 1 var(--delay, 0ms);
   --animate-fade-in: fade-in 0.6s ease-out both;
   --animate-radar-ping: radar-ping 4.4s cubic-bezier(0, 0, 0.2, 1) infinite;

@@ -10,11 +10,11 @@ export type FlagAccent = {
 
 export const FLAG_ACCENTS: FlagAccent[] = [
   {
-    bar: "bg-primary",
-    text: "text-primary",
-    soft: "bg-primary/10",
-    border: "border-primary/40",
-    dot: "bg-primary",
+    bar: "bg-flag-green",
+    text: "text-flag-green",
+    soft: "bg-flag-green-soft",
+    border: "border-flag-green/40",
+    dot: "bg-flag-green",
   },
   {
     bar: "bg-flag-red",
@@ -58,7 +58,7 @@ export function FlagStripe({
       <span className="flex-1 bg-base-100" />
       <span className="flex-5 bg-flag-red" />
       <span className="flex-1 bg-base-100" />
-      <span className="flex-5 bg-primary" />
+      <span className="flex-5 bg-flag-green" />
       {withSheen ? (
         <span className="pointer-events-none absolute inset-y-0 w-1/4 animate-flag-sheen bg-linear-to-r from-transparent via-white/40 to-transparent" />
       ) : null}
@@ -94,48 +94,56 @@ type KenyaShieldProps = {
 };
 
 export function KenyaShield({ className }: KenyaShieldProps) {
+  return <KenyaShieldGraphic className={className} />;
+}
+
+type KenyaShieldBackdropProps = {
+  className?: string;
+};
+
+export function KenyaShieldBackdrop({ className }: KenyaShieldBackdropProps) {
+  return (
+    <div
+      aria-hidden
+      className={cn(
+        "pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden",
+        className,
+      )}
+    >
+      <KenyaShieldGraphic className="h-[min(130vh,95vw)] w-auto opacity-[0.07] dark:opacity-[0.09]" />
+    </div>
+  );
+}
+
+function KenyaShieldGraphic({ className }: KenyaShieldProps) {
   return (
     <svg
-      viewBox="0 0 120 150"
-      className={cn("text-base-content", className)}
+      viewBox="0 0 200 280"
+      className={cn(className)}
       fill="none"
-      role="img"
-      aria-label="Stylized Kenyan shield and spears emblem"
+      role="presentation"
+      aria-hidden
     >
-      <defs>
-        <clipPath id="kenya-shield-clip">
-          <ellipse cx="60" cy="75" rx="30" ry="48" />
-        </clipPath>
-      </defs>
-
-      <g stroke="currentColor" strokeWidth="3" strokeLinecap="round">
-        <line x1="30" y1="18" x2="90" y2="132" />
-        <line x1="90" y1="18" x2="30" y2="132" />
-      </g>
-      <g fill="currentColor">
-        <path d="M30 18 L24 30 L38 28 Z" />
-        <path d="M90 18 L96 30 L82 28 Z" />
-      </g>
-
-      <g clipPath="url(#kenya-shield-clip)">
-        <rect x="28" y="24" width="64" height="102" className="fill-base-content" />
-        <rect x="28" y="44" width="64" height="62" className="fill-base-100" />
-        <rect x="28" y="52" width="64" height="46" className="fill-flag-red" />
-        <g className="fill-base-100">
-          <ellipse cx="60" cy="75" rx="5" ry="16" />
-          <rect x="57.5" y="58" width="5" height="34" rx="2.5" />
-        </g>
-      </g>
-
-      <ellipse
-        cx="60"
-        cy="75"
-        rx="30"
-        ry="48"
+      <g
+        className="text-flag-red"
         stroke="currentColor"
-        strokeWidth="3"
-        className="text-primary"
-      />
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <line x1="52" y1="42" x2="148" y2="238" strokeWidth="3.5" />
+        <line x1="148" y1="42" x2="52" y2="238" strokeWidth="3.5" />
+        <path d="M52 42 L46 28 L58 34 Z" fill="currentColor" stroke="none" />
+        <path d="M148 42 L154 28 L142 34 Z" fill="currentColor" stroke="none" />
+      </g>
+
+      <g className="text-flag-green" stroke="currentColor" strokeLinecap="round">
+        <path d="M92 52 Q72 140 92 228" strokeWidth="5" />
+        <path d="M108 52 Q128 140 108 228" strokeWidth="5" />
+        <path d="M96 68 Q84 140 96 212" strokeWidth="2.5" opacity="0.85" />
+        <path d="M104 68 Q116 140 104 212" strokeWidth="2.5" opacity="0.85" />
+        <line x1="100" y1="58" x2="100" y2="222" strokeWidth="2.5" />
+        <circle cx="100" cy="140" r="9" strokeWidth="2.5" />
+      </g>
     </svg>
   );
 }

@@ -42,7 +42,7 @@ export function LandingNavbar() {
         </Link>
 
         <div className="hidden flex-1 items-center gap-6 px-6 text-xs text-muted-foreground md:flex">
-          <div className="flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1.5 text-primary">
+          <div className="flex items-center gap-2 rounded-full bg-flag-green-soft px-3 py-1.5 text-flag-green">
             <span className="size-1.5 animate-pulse rounded-full bg-flag-red" />
             <span>{landingNav.status}</span>
           </div>

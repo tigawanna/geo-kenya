@@ -1,118 +1,109 @@
-import {
-  Layers,
-  MapPin,
-  MapPinned,
-  RefreshCw,
-  ShieldCheck,
-  Smartphone,
-  Vote,
-  WifiOff,
-} from "lucide-react";
+import { Layers, Map, MapPin, PencilLine, Search, Users, WifiOff, Zap } from "lucide-react";
 
 export const landingNav = {
-  status: "Offline maps · Ward lookup",
+  status: "Know your ward, constituency & county",
   links: [
-    { label: "Capabilities", href: "#capabilities" },
+    { label: "How it works", href: "#capabilities" },
     { label: "Why GeoKenya", href: "#why" },
     { label: "Privacy", href: "/privacy" },
   ],
 } as const;
 
 export const landingHero = {
-  eyebrow: "Kenya · Offline-first",
-  title: "Every ward, county, and constituency — on your phone.",
+  eyebrow: "Get to know your Kenya",
+  title: "Know your ward, constituency, and county.",
   description:
-    "GeoKenya puts Kenya's administrative geography in your pocket. Look up wards by location or coordinates, explore boundaries on the map, and sync verified community updates — all without relying on a connection.",
+    "Most of us know our county, but few can name the ward or constituency we live in — even though they show up on official forms all the time. GeoKenya is a simple, friendly way to look up exactly where you are and understand how your area is put together.",
   primaryCta: "Get the app",
   secondaryCta: "Open dashboard",
   mapPanel: {
     fileLabel: "kenya.wards",
-    pathLabel: "/admin/divisions",
+    pathLabel: "/explore/ward-lookup",
     coords: "-1.2921, 36.8219",
     legend: [
-      { label: "Ward", tone: "green" },
-      { label: "Constituency", tone: "red" },
+      { label: "Ward", tone: "red" },
+      { label: "Constituency", tone: "green" },
       { label: "County", tone: "ink" },
     ],
   },
   navPanel: {
     title: "Kilimani Ward",
-    context: "Nairobi County · Dagoretti North",
+    context: "Dagoretti North · Nairobi County",
     stats: [
       { label: "Counties", value: "47", icon: Layers },
-      { label: "Constituencies", value: "290", icon: Vote },
+      { label: "Constituencies", value: "290", icon: Map },
       { label: "Wards", value: "1,450+", icon: MapPin },
     ],
   },
 } as const;
 
 export const landingCapabilities = {
-  heading: "From the map to the field",
+  heading: "A friendly way to know your place",
   description:
-    "A complete geographic reference on your device, with an optional sync hub for verified ward events and updates.",
+    "Look up where you are, see how the map fits together, and help make the data better for everyone who comes after you.",
   steps: [
     {
       id: "01",
-      label: "OFFLINE DATA",
-      icon: WifiOff,
-      title: "Works without signal",
+      label: "LOOK IT UP",
+      icon: Search,
+      title: "Find your ward in seconds",
       description:
-        "MapLibre tiles and a SpatiaLite database ship on-device. All 1,450+ wards, 47 counties, and 290 constituencies stay available offline.",
+        "Search by your current location or any place name to instantly see the ward, constituency, and county it belongs to.",
     },
     {
       id: "02",
-      label: "LOCATION LOOKUP",
-      icon: MapPin,
-      title: "Find your ward instantly",
+      label: "UNDERSTAND",
+      icon: Map,
+      title: "See how your area fits together",
       description:
-        "GPS-based ward detection, proximity search, and coordinate lookup — computed locally with no data leaving your device.",
+        "Explore boundaries on the map and learn how wards roll up into constituencies and counties across all 47 counties.",
     },
     {
       id: "03",
-      label: "SYNC HUB",
-      icon: RefreshCw,
-      title: "Verified community updates",
+      label: "CONTRIBUTE",
+      icon: PencilLine,
+      title: "Improve the map for everyone",
       description:
-        "Optional sync brings ward events and updates through an append-only event log. Admins verify changes before they reach other devices.",
+        "Notice something off or missing? Suggest edits and add local detail. Verified contributions become a shared reference others can trust.",
     },
   ],
 } as const;
 
 export const landingReasons = {
-  heading: "Built for the field, not the cloud",
+  heading: "A handy tool you'll keep coming back to",
   description:
-    "Connectivity is unreliable across much of Kenya. GeoKenya is designed around offline-first operation from the first tile to the last lookup.",
+    "GeoKenya is small, quick, and dependable — easy to whip out whenever you want a clear picture of where you are and what it's made up of.",
   items: [
     {
-      icon: Smartphone,
-      title: "Offline-first by design",
+      icon: Zap,
+      title: "Answers in a tap",
       description:
-        "Ward lookup, map exploration, and proximity search run entirely on-device. The network is an enhancement, never a requirement.",
+        "Open it anywhere and immediately see your ward, constituency, and county — no scrolling through forms or guessing.",
     },
     {
-      icon: ShieldCheck,
-      title: "Your location stays private",
+      icon: WifiOff,
+      title: "Works wherever you go",
       description:
-        "Geographic calculations and database queries never leave your phone unless you explicitly enable sync.",
+        "Maps and lookups are stored on your phone, so they keep working out on the trail or in remote areas where the signal drops.",
     },
     {
-      icon: MapPinned,
-      title: "Field-grade accuracy",
+      icon: Users,
+      title: "Built better by the community",
       description:
-        "Boundaries, distances, and ward assignments use embedded SpatiaLite geometry — not guessed from a remote API.",
+        "High-quality data kept accurate and current by people who know their areas best — and every contribution helps the next person.",
     },
   ],
 } as const;
 
 export const landingCta = {
-  title: "Explore Kenya's geography",
+  title: "Get to know your Kenya",
   highlight: "Kenya",
   description:
-    "Sign in to the admin hub to review sync events, or grab the mobile app to start exploring wards offline.",
+    "Grab the app to look up any ward or constituency, or open the dashboard to review and verify community contributions.",
   primaryCta: "Open dashboard",
   secondaryCta: "Create an account",
 } as const;
 
 export const landingFooter = {
-  tagline: "Offline wards · Location lookup · Verified sync",
+  tagline: "Know your ward · constituency · county",
 } as const;

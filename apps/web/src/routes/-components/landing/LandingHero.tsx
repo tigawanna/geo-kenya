@@ -1,23 +1,24 @@
 import { GpsRadarBackground } from "@/components/ui/gps-radar-background";
 import { FlagStripe } from "@/components/ui/kenya-marks";
 import { Blob, Dots, Ring, Sparkle, Squiggle } from "@/components/ui/playful-decor";
+import { Reveal } from "@/components/ui/reveal";
 import { landingHero } from "@/content/landing";
 import { Link } from "@tanstack/react-router";
 import { Crosshair, type LucideIcon } from "lucide-react";
 import type { CSSProperties } from "react";
 
 const LEGEND_TONE: Record<string, string> = {
-  green: "bg-primary",
   red: "bg-flag-red",
+  green: "bg-flag-green",
   ink: "bg-base-content",
 };
 
 const WARD_MARKERS: { cx: number; cy: number; tone: string; delay: string }[] = [
-  { cx: 150, cy: 150, tone: "fill-primary", delay: "0ms" },
-  { cx: 118, cy: 96, tone: "fill-flag-red", delay: "400ms" },
+  { cx: 150, cy: 150, tone: "fill-flag-red", delay: "0ms" },
+  { cx: 118, cy: 96, tone: "fill-flag-green", delay: "400ms" },
   { cx: 196, cy: 120, tone: "fill-base-content", delay: "800ms" },
   { cx: 96, cy: 138, tone: "fill-flag-red", delay: "1200ms" },
-  { cx: 178, cy: 74, tone: "fill-primary", delay: "600ms" },
+  { cx: 178, cy: 74, tone: "fill-flag-green", delay: "600ms" },
   { cx: 214, cy: 150, tone: "fill-base-content", delay: "1000ms" },
 ];
 
@@ -35,28 +36,28 @@ export function LandingHero() {
 
       <div className="pointer-events-none absolute inset-0 z-0" aria-hidden>
         <Blob
-          className="absolute top-24 -right-16 w-72 animate-blob-float text-primary/15"
+          className="absolute top-24 -right-16 w-72 animate-blob-float text-flag-green/20"
           style={{ "--blob-rotate": "8deg" } as DecorStyle}
         />
         <Sparkle
-          className="absolute top-28 right-[34%] w-9 animate-wiggle text-flag-red"
+          className="absolute top-28 right-[34%] w-9 animate-wiggle text-flag-green"
           style={{ "--blob-rotate": "-8deg" } as DecorStyle}
         />
         <Ring className="absolute bottom-32 left-6 w-14 animate-blob-float text-flag-red/40" />
-        <Squiggle className="absolute top-14 left-[42%] w-24 text-primary/40" />
+        <Squiggle className="absolute top-14 left-[42%] w-24 text-flag-green/60" />
         <Dots className="absolute right-10 bottom-24 w-20 text-base-content/15" />
       </div>
 
       <div className="relative z-10 px-8 pt-20 pb-12 md:px-16 md:pt-28">
         <div className="flex max-w-3xl flex-col gap-7">
           <div className="flex animate-fade-in items-center gap-3">
-            <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-medium tracking-wide text-primary">
+            <span className="inline-flex items-center gap-2 rounded-full border border-flag-green/30 bg-flag-green-soft px-4 py-1.5 text-xs font-medium tracking-wide text-flag-green">
               <span className="size-1.5 animate-pulse rounded-full bg-flag-red" />
               {landingHero.eyebrow}
             </span>
           </div>
 
-          <h1 className="animate-fade-in font-display text-5xl leading-[1.02] font-semibold tracking-tight text-balance text-base-content md:text-7xl">
+          <h1 className="animate-fade-in font-display text-6xl leading-[0.95] font-bold tracking-tighter text-balance text-base-content md:text-8xl">
             {landingHero.title}
           </h1>
 
@@ -83,7 +84,7 @@ export function LandingHero() {
       </div>
 
       <div className="relative z-10 grid grid-cols-1 gap-6 px-8 pb-20 md:px-16 lg:grid-cols-12">
-        <div className="flex flex-col gap-4 rounded-3xl border border-border/60 bg-base-100/70 p-6 shadow-sm backdrop-blur-md md:p-8 lg:col-span-7">
+        <Reveal className="flex flex-col gap-4 rounded-3xl border border-border/60 bg-base-100/70 p-6 shadow-sm backdrop-blur-md md:p-8 lg:col-span-7">
           <div className="flex items-end justify-between border-b border-border/70 pb-3 font-mono">
             <div className="flex gap-4">
               <span className="text-xs font-semibold text-base-content">
@@ -109,16 +110,19 @@ export function LandingHero() {
               </span>
             ))}
           </div>
-        </div>
+        </Reveal>
 
-        <div className="relative flex flex-col gap-6 rounded-3xl border border-border/60 bg-neutral/40 p-6 shadow-sm backdrop-blur-md md:p-8 lg:col-span-5">
+        <Reveal
+          delay={120}
+          className="relative flex flex-col gap-6 rounded-3xl border border-border/60 bg-neutral/40 p-6 shadow-sm backdrop-blur-md md:p-8 lg:col-span-5"
+        >
           <div className="flex items-center gap-2 self-start rounded-full bg-primary/10 px-3 py-1.5">
             <Crosshair className="size-4 text-primary" />
-            <span className="text-xs font-medium tracking-wide text-primary">Locate</span>
+            <span className="text-xs font-medium tracking-wide text-primary">Where you are</span>
           </div>
 
           <div>
-            <div className="font-display text-2xl font-semibold tracking-tight text-base-content">
+            <div className="font-display text-2xl font-bold tracking-tight text-base-content">
               {landingHero.navPanel.title}
             </div>
             <div className="mt-1 font-mono text-xs text-muted-foreground">
@@ -127,8 +131,14 @@ export function LandingHero() {
           </div>
 
           <div className="grid grid-cols-3 gap-px overflow-hidden rounded-2xl border border-border bg-border">
-            {landingHero.navPanel.stats.map((stat) => (
-              <Stat key={stat.label} icon={stat.icon} label={stat.label} value={stat.value} />
+            {landingHero.navPanel.stats.map((stat, index) => (
+              <Stat
+                key={stat.label}
+                icon={stat.icon}
+                label={stat.label}
+                value={stat.value}
+                iconTone={index % 2 === 0 ? "text-flag-green" : "text-flag-red"}
+              />
             ))}
           </div>
 
@@ -137,7 +147,7 @@ export function LandingHero() {
             <div className="h-1.5 w-4/5 rounded-full bg-base-content/10" />
             <div className="h-1.5 w-2/3 rounded-full bg-primary/40" />
           </div>
-        </div>
+        </Reveal>
       </div>
     </section>
   );
@@ -147,12 +157,13 @@ type StatProps = {
   icon: LucideIcon;
   label: string;
   value: string;
+  iconTone: string;
 };
 
-function Stat({ icon: Icon, label, value }: StatProps) {
+function Stat({ icon: Icon, label, value, iconTone }: StatProps) {
   return (
     <div className="flex flex-col gap-2 bg-base-100 p-4">
-      <Icon className="size-4 text-primary" />
+      <Icon className={`size-4 ${iconTone}`} />
       <span className="font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
         {label}
       </span>
@@ -184,7 +195,7 @@ function KenyaMap() {
             y="0"
             width="320"
             height="220"
-            className="fill-primary/10 dark:fill-primary/15"
+            className="fill-flag-green/10 dark:fill-flag-green/15"
           />
           <g className="text-base-content/15" stroke="currentColor" strokeWidth="1.2">
             <path d="M150 16 L150 178" />
@@ -197,7 +208,7 @@ function KenyaMap() {
 
         <path
           d="M152 16 L214 44 L252 78 L257 120 L236 152 L205 178 L176 180 L166 161 L150 178 L106 169 L64 150 L50 126 L45 92 L72 54 L110 28 Z"
-          className="text-primary"
+          className="text-flag-green"
           stroke="currentColor"
           strokeWidth="2"
           strokeLinejoin="round"
@@ -215,8 +226,8 @@ function KenyaMap() {
         ))}
 
         <g>
-          <circle cx="150" cy="150" r="12" className="fill-primary/15" />
-          <circle cx="150" cy="150" r="5" className="fill-primary" />
+          <circle cx="150" cy="150" r="12" className="fill-flag-red/15" />
+          <circle cx="150" cy="150" r="5" className="fill-flag-red" />
           <text
             x="150"
             y="138"
