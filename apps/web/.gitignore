@@ -1,0 +1,11 @@
+.output
+.tanstack
+node_modules
+dist
+*.tsbuildinfo
+.env
+.env.local
+.dev.vars
+.wrangler
+db.sqlite
+db.sqlite-journal
