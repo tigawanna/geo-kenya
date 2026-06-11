@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Text, useTheme } from "react-native-paper";
-import { LoadingIndicatorDots } from "../state-screens/LoadingIndicatorDots";
+import { WavySpinner } from "../state-screens/wavy-spinner";
 import { WardDetailBottomSheet } from "./WardDetailBottomSheet";
 import { WardWithNeighborsMap } from "./maps/WardWithNeighborsMap.tsx";
 import { NotInKenyaBottomSheet } from "./proximity/NotInKenyaBottomSheet";
@@ -47,27 +47,19 @@ export function CurrentWard({ lat, lng, actions, backButton, preferBottomSheet }
         }
       />
 
-      {!data?.result && (
-        <View style={styles.statusOverlay} pointerEvents="none">
-          {isPending ? (
-            <View style={styles.statusContent}>
-              <Text variant="titleMedium" style={{ textAlign: "center", color: theme.colors.primary }}>
-                Checking your location
-                <LoadingIndicatorDots />
-              </Text>
-              <Text variant="labelSmall" style={{ textAlign: "center", color: theme.colors.primary }}>
-                Jump to any ward by tapping on the map
-              </Text>
-            </View>
-          ) : (
-            <Text
-              variant="bodyMedium"
-              style={{ textAlign: "center", color: theme.colors.onSurfaceVariant }}>
-              No ward found here. Tap the map for options.
-            </Text>
-          )}
+      {isPending && !data?.result ? (
+        <View style={styles.loadingIndicator} pointerEvents="none">
+          <WavySpinner />
         </View>
-      )}
+      ) : null}
+
+      {!isPending && !data?.result ? (
+        <View style={styles.emptyHint} pointerEvents="none">
+          <Text variant="labelSmall" style={{ color: theme.colors.onSurfaceVariant }}>
+            Tap the map to explore
+          </Text>
+        </View>
+      ) : null}
 
       <WardInfoBottomSheet
         ward={data?.result}
@@ -94,14 +86,18 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
   },
-  statusOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: "center",
+  loadingIndicator: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 24,
     alignItems: "center",
-    paddingHorizontal: 24,
   },
-  statusContent: {
-    gap: 8,
+  emptyHint: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 24,
     alignItems: "center",
   },
 });

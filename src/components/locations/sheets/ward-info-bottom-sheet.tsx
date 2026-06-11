@@ -3,12 +3,12 @@ import BottomSheet, {
   type BottomSheetMethods,
 } from "@expo/ui/community/bottom-sheet";
 import { KenyaWardsSelect } from "@/lib/drizzle/schema";
-import { forwardRef, ReactNode, useEffect, useImperativeHandle, useRef, useState } from "react";
+import { forwardRef, ReactNode, useImperativeHandle, useRef } from "react";
 import { useTheme } from "react-native-paper";
 import { WardSheetHeader } from "./ward-sheet-header";
 
-const SNAP_POINTS = ["20%", "30%", "70%"] as const;
-const INITIAL_SNAP_INDEX = 1;
+export const WARD_SHEET_SNAP_POINTS = ["10%", "30%", "50%", "70%", "90%"] as const;
+export const WARD_SHEET_INITIAL_INDEX = 1;
 
 interface WardInfoBottomSheetProps {
   ward: Partial<KenyaWardsSelect> | null | undefined;
@@ -25,25 +25,8 @@ export const WardInfoBottomSheet = forwardRef<BottomSheetMethods, WardInfoBottom
   ) {
     const theme = useTheme();
     const sheetRef = useRef<BottomSheetMethods>(null);
-    const [sheetIndex, setSheetIndex] = useState(-1);
 
     useImperativeHandle(forwardedRef, () => sheetRef.current as BottomSheetMethods);
-
-    const handleIndexChange = (index: number) => {
-      const nextIndex = index < 0 ? 0 : index;
-      setSheetIndex(nextIndex);
-      onSheetIndexChange?.(nextIndex);
-    };
-
-    useEffect(() => {
-      if (!ward?.id) {
-        handleIndexChange(-1);
-        return;
-      }
-
-      handleIndexChange(INITIAL_SNAP_INDEX);
-      sheetRef.current?.snapToIndex(INITIAL_SNAP_INDEX);
-    }, [ward?.id]);
 
     if (!ward?.id) {
       return null;
@@ -51,11 +34,16 @@ export const WardInfoBottomSheet = forwardRef<BottomSheetMethods, WardInfoBottom
 
     return (
       <BottomSheet
+        key={ward.id}
         ref={sheetRef}
-        snapPoints={[...SNAP_POINTS]}
-        index={sheetIndex}
+        snapPoints={[...WARD_SHEET_SNAP_POINTS]}
+        index={WARD_SHEET_INITIAL_INDEX}
         enablePanDownToClose={false}
-        onChange={handleIndexChange}
+        onChange={(index) => {
+          if (index >= 0) {
+            onSheetIndexChange?.(index);
+          }
+        }}
         backgroundStyle={{ backgroundColor: theme.colors.surface }}>
         <BottomSheetScrollView
           contentContainerStyle={{ paddingBottom: 32 }}

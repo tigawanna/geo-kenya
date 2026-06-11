@@ -17,7 +17,8 @@ import { Camera, GeoJSONSource, Layer, Map, type CameraRef } from "@maplibre/map
 import { useQuery } from "@tanstack/react-query";
 import { usePathname, useRouter } from "expo-router";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, Platform, StyleSheet, Text, useColorScheme, View } from "react-native";
+import { WavySpinner } from "@/components/state-screens/wavy-spinner";
+import { Platform, StyleSheet, Text, useColorScheme, View } from "react-native";
 import { useTheme } from "react-native-paper";
 
 interface WardWithNeighborsMapProps {
@@ -232,11 +233,8 @@ export function WardWithNeighborsMap({
   return (
     <View style={[styles.container, fillHeight && styles.containerFill]}>
       {(isPending || !basemapReady) && (
-        <View style={styles.loadingOverlay}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
-          <Text style={[styles.loadingText, { color: theme.colors.onSurface }]}>
-            {!basemapReady ? "Loading map…" : "Finding wards..."}
-          </Text>
+        <View style={styles.loadingOverlay} pointerEvents="none">
+          <WavySpinner barHeight={26} />
         </View>
       )}
 
@@ -389,11 +387,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgba(0,0,0,0.5)",
     zIndex: 10,
-  },
-  loadingText: {
-    marginTop: 8,
-    fontSize: 16,
-    fontWeight: "500",
   },
   errorBanner: {
     position: "absolute",
