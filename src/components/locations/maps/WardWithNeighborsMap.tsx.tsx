@@ -13,33 +13,79 @@ import {
 } from "@/lib/map-libre/geom-parse";
 import { normalizeMapColorScheme, resolveMapStyle } from "@/lib/map-libre/map-style";
 import { MapBasemapToggle } from "@/components/map/map-basemap-toggle";
-import { Camera, GeoJSONSource, Layer, Map } from "@maplibre/maplibre-react-native";
+import { Camera, GeoJSONSource, Layer, Map, type CameraRef } from "@maplibre/maplibre-react-native";
 import { useQuery } from "@tanstack/react-query";
 import { usePathname, useRouter } from "expo-router";
-import React, { useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, StyleSheet, Text, useColorScheme, View } from "react-native";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { ActivityIndicator, Platform, StyleSheet, Text, useColorScheme, View } from "react-native";
 import { useTheme } from "react-native-paper";
 
 interface WardWithNeighborsMapProps {
   wardId?: number;
   onMapPress?: (coords: { lat: number; lng: number }) => void;
+  fillHeight?: boolean;
 }
 
-export function WardWithNeighborsMap({ wardId, onMapPress }: WardWithNeighborsMapProps) {
+function bboxFromWardFields(ward: {
+  minX?: number | null;
+  minY?: number | null;
+  maxX?: number | null;
+  maxY?: number | null;
+}): [number, number, number, number] | null {
+  const { minX, minY, maxX, maxY } = ward;
+  if (
+    minX == null ||
+    minY == null ||
+    maxX == null ||
+    maxY == null ||
+    !Number.isFinite(minX) ||
+    !Number.isFinite(minY) ||
+    !Number.isFinite(maxX) ||
+    !Number.isFinite(maxY)
+  ) {
+    return null;
+  }
+
+  return [minX, minY, maxX, maxY];
+}
+
+function cameraFromBBox(bbox: [number, number, number, number]) {
+  const [minLng, minLat, maxLng, maxLat] = bbox;
+  const centerLng = (minLng + maxLng) / 2;
+  const centerLat = (minLat + maxLat) / 2;
+  const maxDelta = Math.max(maxLat - minLat, maxLng - minLng);
+
+  let zoom = 12;
+  if (maxDelta > 0.1) zoom = 10;
+  if (maxDelta > 0.25) zoom = 9;
+  if (maxDelta > 0.5) zoom = 8;
+  if (maxDelta > 1) zoom = 7;
+  if (maxDelta > 2) zoom = 6;
+
+  return {
+    center: [centerLng, centerLat] as [number, number],
+    zoom,
+  };
+}
+
+export function WardWithNeighborsMap({
+  wardId,
+  onMapPress,
+  fillHeight = false,
+}: WardWithNeighborsMapProps) {
   const theme = useTheme();
   const colorScheme = normalizeMapColorScheme(useColorScheme());
   const { preset, setPreset, isReady: basemapReady } = useMapBasemapPreference();
   const mapStyle = resolveMapStyle(preset, colorScheme);
-  const [isZooming, setIsZooming] = useState(false);
+  const mapStyleKey = `${preset}-${colorScheme}`;
+  const [mapLoaded, setMapLoaded] = useState(false);
+  const [mapStyleFailed, setMapStyleFailed] = useState(false);
   const { location, manuallySetLocation } = useDeviceLocation();
   const router = useRouter();
   const pathname = usePathname();
 
-  const [camera, setCamera] = useState({
-    center: KENYA_CENTER,
-    zoom: KENYA_DEFAULT_ZOOM,
-    duration: 1000,
-  });
+  const cameraRef = useRef<CameraRef>(null);
+  const cameraTargetRef = useRef<{ center: [number, number]; zoom: number } | null>(null);
 
   const { data: mainWardData, isPending: isMainWardPending } = useQuery({
     ...getWardByIdQueryOptions({ id: wardId! }),
@@ -69,7 +115,7 @@ export function WardWithNeighborsMap({ wardId, onMapPress }: WardWithNeighborsMa
         type: "main",
       },
     };
-  }, [mainWardData, wardId]);
+  }, [mainWardData]);
 
   const closestWardFeatures = useMemo(() => {
     if (!closestWardsData?.results || !Array.isArray(closestWardsData.results)) return [];
@@ -109,56 +155,62 @@ export function WardWithNeighborsMap({ wardId, onMapPress }: WardWithNeighborsMa
     [allFeatures],
   );
 
-  useEffect(() => {
-    if (allFeatures.length === 0) {
-      setCamera({
-        center: KENYA_CENTER,
-        zoom: KENYA_DEFAULT_ZOOM,
-        duration: 1000,
-      });
+  const applyCameraTarget = () => {
+    const target = cameraTargetRef.current;
+    if (!target || !mapLoaded) {
       return;
     }
 
-    let minLng = Infinity,
-      minLat = Infinity,
-      maxLng = -Infinity,
-      maxLat = -Infinity;
-
-    allFeatures.forEach((feature) => {
-      const bbox = calculateBBox(feature.geometry);
-      if (bbox) {
-        const [fMinLng, fMinLat, fMaxLng, fMaxLat] = bbox;
-        minLng = Math.min(minLng, fMinLng);
-        minLat = Math.min(minLat, fMinLat);
-        maxLng = Math.max(maxLng, fMaxLng);
-        maxLat = Math.max(maxLat, fMaxLat);
-      }
+    cameraRef.current?.easeTo({
+      center: target.center,
+      zoom: target.zoom,
+      duration: 1000,
     });
+  };
 
-    if (isFinite(minLng) && isFinite(minLat) && isFinite(maxLng) && isFinite(maxLat)) {
-      const centerLng = (minLng + maxLng) / 2;
-      const centerLat = (minLat + maxLat) / 2;
+  useEffect(() => {
+    setMapLoaded(false);
+    setMapStyleFailed(false);
+  }, [mapStyleKey]);
 
-      const latDelta = maxLat - minLat;
-      const lngDelta = maxLng - minLng;
-      const maxDelta = Math.max(latDelta, lngDelta);
+  useEffect(() => {
+    if (allFeatures.length > 0) {
+      let minLng = Infinity,
+        minLat = Infinity,
+        maxLng = -Infinity,
+        maxLat = -Infinity;
 
-      let zoom = 12;
-      if (maxDelta > 0.1) zoom = 10;
-      if (maxDelta > 0.25) zoom = 9;
-      if (maxDelta > 0.5) zoom = 8;
-      if (maxDelta > 1) zoom = 7;
-      if (maxDelta > 2) zoom = 6;
-
-      setCamera({
-        center: [centerLng, centerLat],
-        zoom,
-        duration: 1000,
+      allFeatures.forEach((feature) => {
+        const bbox = calculateBBox(feature.geometry);
+        if (bbox) {
+          const [fMinLng, fMinLat, fMaxLng, fMaxLat] = bbox;
+          minLng = Math.min(minLng, fMinLng);
+          minLat = Math.min(minLat, fMinLat);
+          maxLng = Math.max(maxLng, fMaxLng);
+          maxLat = Math.max(maxLat, fMaxLat);
+        }
       });
-      setIsZooming(true);
-      setTimeout(() => setIsZooming(false), 1000);
+
+      if (isFinite(minLng) && isFinite(minLat) && isFinite(maxLng) && isFinite(maxLat)) {
+        cameraTargetRef.current = cameraFromBBox([minLng, minLat, maxLng, maxLat]);
+        applyCameraTarget();
+        return;
+      }
     }
-  }, [allFeatures]);
+
+    const wardBbox = mainWardData?.result ? bboxFromWardFields(mainWardData.result) : null;
+    if (wardBbox) {
+      cameraTargetRef.current = cameraFromBBox(wardBbox);
+      applyCameraTarget();
+      return;
+    }
+
+    cameraTargetRef.current = {
+      center: KENYA_CENTER,
+      zoom: KENYA_DEFAULT_ZOOM,
+    };
+    applyCameraTarget();
+  }, [allFeatures, mainWardData, mapLoaded]);
 
   const handleMapPress = (event: { coordinates?: { longitude: number; latitude: number } }) => {
     const lng = event.coordinates?.longitude;
@@ -178,19 +230,43 @@ export function WardWithNeighborsMap({ wardId, onMapPress }: WardWithNeighborsMa
   const isPending = wardId !== undefined && (isMainWardPending || isClosestWardsPending);
 
   return (
-    <View style={styles.container}>
-      {(isPending || isZooming || !basemapReady) && (
+    <View style={[styles.container, fillHeight && styles.containerFill]}>
+      {(isPending || !basemapReady) && (
         <View style={styles.loadingOverlay}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
           <Text style={[styles.loadingText, { color: theme.colors.onSurface }]}>
-            {!basemapReady ? "Loading map…" : isPending ? "Finding wards..." : "Zooming to wards..."}
+            {!basemapReady ? "Loading map…" : "Finding wards..."}
           </Text>
         </View>
       )}
 
+      {mapStyleFailed ? (
+        <View style={styles.errorBanner}>
+          <Text variant="bodySmall" style={{ color: theme.colors.onErrorContainer }}>
+            Map tiles failed to load. Check your internet connection.
+          </Text>
+        </View>
+      ) : null}
+
       {basemapReady ? (
-        <Map style={styles.map} mapStyle={mapStyle} onPress={handleMapPress}>
-          <Camera center={camera.center} zoom={camera.zoom} duration={camera.duration} />
+        <Map
+          key={mapStyleKey}
+          style={styles.map}
+          mapStyle={mapStyle}
+          touchZoom
+          dragPan
+          doubleTapZoom
+          androidView={Platform.OS === "android" ? "texture" : undefined}
+          onPress={handleMapPress}
+          onDidFinishLoadingMap={() => {
+            setMapLoaded(true);
+            setMapStyleFailed(false);
+          }}
+          onDidFailLoadingMap={() => setMapStyleFailed(true)}>
+          <Camera
+            ref={cameraRef}
+            initialViewState={{ center: KENYA_CENTER, zoom: KENYA_DEFAULT_ZOOM }}
+          />
 
           {wardsCollection.features.length > 0 ? (
             <GeoJSONSource id="all-wards" data={wardsCollection}>
@@ -227,6 +303,7 @@ export function WardWithNeighborsMap({ wardId, onMapPress }: WardWithNeighborsMa
                 id="wards-label"
                 layout={{
                   "text-field": ["get", "name"],
+                  "text-font": ["Open Sans Regular", "Arial Unicode MS Regular"],
                   "text-size": 14,
                   "text-anchor": "center",
                   "text-allow-overlap": false,
@@ -272,7 +349,7 @@ export function WardWithNeighborsMap({ wardId, onMapPress }: WardWithNeighborsMa
       ) : null}
 
       {basemapReady ? (
-        <View style={styles.mapOverlay} pointerEvents="box-none">
+        <View style={styles.mapToggleContainer} pointerEvents="box-none">
           <MapBasemapToggle preset={preset} onPresetChange={setPreset} />
         </View>
       ) : null}
@@ -282,16 +359,23 @@ export function WardWithNeighborsMap({ wardId, onMapPress }: WardWithNeighborsMa
 
 const styles = StyleSheet.create({
   container: {
+    height: 360,
+    width: "100%",
+    overflow: "hidden",
+  },
+  containerFill: {
     flex: 1,
-    minHeight: 400,
-    maxHeight: "80%",
+    height: undefined,
   },
   map: {
     flex: 1,
+    width: "100%",
     height: "100%",
   },
-  mapOverlay: {
-    ...StyleSheet.absoluteFill,
+  mapToggleContainer: {
+    position: "absolute",
+    top: 12,
+    right: 12,
     zIndex: 20,
     elevation: 20,
   },
@@ -310,5 +394,15 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontSize: 16,
     fontWeight: "500",
+  },
+  errorBanner: {
+    position: "absolute",
+    top: 8,
+    left: 8,
+    right: 8,
+    zIndex: 15,
+    padding: 8,
+    borderRadius: 8,
+    backgroundColor: "rgba(255, 235, 238, 0.95)",
   },
 });

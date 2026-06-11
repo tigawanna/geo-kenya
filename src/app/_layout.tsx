@@ -1,3 +1,4 @@
+import { useRegisterCrashalytics } from "@/lib/react-native-firebase/crashalytics/use-register-crashalytics";
 import { useThemeSetup } from "@/hooks/theme/use-theme-setup";
 import { InitDatabase } from "@/lib/drizzle/InitDatabase";
 import {
@@ -36,6 +37,7 @@ initializePullEventsBackgroundTask(initilializerPromise);
 export default function RootLayout() {
   useOnlineManager();
   useAppState(onAppStateChange);
+  useRegisterCrashalytics();
   const { colorScheme, paperTheme } = useThemeSetup();
 
   useEffect(() => {

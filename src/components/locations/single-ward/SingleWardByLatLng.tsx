@@ -1,6 +1,5 @@
-import { ScrollView, StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { CurrentWard } from "../CurrentWard";
-import { ClosestWards } from "../proximity/ClosestWards";
 
 interface SingleWardByLatLngProps {
   lat: number;
@@ -18,7 +17,7 @@ export function SingleWardByLatLng({
   preferBottomSheet,
 }: SingleWardByLatLngProps) {
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
+    <View style={styles.container}>
       <CurrentWard
         lat={lat}
         lng={lng}
@@ -26,19 +25,13 @@ export function SingleWardByLatLng({
         backButton={backButton}
         preferBottomSheet={preferBottomSheet}
       />
-      <ClosestWards lat={lat} lng={lng} />
-    </ScrollView>
+    </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
-    height: "100%",
+    flex: 1,
     width: "100%",
-  },
-  scrollContent: {
-    // gap: 16,
-    // paddingBottom: 16,
-    // justifyContent: "center",
-    // alignItems: "center",
   },
 });

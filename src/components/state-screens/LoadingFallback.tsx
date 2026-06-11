@@ -8,39 +8,25 @@ import Animated, {
   withSequence,
   withTiming,
 } from "react-native-reanimated";
+import { KenyaShapeSpinner } from "./kenya-shape-spinner";
 
-import { LoadingIndicatorDots } from "./LoadingIndicatorDots";
-import { AppLogoSvg } from "@/components/shared/svg/AppLogoSvg";
 interface LoadingFallbackProps {
-  action?:React.ReactNode
+  action?: React.ReactNode;
   initialScreen?: boolean;
-  logoSize?:number;
-
+  logoSize?: number;
 }
-export function LoadingFallback({ initialScreen,logoSize=250,action }: LoadingFallbackProps) {
+
+export function LoadingFallback({ initialScreen, logoSize = 250, action }: LoadingFallbackProps) {
   const { colors } = useTheme();
-  const pulseValue = useSharedValue(1);
   const fadeValue = useSharedValue(0.6);
 
   useEffect(() => {
-    // Gentle pulse animation for the logo
-    pulseValue.value = withRepeat(
-      withSequence(withTiming(1.1, { duration: 1500 }), withTiming(1, { duration: 1500 })),
-      -1,
-      false
-    );
-
-    // Fade animation for loading text
     fadeValue.value = withRepeat(
       withSequence(withTiming(1, { duration: 2000 }), withTiming(0.6, { duration: 2000 })),
       -1,
-      false
+      false,
     );
-  }, [fadeValue, pulseValue]);
-
-  const animatedLogoStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: pulseValue.value }],
-  }));
+  }, [fadeValue]);
 
   const animatedTextStyle = useAnimatedStyle(() => ({
     opacity: fadeValue.value,
@@ -49,14 +35,12 @@ export function LoadingFallback({ initialScreen,logoSize=250,action }: LoadingFa
   return (
     <Surface style={[styles.container, { backgroundColor: colors.surface }]} testID="loading-fallback">
       <View style={styles.content}>
-        <Animated.View style={[styles.logoContainer, animatedLogoStyle]}>
-          <AppLogoSvg width={logoSize} height={logoSize}/>
-        </Animated.View>
+        <View style={styles.logoContainer}>
+          <KenyaShapeSpinner size={logoSize} />
+        </View>
 
         <View style={styles.loadingContainer}>
-          <LoadingIndicatorDots />
-
-          {initialScreen && (
+          {initialScreen ? (
             <Animated.View style={animatedTextStyle}>
               <Text
                 variant="bodyMedium"
@@ -64,14 +48,10 @@ export function LoadingFallback({ initialScreen,logoSize=250,action }: LoadingFa
                 Getting things ready...
               </Text>
             </Animated.View>
-          )}
+          ) : null}
         </View>
-        
-        {action && (
-          <View style={styles.actionsContainer}>
-            {action}
-          </View>
-        )}
+
+        {action ? <View style={styles.actionsContainer}>{action}</View> : null}
       </View>
     </Surface>
   );
@@ -86,12 +66,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 24,
   },
-  content: {
-    // alignItems: "center",
-  },
+  content: {},
   logoContainer: {
     marginBottom: 32,
     padding: 16,
+    alignItems: "center",
   },
   loadingContainer: {
     alignItems: "center",

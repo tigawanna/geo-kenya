@@ -5,7 +5,7 @@ import type { MapBasemapPreset } from "@/lib/map-libre/map-style";
 const STORAGE_KEY = "geo-kenya:map-basemap-preset";
 
 export function useMapBasemapPreference() {
-  const [preset, setPresetState] = useState<MapBasemapPreset>("minimal");
+  const [preset, setPresetState] = useState<MapBasemapPreset>("standard");
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {

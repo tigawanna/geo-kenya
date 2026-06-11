@@ -86,9 +86,9 @@ export function ClosestWards({ lat, lng }: ClosestWardsProps) {
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    height: "100%",
     gap: 6,
     paddingHorizontal: 6,
+    paddingTop: 8,
   },
   labelCard: {
     margin: 6,

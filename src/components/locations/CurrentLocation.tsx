@@ -1,6 +1,6 @@
 import { useDeviceLocation } from "@/hooks/use-device-location";
 import * as Clipboard from "expo-clipboard";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { Card, IconButton, useTheme } from "react-native-paper";
 
 import { LoadingFallback } from "../state-screens/LoadingFallback";
@@ -15,8 +15,8 @@ export function CurrentLocation() {
   const lng = location?.coords.longitude ?? 0;
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
-      <Card style={styles.banner} elevation={4}>
+    <View style={styles.container}>
+      <Card style={styles.banner} elevation={2}>
         <Card.Content
           style={{
             alignItems: "center",
@@ -61,21 +61,18 @@ export function CurrentLocation() {
           </View>
         }
       />
-    </ScrollView>
+    </View>
   );
 }
 const styles = StyleSheet.create({
   container: {
-    height: "100%",
+    flex: 1,
     width: "100%",
   },
-  scrollContent: {
-    // gap: 16,
-    // paddingBottom: 16,
-  },
   banner: {
-    marginHorizontal: 16,
-    marginVertical: 8,
+    marginHorizontal: 12,
+    marginTop: 4,
+    marginBottom: 0,
     borderRadius: 12,
   },
 });

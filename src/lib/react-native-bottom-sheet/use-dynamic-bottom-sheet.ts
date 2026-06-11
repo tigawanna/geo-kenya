@@ -1,4 +1,4 @@
-import BottomSheet from "@gorhom/bottom-sheet";
+import type { BottomSheetMethods } from "@expo/ui/community/bottom-sheet";
 import { useRef, useMemo, useCallback, useState } from "react";
 
 interface UseDynamicBottomSheetProps {
@@ -9,7 +9,7 @@ export function useDynamicBottomSheet({
   maxSnapindex = 7,
   minSnapindex = 0,
 }: UseDynamicBottomSheetProps = {}) {
-  const sheetRef = useRef<BottomSheet>(null);
+  const sheetRef = useRef<BottomSheetMethods>(null);
   const [isOpen, setIsOpen] = useState(false);
   const allSnapPoints = useMemo(() => ["5%", "15%", "30%", "50%", "70%", "85%", "100%"], []);
   const snapPoints = useMemo(
@@ -19,8 +19,7 @@ export function useDynamicBottomSheet({
 
   // callbacks
   const handleSheetChange = useCallback((index: number) => {
-    console.log("handleSheetChange", index);
-    setIsOpen(index > 0);
+    setIsOpen(index >= 0);
   }, []);
   const handleSnapPress = useCallback((index: number) => {
     sheetRef.current?.snapToIndex(index);

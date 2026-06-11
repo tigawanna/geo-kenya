@@ -1,6 +1,7 @@
 {
   "cli": {
-    "version": ">= 3.14.0"
+    "version": ">= 3.14.0",
+    "appVersionSource": "remote"
   },
   "build": {
     "development": {
@@ -55,7 +56,16 @@
     },
     "production": {
       "distribution": "store",
-      "channel": "production"
+      "channel": "production",
+      "autoIncrement": true,
+      "env": {
+        "EXPO_NO_CACHE": "true",
+        "EXPO_NO_GIT_STATUS": "true",
+        "APP_VARIANT": "production"
+      },
+      "android": {
+        "buildType": "app-bundle"
+      }
     }
   },
   "submit": {

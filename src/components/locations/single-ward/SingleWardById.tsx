@@ -1,24 +1,24 @@
 import { getWardByIdQueryOptions } from "@/data-access-layer/wards-query-options";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Button, useTheme } from "react-native-paper";
 import { MaterialIcon } from "../../default/ui/icon-symbol";
 import { LoadingFallback } from "../../state-screens/LoadingFallback";
 import { NoDataScreen } from "../../state-screens/NoDataScreen";
 import { WardWithNeighborsMap } from "../maps/WardWithNeighborsMap.tsx";
 import { ClosestWardsByGeom } from "../proximity/ClosestWardsByGeom";
-import { SingleWardCard } from "./SingleWardCard";
+import { WardInfoBottomSheet } from "../sheets/ward-info-bottom-sheet";
 
 interface SingleWardByIdProps {
   wardId: string;
 }
+
 export function SingleWardById({ wardId }: SingleWardByIdProps) {
   const theme = useTheme();
   const router = useRouter();
-
   const { data, isPending, refetch, isRefetching } = useQuery(
-    getWardByIdQueryOptions({ id: Number(wardId) })
+    getWardByIdQueryOptions({ id: Number(wardId) }),
   );
 
   if (isPending) {
@@ -84,48 +84,22 @@ export function SingleWardById({ wardId }: SingleWardByIdProps) {
   }
 
   return (
-    <ScrollView style={styles.container}>
-      {/* <View style={styles.header}>
-        <IconButton icon="arrow-left" onPress={() => router.back()} />
-      </View> */}
-      <SingleWardCard ward={data.result} backButton />
-      <WardWithNeighborsMap wardId={data.result.id} />
-      <ClosestWardsByGeom wardId={data.result.id} />
-      {/* <TabsProvider
-        defaultIndex={0}
-        // onChangeIndex={handleChangeIndex} optional
-      >
-        <Surface style={{ flex: 1, paddingTop: 10 }}>
-          <Tabs
-            tabHeaderStyle={{
-              marginBottom: 12,
-            }}
-            theme={{
-              colors: {
-                primary: theme.colors.primary,
-                background: theme.colors.surface,
-              },
-            }}>
-            <TabScreen label="Map" icon="compass">
-              <WardWithNeighborsMap wardId={data.result.id} />
-            </TabScreen>
-            <TabScreen label="List" icon={getMaterialIconName("list-box")}>
-              <ClosestWardsByGeom wardId={data.result.id} />
-            </TabScreen>
-          </Tabs>
-        </Surface>
-      </TabsProvider> */}
-    </ScrollView>
+    <View style={styles.container}>
+      <WardWithNeighborsMap fillHeight wardId={data.result.id} />
+
+      <WardInfoBottomSheet
+        ward={data.result}
+        backButton
+        nearbyContent={<ClosestWardsByGeom wardId={data.result.id} />}
+      />
+    </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    height: "100%",
     width: "100%",
-  },
-  header: {
-    paddingHorizontal: 8,
   },
   buttonContainer: {
     flexDirection: "row",

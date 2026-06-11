@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import { StyleSheet, View, TouchableOpacity } from "react-native";
 import { Text, Button, IconButton, Card } from "react-native-paper";
 import { router } from "expo-router";
-import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
+import type { BottomSheetMethods } from "@expo/ui/community/bottom-sheet";
 
 interface NotInKenyaBottomSheetProps {
   location: {

@@ -1,9 +1,13 @@
 import { executeQuerySync } from "@/lib/drizzle/client";
 import { db } from "@/lib/drizzle/client";
 import { kenyaWards, KenyaWardsSelect } from "@/lib/drizzle/schema";
+import {
+  findClosestWardsByCoordinates,
+  findWardByCoordinates,
+} from "@/data-access-layer/ward-location-lookup";
 import { queryOptions } from "@tanstack/react-query";
 import { isPointInkenya } from "./location-query";
-import { sql, eq, getTableColumns } from "drizzle-orm";
+import { sql, eq } from "drizzle-orm";
 
 interface WardsQueryOptionsProps {
   searchQuery: string;
@@ -55,41 +59,32 @@ export function getWardByLocation({ lat, lng }: GetWardByLocationProps) {
   return queryOptions({
     queryKey: ["current-ward", lat, lng],
     queryFn: async () => {
-      try {
-        const result = executeQuerySync<KenyaWardsSelect & { geometry: string }>(
-          `
-            SELECT 
-              id, 
-              ward_code as wardCode, 
-              ward, 
-              county, 
-              county_code as countyCode, 
-              sub_county as subCounty, 
-              constituency, 
-              constituency_code as constituencyCode,
-              AsGeoJSON(geom) as geometry 
-            FROM kenya_wards
-            WHERE ST_Contains(geom, MakePoint(?, ?, 4326))
-            LIMIT 1
-          `,
-          [lng, lat],
-        );
+      const lookup = findWardByCoordinates(lat, lng);
 
-        const ward = result?.[0];
-        if (!ward) {
-          throw new Error("Ward not found");
-        }
-
-        return {
-          result: ward,
-          error: null,
-        };
-      } catch (e) {
+      if (!lookup.ward) {
+        console.log("[WardLocation] getWardByLocation: no ward found", {
+          lat,
+          lng,
+          error: lookup.error,
+        });
         return {
           result: null,
-          error: e instanceof Error ? e.message : String(e),
+          error: lookup.error ?? "Ward not found",
         };
       }
+
+      console.log("[WardLocation] getWardByLocation: success", {
+        lat,
+        lng,
+        strategy: lookup.strategy,
+        wardId: lookup.ward.id,
+        wardName: lookup.ward.ward,
+      });
+
+      return {
+        result: lookup.ward,
+        error: null,
+      };
     },
     enabled: lat !== 0 && lng !== 0,
     placeholderData: (prevData) => prevData,
@@ -105,14 +100,28 @@ export function getWardByIdQueryOptions({ id }: GetWardByIdProps) {
     queryKey: ["wards", "single", id],
     queryFn: async () => {
       try {
-        const query = await db
-          .select({
-            ...getTableColumns(kenyaWards),
-            geom: sql<string>`AsGeoJSON(${kenyaWards.geom})`,
-          })
-          .from(kenyaWards)
-          .where(eq(kenyaWards.id, id))
-          .limit(1);
+        const query = executeQuerySync<KenyaWardsSelect & { geom: string | null }>(
+          `
+            SELECT
+              id,
+              ward_code AS wardCode,
+              ward,
+              county,
+              county_code AS countyCode,
+              sub_county AS subCounty,
+              constituency,
+              constituency_code AS constituencyCode,
+              minx AS minX,
+              miny AS minY,
+              maxx AS maxX,
+              maxy AS maxY,
+              AsGeoJSON(geom) AS geom
+            FROM kenya_wards
+            WHERE id = ?
+            LIMIT 1
+          `,
+          [id],
+        );
         const ward = query?.[0];
         if (!ward) {
           throw new Error("Ward not found");
@@ -196,43 +205,19 @@ export function getClosestWardsByCorrdsQueryOptions({
   return queryOptions({
     queryKey: ["closest-ward", lat, lng],
     queryFn: async () => {
-      try {
-        const query = executeQuerySync<KenyaWardsSelect & { geometry: string; distance: number }>(
-          `
-                SELECT 
-                  id,
-                  ward_code AS wardCode,
-                  ward,
-                  county,
-                  county_code AS countyCode,
-                  sub_county AS subCounty,
-                  constituency,
-                  constituency_code AS constituencyCode,
-                  AsGeoJSON(geom) AS geometry,
-                  ST_Distance(ST_Centroid(geom), MakePoint(?, ?, 4326), 1) AS distance
-                FROM kenya_wards
-                ORDER BY distance
-                LIMIT 10
-              `,
-          [lng, lat],
-        );
+      const { results, error } = findClosestWardsByCoordinates(lat, lng, 10);
 
-        const results = query?.slice(1);
-        if (!results.length) {
-          throw new Error("No nearby wards found");
-        }
-
-        return {
-          results,
-          error: null,
-        };
-      } catch (e) {
-        return {
-          results: null,
-          error: e instanceof Error ? e.message : JSON.stringify(e),
-        };
+      if (error) {
+        return { results: null, error };
       }
+
+      if (!results.length) {
+        return { results: null, error: "No nearby wards found" };
+      }
+
+      return { results, error: null };
     },
+    enabled: lat !== 0 && lng !== 0,
     placeholderData: (prevData) => prevData,
   });
 }

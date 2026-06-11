@@ -1,7 +1,9 @@
 import { GenericBottomSheet } from "@/components/shared/modals/GenericBottomSheet";
 import { getWardByLocation } from "@/data-access-layer/wards-query-options";
-import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
-import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import {
+  BottomSheetScrollView,
+  type BottomSheetMethods,
+} from "@expo/ui/community/bottom-sheet";
 import { useQuery } from "@tanstack/react-query";
 import { StyleSheet, View } from "react-native";
 import { IconButton } from "react-native-paper";

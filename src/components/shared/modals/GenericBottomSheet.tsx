@@ -1,5 +1,7 @@
-import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
-import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
+import BottomSheet, {
+  BottomSheetView,
+  type BottomSheetMethods,
+} from "@expo/ui/community/bottom-sheet";
 import { StyleSheet } from "react-native";
 import { useTheme } from "react-native-paper";
 
@@ -20,17 +22,17 @@ export function GenericBottomSheet({ options, children }: Props) {
   return (
     <BottomSheet
       ref={options.sheetRef}
-      onChange={(idx, position, type) => {
-        if (idx < 2) options.handleClosePress();
+      onChange={(idx) => {
         options.handleSheetChange(idx);
+        if (idx < 0) {
+          options.handleClosePress();
+        }
       }}
       index={-1}
       snapPoints={options.snapPoints}
+      enablePanDownToClose
       enableDynamicSizing={false}
-      style={{ height: "auto" }}
-      backgroundStyle={{ backgroundColor: theme.colors.background }}
-      handleStyle={{ backgroundColor: theme.colors.elevation.level4 }}
-      handleIndicatorStyle={{ backgroundColor: theme.colors.primary }}>
+      backgroundStyle={{ backgroundColor: theme.colors.background }}>
       <BottomSheetView
         style={{ ...styles.contentContainer, backgroundColor: theme.colors.surface }}>
         {children}

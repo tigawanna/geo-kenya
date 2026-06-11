@@ -14,7 +14,7 @@ export default function HomeScreen() {
   );
 
   return (
-    <Surface style={{ flex: 1, justifyContent: "center", alignItems: "center", paddingTop: top }}>
+    <Surface style={{ flex: 1, paddingTop: top }}>
       <CurrentLocation />
     </Surface>
   );
