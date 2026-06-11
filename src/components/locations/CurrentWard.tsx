@@ -1,13 +1,16 @@
-import { getWardByLocation } from "@/data-access-layer/wards-query-options";
-import { useDynamicBottomSheet } from "@/lib/react-native-bottom-sheet/use-dynamic-bottom-sheet";
+import {
+  checkIsPointInKenyaQueryOptions,
+  getWardByLocation,
+} from "@/data-access-layer/wards-query-options";
+import { hasResolvableCoordinates } from "@/data-access-layer/location-query";
+import { useDeviceLocation } from "@/hooks/use-device-location";
 import { useQuery } from "@tanstack/react-query";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Text, useTheme } from "react-native-paper";
-import { WavySpinner } from "../state-screens/wavy-spinner";
 import { WardWithNeighborsMap } from "./maps/WardWithNeighborsMap.tsx";
-import { NotInKenyaBottomSheet } from "./proximity/NotInKenyaBottomSheet";
 import { ClosestWards } from "./proximity/ClosestWards";
+import { NotInKenyaMapBanner } from "./proximity/not-in-kenya-map-banner";
 import {
   collapseWardInfoSheet,
   WardInfoBottomSheet,
@@ -23,31 +26,55 @@ interface CurretWardProps {
 
 export function CurrentWard({ lat, lng, actions, backButton }: CurretWardProps) {
   const theme = useTheme();
-  const sheetOptions = useDynamicBottomSheet();
   const wardSheetRef = useRef<WardInfoSheetRef>(null);
+  const [outsideKenyaDismissed, setOutsideKenyaDismissed] = useState(false);
+  const { isLoading: isLocationLoading } = useDeviceLocation();
 
-  const { data, isPending } = useQuery(
+  const { data, isFetching, isPending } = useQuery(
     getWardByLocation({
       lat,
       lng,
     }),
   );
 
+  const locationResolved = !isLocationLoading && hasResolvableCoordinates(lat, lng);
+
+  const { data: kenyaCheck, isFetching: isKenyaCheckFetching } = useQuery({
+    ...checkIsPointInKenyaQueryOptions({ lat, lng }),
+    enabled: locationResolved,
+  });
+
+  useEffect(() => {
+    setOutsideKenyaDismissed(false);
+  }, [lat, lng]);
+
+  useEffect(() => {
+    if (kenyaCheck?.results === "in_kenya") {
+      setOutsideKenyaDismissed(false);
+    }
+  }, [kenyaCheck?.results]);
+
+  const locationLoading = locationResolved && (isFetching || isPending);
+  const showOutsideKenya =
+    locationResolved &&
+    !isKenyaCheckFetching &&
+    kenyaCheck?.results === "outside_kenya" &&
+    !outsideKenyaDismissed;
+
   return (
     <View style={styles.container}>
       <WardWithNeighborsMap
         fillHeight
         wardId={data?.result?.id}
+        locationLoading={locationLoading}
         onMapPress={() => collapseWardInfoSheet(wardSheetRef)}
       />
 
-      {isPending && !data?.result ? (
-        <View style={styles.loadingIndicator} pointerEvents="none">
-          <WavySpinner />
-        </View>
+      {showOutsideKenya ? (
+        <NotInKenyaMapBanner onDismiss={() => setOutsideKenyaDismissed(true)} />
       ) : null}
 
-      {!isPending && !data?.result ? (
+      {!locationLoading && !data?.result && locationResolved && kenyaCheck?.results === "in_kenya" ? (
         <View style={styles.emptyHint} pointerEvents="none">
           <Text variant="labelSmall" style={{ color: theme.colors.onSurfaceVariant }}>
             Tap the map to explore
@@ -62,8 +89,6 @@ export function CurrentWard({ lat, lng, actions, backButton }: CurretWardProps) 
         actions={actions}
         nearbyContent={<ClosestWards lat={lat} lng={lng} />}
       />
-
-      <NotInKenyaBottomSheet location={{ lat, lng }} sheetOptions={sheetOptions} />
     </View>
   );
 }
@@ -72,13 +97,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: "100%",
-  },
-  loadingIndicator: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    bottom: 24,
-    alignItems: "center",
   },
   emptyHint: {
     position: "absolute",

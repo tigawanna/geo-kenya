@@ -9,7 +9,7 @@ import { useTheme } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { WardSheetHeader } from "./ward-sheet-header";
 
-export const WARD_SHEET_SNAP_POINTS = ["10%", "30%", "50%", "70%", "90%"] as const;
+export const WARD_SHEET_SNAP_POINTS = ["20%", "30%", "50%", "70%", "90%"] as const;
 export const WARD_SHEET_MIN_INDEX = 0;
 export const WARD_SHEET_INITIAL_INDEX = 1;
 

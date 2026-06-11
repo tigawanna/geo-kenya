@@ -17,7 +17,7 @@ import { Camera, GeoJSONSource, Layer, Map, type CameraRef } from "@maplibre/map
 import { useQuery } from "@tanstack/react-query";
 import { usePathname, useRouter } from "expo-router";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { WavySpinner } from "@/components/state-screens/wavy-spinner";
+import { MapDimLoadingOverlay } from "@/components/map/map-dim-loading-overlay";
 import { Platform, StyleSheet, Text, useColorScheme, View } from "react-native";
 import { useTheme } from "react-native-paper";
 
@@ -25,6 +25,7 @@ interface WardWithNeighborsMapProps {
   wardId?: number;
   onMapPress?: (coords: { lat: number; lng: number }) => void;
   fillHeight?: boolean;
+  locationLoading?: boolean;
 }
 
 function bboxFromWardFields(ward: {
@@ -73,6 +74,7 @@ export function WardWithNeighborsMap({
   wardId,
   onMapPress,
   fillHeight = false,
+  locationLoading = false,
 }: WardWithNeighborsMapProps) {
   const theme = useTheme();
   const colorScheme = normalizeMapColorScheme(useColorScheme());
@@ -88,12 +90,17 @@ export function WardWithNeighborsMap({
   const cameraRef = useRef<CameraRef>(null);
   const cameraTargetRef = useRef<{ center: [number, number]; zoom: number } | null>(null);
 
-  const { data: mainWardData, isPending: isMainWardPending } = useQuery({
-    ...getWardByIdQueryOptions({ id: wardId! }),
-    enabled: wardId !== undefined,
-  });
+  const { data: mainWardData, isPending: isMainWardPending, isFetching: isMainWardFetching } =
+    useQuery({
+      ...getWardByIdQueryOptions({ id: wardId! }),
+      enabled: wardId !== undefined,
+    });
 
-  const { data: closestWardsData, isPending: isClosestWardsPending } = useQuery({
+  const {
+    data: closestWardsData,
+    isPending: isClosestWardsPending,
+    isFetching: isClosestWardsFetching,
+  } = useQuery({
     ...getClosestWardsByGeomQueryOptions({ wardId: wardId! }),
     enabled: wardId !== undefined,
   });
@@ -228,16 +235,16 @@ export function WardWithNeighborsMap({
     manuallySetLocation(lat, lng);
   };
 
-  const isPending = wardId !== undefined && (isMainWardPending || isClosestWardsPending);
+  const isWardDataLoading =
+    wardId !== undefined &&
+    (isMainWardPending ||
+      isClosestWardsPending ||
+      isMainWardFetching ||
+      isClosestWardsFetching);
+  const showLoadingOverlay = !basemapReady || locationLoading || isWardDataLoading;
 
   return (
     <View style={[styles.container, fillHeight && styles.containerFill]}>
-      {(isPending || !basemapReady) && (
-        <View style={styles.loadingOverlay} pointerEvents="none">
-          <WavySpinner barHeight={26} />
-        </View>
-      )}
-
       {mapStyleFailed ? (
         <View style={styles.errorBanner}>
           <Text variant="bodySmall" style={{ color: theme.colors.onErrorContainer }}>
@@ -346,6 +353,8 @@ export function WardWithNeighborsMap({
         </Map>
       ) : null}
 
+      {showLoadingOverlay ? <MapDimLoadingOverlay /> : null}
+
       {basemapReady ? (
         <View style={styles.mapToggleContainer} pointerEvents="box-none">
           <MapBasemapToggle preset={preset} onPresetChange={setPreset} />
@@ -376,17 +385,6 @@ const styles = StyleSheet.create({
     right: 12,
     zIndex: 20,
     elevation: 20,
-  },
-  loadingOverlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.5)",
-    zIndex: 10,
   },
   errorBanner: {
     position: "absolute",

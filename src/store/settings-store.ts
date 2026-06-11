@@ -1,10 +1,10 @@
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { createDebouncedAsyncStorage } from "@/lib/storage/debounced-async-storage";
+import type { CustomThemeKey } from "@/constants/Colors";
 import { useEffect, useState } from "react";
 import { useColorScheme } from "react-native";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import type { CustomThemeKey } from "@/constants/Colors";
 
 type SettingsStoreType = {
   theme: "dark" | "light" | null;
@@ -47,10 +47,17 @@ export const useSettingsStore = create<SettingsStoreType>()(
       
       setTheme: (theme) => set({ theme }),
       
-      setColorScheme: (scheme) => set({ 
-        colorScheme: scheme,
-        dynamicColors: scheme === null // Enable dynamic colors only when System Default
-      }),
+      setColorScheme: (scheme) =>
+        set((state) => {
+          const nextDynamicColors = scheme === null;
+          if (state.colorScheme === scheme && state.dynamicColors === nextDynamicColors) {
+            return state;
+          }
+          return {
+            colorScheme: scheme,
+            dynamicColors: nextDynamicColors,
+          };
+        }),
       
       setLocalBackupPath: (path) => set({ localBackupPath: path }),
       
@@ -60,7 +67,7 @@ export const useSettingsStore = create<SettingsStoreType>()(
     }),
     {
       name: "app-settings",
-      storage: createJSONStorage(() => AsyncStorage),
+      storage: createJSONStorage(() => createDebouncedAsyncStorage()),
       // Only persist the state, not the actions
       partialize: (state) => ({
         theme: state.theme,
@@ -75,17 +82,19 @@ export const useSettingsStore = create<SettingsStoreType>()(
 
 // Custom hook for theme functionality
 export function useThemeStore() {
-  const colorScheme = useColorScheme();
-  const { theme, setTheme, toggleTheme } = useSettingsStore();
-  
-  const currentTheme = theme ?? colorScheme;
+  const systemColorScheme = useColorScheme();
+  const theme = useSettingsStore((state) => state.theme);
+  const setTheme = useSettingsStore((state) => state.setTheme);
+  const toggleTheme = useSettingsStore((state) => state.toggleTheme);
+
+  const currentTheme = theme ?? systemColorScheme;
   const isDarkMode = currentTheme === "dark";
-  
-  return { 
-    theme: currentTheme, 
-    toggleTheme, 
+
+  return {
+    theme: currentTheme,
+    toggleTheme,
     setTheme,
-    isDarkMode 
+    isDarkMode,
   };
 }
 

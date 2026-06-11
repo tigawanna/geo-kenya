@@ -6,7 +6,7 @@ import {
   findWardByCoordinates,
 } from "@/data-access-layer/ward-location-lookup";
 import { queryOptions } from "@tanstack/react-query";
-import { isPointInkenya } from "./location-query";
+import { hasResolvableCoordinates, isPointInkenya } from "./location-query";
 import { sql, eq } from "drizzle-orm";
 
 interface WardsQueryOptionsProps {
@@ -288,6 +288,7 @@ export function checkIsPointInKenyaQueryOptions({
     queryFn: async () => {
       return isPointInkenya({ lat, lng });
     },
+    enabled: hasResolvableCoordinates(lat, lng),
     placeholderData: (prevData) => prevData,
   });
 }

@@ -1,5 +1,6 @@
 import { customTheme, type CustomThemeKey } from "@/constants/Colors";
 import { useSettingsStore, useThemeStore } from "@/store/settings-store";
+import { startTransition } from "react";
 import { Linking, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Divider, Icon, List, Surface, Switch, useTheme } from "react-native-paper";
 import * as Application from "expo-application";
@@ -7,7 +8,10 @@ import * as Application from "expo-application";
 export default function Settings() {
   const theme = useTheme();
   const { isDarkMode, toggleTheme } = useThemeStore();
-  const { dynamicColors, toggleDynamicColors, colorScheme, setColorScheme } = useSettingsStore();
+  const dynamicColors = useSettingsStore((state) => state.dynamicColors);
+  const colorScheme = useSettingsStore((state) => state.colorScheme);
+  const toggleDynamicColors = useSettingsStore((state) => state.toggleDynamicColors);
+  const setColorScheme = useSettingsStore((state) => state.setColorScheme);
   const developerFacingBuildVersion = Application.nativeBuildVersion;
 
   const colorSchemeOptions = Object.entries(customTheme).map(([key, value]) => ({
@@ -46,7 +50,7 @@ export default function Settings() {
             {colorSchemeOptions.map((option) => (
               <TouchableOpacity
                 key={option.key || "system"}
-                onPress={() => setColorScheme(option.key)}
+                onPress={() => startTransition(() => setColorScheme(option.key))}
                 style={styles.colorDot}>
                 <View
                   style={[
