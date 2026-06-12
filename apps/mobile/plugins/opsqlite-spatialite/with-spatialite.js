@@ -2,68 +2,69 @@ const fs = require("fs");
 const path = require("path");
 const { withDangerousMod } = require("@expo/config-plugins");
 
-/**
- * Proper Expo plugin for copying Spatialite native libraries (.so files)
- * during the Android prebuild process using withDangerousMod
- */
+const ARCHITECTURES = ["arm64-v8a", "armeabi-v7a", "x86", "x86_64"];
+const FETCH_COMMAND = "pnpm fetch:spatialite";
+
+function missingLibsError(detail) {
+  return new Error(
+    [
+      "SpatiaLite native libraries are not available for prebuild.",
+      detail,
+      "",
+      `These binaries are intentionally not committed. Download them first:`,
+      `  ${FETCH_COMMAND}`,
+      "",
+      "Then run the prebuild again.",
+    ].join("\n"),
+  );
+}
+
 module.exports = (config) => {
   return withDangerousMod(config, [
     "android",
     async (config) => {
-      // Get the plugin's directory using module.filename
-      const pluginDir = module.filename
-        ? path.dirname(module.filename)
-        : process.cwd();
+      const pluginDir = path.dirname(module.filename);
       const sourceBase = path.join(pluginDir, "spatialite-libs", "jni");
-      
-      // Get the platform project root (android directory)
       const platformProjectRoot = config.modRequest.platformProjectRoot;
-      
       const targetBase = path.join(
         platformProjectRoot,
         "app",
         "src",
         "main",
-        "jniLibs"
+        "jniLibs",
       );
 
       if (!fs.existsSync(sourceBase)) {
-        console.warn(
-          "⚠️  Spatialite libraries not found at:",
-          sourceBase
-        );
-        return config;
+        throw missingLibsError(`Expected libraries at ${sourceBase}.`);
       }
 
-      const architectures = ["arm64-v8a", "armeabi-v7a", "x86", "x86_64"];
+      let copied = 0;
 
-      for (const arch of architectures) {
+      for (const arch of ARCHITECTURES) {
         const sourceDir = path.join(sourceBase, arch);
         const targetDir = path.join(targetBase, arch);
 
-        if (fs.existsSync(sourceDir)) {
-          // Create target directory
-          if (!fs.existsSync(targetDir)) {
-            fs.mkdirSync(targetDir, { recursive: true });
-          }
+        const soFile = path.join(sourceDir, "libspatialite.so");
+        if (!fs.existsSync(soFile)) {
+          throw missingLibsError(`Missing ABI binary: ${soFile}.`);
+        }
 
-          // Copy .so files
-          const files = fs.readdirSync(sourceDir);
-          for (const file of files) {
-            if (file.endsWith(".so")) {
-              const sourceFile = path.join(sourceDir, file);
-              const targetFile = path.join(targetDir, file);
-              fs.copyFileSync(sourceFile, targetFile);
-              console.log(
-                `✓ Copied Spatialite library: ${arch}/${file}`
-              );
-            }
+        fs.mkdirSync(targetDir, { recursive: true });
+
+        for (const file of fs.readdirSync(sourceDir)) {
+          if (!file.endsWith(".so")) {
+            continue;
           }
+          fs.copyFileSync(
+            path.join(sourceDir, file),
+            path.join(targetDir, file),
+          );
+          copied += 1;
         }
       }
 
-      console.log("✅ Spatialite native libraries installed successfully!");
-      
+      console.log(`[with-spatialite] copied ${copied} native libraries`);
+
       return config;
     },
   ]);
