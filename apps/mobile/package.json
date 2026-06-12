@@ -88,6 +88,8 @@
     "@react-native-vector-icons/material-design-icons": "^13.1.2"
   },
   "devDependencies": {
+    "@expo/config-plugins": "~56.0.8",
+    "babel-preset-expo": "~56.0.15",
     "@testing-library/react-native": "^13.3.3",
     "@types/color": "^4.2.0",
     "@types/jest": "^29.5.14",

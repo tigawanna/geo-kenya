@@ -30,7 +30,6 @@
     "preview:local": {
       "extends": "preview",
       "env": {
-        "GRADLE_OPTS": "-Xmx4g -XX:MaxMetaspaceSize=1g",
         "TMPDIR": "/home/dennis/tmp-build",
         "GRADLE_USER_HOME": "/home/dennis/.gradle-tmp-build"
       }
@@ -47,7 +46,6 @@
           "EXPO_NO_GIT_STATUS": "true",
           "ABI_FILTERS": "arm64-v8a",
           "APP_VARIANT": "preview",
-          "GRADLE_OPTS": "-Xmx4g -XX:MaxMetaspaceSize=1g",
           "TMPDIR": "/home/dennis/tmp-build",
           "GRADLE_USER_HOME": "/home/dennis/.gradle-tmp-build"
         }
