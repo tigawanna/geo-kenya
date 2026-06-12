@@ -46,11 +46,8 @@ jest.mock('expo-font', () => ({
   isLoaded: jest.fn(() => true),
 }));
 
-jest.mock('@expo/vector-icons', () => ({
-  MaterialIcons: 'MaterialIcons',
-  MaterialCommunityIcons: 'MaterialCommunityIcons',
-  Ionicons: 'Ionicons',
-}));
+jest.mock('@react-native-vector-icons/material-icons/static', () => 'MaterialIcons');
+jest.mock('@react-native-vector-icons/material-design-icons/static', () => 'MaterialCommunityIcons');
 
 jest.mock('@material/material-color-utilities', () => ({
   argbFromHex: jest.fn(() => 0xff6750a4),

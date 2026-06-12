@@ -1,5 +1,5 @@
 import { MenuView } from "@expo/ui/community/menu";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import MaterialCommunityIcons from "@react-native-vector-icons/material-design-icons/static";
 import {
   MAP_BASEMAP_OPTIONS,
   type MapBasemapPreset,
