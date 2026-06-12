@@ -1,0 +1,72 @@
+{
+  "cli": {
+    "version": ">= 3.14.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "EXPO_NO_CACHE": "true",
+        "EXPO_NO_GIT_STATUS": "true",
+        "APP_VARIANT": "development",
+        "EXPO_PUBLIC_USE_FIREBASE": "true"
+      },
+      "channel": "development"
+    },
+    "preview": {
+      "distribution": "internal",
+      "channel": "preview",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_NO_CACHE": "true",
+        "EXPO_NO_GIT_STATUS": "true",
+        "APP_VARIANT": "preview"
+      }
+    },
+    "preview:local": {
+      "extends": "preview",
+      "env": {
+        "TMPDIR": "/home/dennis/tmp-build",
+        "GRADLE_USER_HOME": "/home/dennis/.gradle-tmp-build"
+      }
+    },
+    "preview:eas": {
+      "extends": "preview"
+    },
+    "preview-arm64": {
+      "extends": "preview",
+      "android": {
+        "buildType": "apk",
+        "env": {
+          "EXPO_NO_CACHE": "true",
+          "EXPO_NO_GIT_STATUS": "true",
+          "ABI_FILTERS": "arm64-v8a",
+          "APP_VARIANT": "preview",
+          "TMPDIR": "/home/dennis/tmp-build",
+          "GRADLE_USER_HOME": "/home/dennis/.gradle-tmp-build"
+        }
+      },
+      "channel": "preview-arm64"
+    },
+    "production": {
+      "distribution": "store",
+      "channel": "production",
+      "autoIncrement": true,
+      "env": {
+        "EXPO_NO_CACHE": "true",
+        "EXPO_NO_GIT_STATUS": "true",
+        "APP_VARIANT": "production"
+      },
+      "android": {
+        "buildType": "app-bundle"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}

@@ -1,0 +1,251 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400..700&display=swap");
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@plugin "daisyui" {
+  themes: false;
+  logs: false;
+}
+
+@plugin "daisyui/theme" {
+  name: "light";
+  default: true;
+  color-scheme: light;
+  --color-base-100: oklch(from #f7f5f3 l c h);
+  --color-base-200: oklch(from #ffffff l c h);
+  --color-base-300: oklch(from #ece8e4 l c h);
+  --color-base-content: oklch(from #1c1917 l c h);
+  --color-primary: oklch(from #2f8a4e l c h);
+  --color-primary-content: oklch(from #ffffff l c h);
+  --color-secondary: oklch(from #eaf3ec l c h);
+  --color-secondary-content: oklch(from #1c1917 l c h);
+  --color-accent: oklch(from #f3e8e8 l c h);
+  --color-accent-content: oklch(from #1c1917 l c h);
+  --color-neutral: oklch(from #f1eeeb l c h);
+  --color-neutral-content: oklch(from #57534e l c h);
+  --color-error: oklch(from #b54a4a l c h);
+  --color-error-content: oklch(from #ffffff l c h);
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 0.75rem;
+}
+
+@plugin "daisyui/theme" {
+  name: "dark";
+  prefersdark: true;
+  color-scheme: dark;
+  --color-base-100: oklch(from #141110 l c h);
+  --color-base-200: oklch(from #1b1715 l c h);
+  --color-base-300: oklch(from #221d1b l c h);
+  --color-base-content: oklch(from #ece8e5 l c h);
+  --color-primary: oklch(from #56bc7d l c h);
+  --color-primary-content: oklch(from #0b120e l c h);
+  --color-secondary: oklch(from #1a231c l c h);
+  --color-secondary-content: oklch(from #ece8e5 l c h);
+  --color-accent: oklch(from #2a1f1f l c h);
+  --color-accent-content: oklch(from #ece8e5 l c h);
+  --color-neutral: oklch(from #1f1a19 l c h);
+  --color-neutral-content: oklch(from #a8a09c l c h);
+  --color-error: oklch(from #cf6b6b l c h);
+  --color-error-content: oklch(from #1a0b0b l c h);
+}
+
+:root,
+[data-theme="light"] {
+  --flag-red: #c5232b;
+  --flag-red-soft: color-mix(in oklch, #c5232b 12%, transparent);
+  --flag-green: #2f8a4e;
+  --flag-green-soft: color-mix(in oklch, #2f8a4e 12%, transparent);
+}
+
+[data-theme="dark"] {
+  --flag-red: #f0584a;
+  --flag-red-soft: color-mix(in oklch, #f0584a 16%, transparent);
+  --flag-green: #56bc7d;
+  --flag-green-soft: color-mix(in oklch, #56bc7d 16%, transparent);
+}
+
+@theme inline {
+  --color-flag-red: var(--flag-red);
+  --color-flag-red-soft: var(--flag-red-soft);
+  --color-flag-green: var(--flag-green);
+  --color-flag-green-soft: var(--flag-green-soft);
+}
+
+@layer base {
+  html {
+    font-family: "DM Sans", system-ui, sans-serif;
+  }
+}
+
+@utility bg-grid {
+  background-image: radial-gradient(circle, var(--color-base-content) 0.5px, transparent 0.5px);
+  background-size: 24px 24px;
+}
+
+.bg-grid {
+  position: relative;
+}
+
+.bg-grid::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, var(--color-base-content) 0.5px, transparent 0.5px);
+  background-size: 24px 24px;
+  opacity: 0.07;
+  z-index: 0;
+}
+
+.bg-grid > * {
+  position: relative;
+  z-index: 1;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+.reveal[data-revealed="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+@theme inline {
+  --font-display: "Space Grotesk", "DM Sans", system-ui, sans-serif;
+  --animate-cell-ripple: cell-ripple var(--duration, 200ms) ease-out none 1 var(--delay, 0ms);
+  --animate-fade-in: fade-in 0.6s ease-out both;
+  --animate-radar-ping: radar-ping 4.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+  --animate-radar-blip: radar-blip 4.4s ease-out infinite;
+  --animate-flag-sheen: flag-sheen 5s ease-in-out infinite;
+  --animate-blob-float: blob-float 9s ease-in-out infinite;
+  --animate-wiggle: wiggle 6s ease-in-out infinite;
+
+  @keyframes cell-ripple {
+    0% {
+      opacity: 0.4;
+    }
+    50% {
+      opacity: 0.8;
+    }
+    100% {
+      opacity: 0.4;
+    }
+  }
+
+  @keyframes fade-in {
+    0% {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes radar-sweep {
+    to {
+      transform: translate(-50%, -50%) rotate(360deg);
+    }
+  }
+
+  @keyframes radar-ping {
+    0% {
+      transform: translate(-50%, -50%) scale(0.05);
+      opacity: 0;
+    }
+    12% {
+      opacity: 0.7;
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 0;
+    }
+  }
+
+  @keyframes blob-float {
+    0%,
+    100% {
+      transform: translate(0, 0) rotate(var(--blob-rotate, 0deg)) scale(1);
+    }
+    50% {
+      transform: translate(0, -14px) rotate(calc(var(--blob-rotate, 0deg) + 6deg)) scale(1.04);
+    }
+  }
+
+  @keyframes wiggle {
+    0%,
+    100% {
+      transform: rotate(var(--blob-rotate, -6deg));
+    }
+    50% {
+      transform: rotate(calc(var(--blob-rotate, -6deg) * -1));
+    }
+  }
+
+  @keyframes flag-sheen {
+    0% {
+      transform: translateX(-120%);
+    }
+    60%,
+    100% {
+      transform: translateX(320%);
+    }
+  }
+
+  @keyframes radar-blip {
+    0%,
+    55% {
+      opacity: 0;
+      transform: scale(0.4);
+    }
+    60% {
+      opacity: 1;
+      transform: scale(1.25);
+    }
+    80% {
+      opacity: 0.6;
+    }
+    100% {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+  }
+}
+
+@utility btn {
+  @apply rounded-xl;
+}
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-sidebar: var(--color-base-100);
+  --color-sidebar-foreground: var(--color-base-content);
+  --color-sidebar-primary: var(--color-primary);
+  --color-sidebar-primary-foreground: var(--color-primary-content);
+  --color-sidebar-accent: color-mix(in oklch, var(--color-primary) 40%, transparent);
+  --color-sidebar-accent-foreground: var(--color-sidebar-foreground);
+  --color-sidebar-border: color-mix(in oklch, var(--color-base-content) 20%, transparent);
+  --color-sidebar-ring: var(--color-neutral);
+  --color-muted-foreground: color-mix(in oklch, var(--color-base-content) 65%, transparent);
+  --color-border: color-mix(in oklch, var(--color-base-content) 15%, transparent);
+  --color-card: var(--color-base-200);
+}

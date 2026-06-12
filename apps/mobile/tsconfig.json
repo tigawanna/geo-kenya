@@ -1,0 +1,15 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "allowJs": true,
+    "paths": {
+      "@/assets/*": ["./assets/*"],
+      "@/modules/*": ["./modules/*"],
+      "@/drizzle/*": ["./drizzle/*"],
+      "@/*": ["./src/*"]
+    }
+  },
+  "exclude": ["node_modules", "babel.config.js", "metro.config.js", "jest.config.js", "modules/expo-spatialite", "modules/expo-material-dynamic-colors"],
+  "include": ["**/*.ts", "**/*.tsx", "drizzle", "./lib", ".expo/types/**/*.ts", "expo-env.d.ts"]
+}

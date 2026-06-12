@@ -1,0 +1,20 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // Create remote DB: wrangler d1 create geo-kenya-db
+  // Then replace database_id and run: pnpm db:migrate:remote
+  "name": "geo-kenya-web",
+  "compatibility_date": "2025-09-02",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "src/server.tsx",
+  "observability": {
+    "enabled": true,
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "geo-kenya-db",
+      "database_id": "00000000-0000-0000-0000-000000000001",
+      "migrations_dir": "drizzle",
+    },
+  ],
+}

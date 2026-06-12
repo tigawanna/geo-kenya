@@ -1,0 +1,7 @@
+BETTER_AUTH_SECRET=replace-with-at-least-32-characters-secret
+BETTER_AUTH_URL=http://localhost:3050
+CORS_ORIGINS=http://localhost:3050
+ADMIN_EMAIL=you@example.com
+SYNC_API_SECRET=local-dev-sync-secret
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=

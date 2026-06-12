@@ -1,31 +1,59 @@
 # GeoKenya
 
-GeoKenya is a React Native mobile application built with Expo that provides comprehensive geographic information about Kenya's administrative divisions, specifically focusing on wards, counties, and constituencies. **All operations run 100% locally** - no internet connection required after initial installation. The app uses SQLite with Spatialite for offline geospatial data storage and leverages modern React Native development practices.
+GeoKenya is a pnpm + Turborepo monorepo with an offline-first Expo mobile app, a TanStack Start landing site, and a Cloudflare Workers sync API.
 
-**Note:** This is currently an Android-only project. iOS support is not yet implemented.
+| Package | Path | Purpose |
+|---------|------|---------|
+| `mobile` | `apps/mobile` | Expo React Native app |
+| `web` | `apps/web` | Landing page, privacy policy, sync server |
+
+**All mobile operations run 100% locally** — no internet required after install. The app uses SQLite with SpatiaLite for offline geospatial data.
+
+**Note:** Android-only for now. iOS is not yet implemented.
 
 ## Prerequisites
 
-- Node.js (LTS version recommended)
-- Android Studio (for Android development/emulator)
-- pnpm package manager (preferred) or npm
+- Node.js >= 18
+- pnpm 9
+- Android Studio (for native mobile builds)
 
 ## Getting Started
 
-1. **Clone the repository:**
+```bash
+git clone https://github.com/tigawanna/geo-kenya
+cd geo-kenya
+pnpm install
+```
 
-   ```bash
-   git clone https://github.com/tigawanna/geo-kenya
-   cd geo-kenya
-   npm install
-   npm run build:android
-   ```
+### Mobile app
 
+```bash
+pnpm --filter mobile dev
+pnpm --filter mobile run:android
+```
 
+### Web (landing + sync API)
 
-   Using pnpm (recommended):
-   ```bash
-   ```
+```bash
+pnpm --filter web dev
+```
+
+Runs at `http://localhost:3050`. Privacy policy: `/privacy`. Sync API: `/api/sync/events`.
+
+Set `EXPO_PUBLIC_WEB_URL` and `EXPO_PUBLIC_SYNC_API_URL` in `apps/mobile/.env` to point the mobile app at your deployed web worker.
+
+### Deploy web to Cloudflare
+
+```bash
+cp apps/web/.dev.vars.example apps/web/.dev.vars   # local dev
+wrangler d1 create geo-kenya-db                    # once — update database_id in apps/web/wrangler.jsonc
+pnpm --filter web db:migrate:local                 # local
+pnpm --filter web db:migrate:remote                # production D1
+pnpm deploy:web
+```
+
+Set production secrets: `pnpm --filter web secrets:auth` and `pnpm --filter web secrets:sync`.
+Update `BETTER_AUTH_URL` and `CORS_ORIGINS` in Cloudflare to your deployed worker URL.
    
 ## Building the Application
 
