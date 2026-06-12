@@ -57,9 +57,10 @@ expo-env.d.ts
 # typescript
 *.tsbuildinfo
 
-# SpatiaLite downloaded libs
-plugins/opsqlite-spatialite/spatialite-libs/
-.cache/spatialite-downloads/
+# SpatiaLite downloaded libs (pnpm fetch:spatialite)
+apps/mobile/plugins/opsqlite-spatialite/spatialite-libs/
+apps/mobile/.cache/spatialite-downloads/
+apps/mobile/android/app/src/main/jniLibs/
 
 # Secrets
 .secrets
