@@ -1,5 +1,5 @@
 function isCrashlyticsEnabled() {
-  return process.env.APP_VARIANT !== "development" && !__DEV__;
+  return process.env.APP_VARIANT === "production" && !__DEV__;
 }
 
 async function getCrashlyticsInstance() {

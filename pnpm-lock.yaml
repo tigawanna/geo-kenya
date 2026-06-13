@@ -13,9 +13,15 @@ importers:
 
   .:
     devDependencies:
+      '@types/node':
+        specifier: ^25.2.0
+        version: 25.9.3
       '@typescript/native-preview':
         specifier: 7.0.0-dev.20260519.1
         version: 7.0.0-dev.20260519.1
+      tsx:
+        specifier: ^4.22.4
+        version: 4.22.4
       turbo:
         specifier: ^2.9.16
         version: 2.9.18

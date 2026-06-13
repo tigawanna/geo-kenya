@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Platform } from "react-native";
 
 function isCrashlyticsEnabled() {
-  return process.env.APP_VARIANT !== "development" && !__DEV__;
+  return process.env.APP_VARIANT === "production" && !__DEV__;
 }
 
 export async function registerCrashalytics() {

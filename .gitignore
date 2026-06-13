@@ -64,8 +64,8 @@ apps/mobile/android/app/src/main/jniLibs/
 
 # Secrets
 .secrets
-google-services.json
-google-services.dev.json
+google-services*.json
+GoogleService-Info.plist
 basestack-3447b-73b90801b7ae.json
 
 # Generated native folders (when at repo root; apps/mobile keeps android/ios)
