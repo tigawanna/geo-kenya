@@ -1,20 +1,20 @@
 {
   "expo": {
-    "icon": "./assets/icon.png",
+    "icon": "./icon.png",
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#F3EDEB",
       "imageWidth": 200
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./adaptive-icon.png",
         "backgroundColor": "#8B685C"
       }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./favicon.png"
     }
   }
 }
