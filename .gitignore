@@ -68,6 +68,8 @@ google-services*.json
 GoogleService-Info.plist
 basestack-3447b-73b90801b7ae.json
 
-# Generated native folders (when at repo root; apps/mobile keeps android/ios)
+# Mobile / EAS build artifacts
 *.apk
 *.aab
+*.ipa
+build-*
