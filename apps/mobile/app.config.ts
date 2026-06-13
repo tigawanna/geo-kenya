@@ -67,10 +67,8 @@ export default ({ config }: ConfigContext): ExpoConfig => {
   const appIdentifier = getUniqueIdentifier();
   const plugins = getPlugins(appIdentifier);
   const is_production = appIdentifier === "com.tigawanna.geokenya";
-  const is_not_dev =
-    appIdentifier === "com.tigawanna.geokenya" ||
-    appIdentifier === "com.tigawanna.geokenya.preview";
-  if (is_not_dev) {
+  const use_firebase = process.env.APP_VARIANT === "production";
+  if (use_firebase) {
     plugins.push("@react-native-firebase/app");
     plugins.push("@react-native-firebase/crashlytics");
   }
@@ -103,7 +101,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         foregroundImage: "./assets/icons/adaptive-icon.png",
         monochromeImage: "./assets/icons/adaptive-icon.png",
       },
-      googleServicesFile: is_not_dev ? "./google-services.json" : undefined,
+      googleServicesFile: use_firebase ? "./google-services.json" : undefined,
       predictiveBackGestureEnabled: false,
       package: appIdentifier,
     },

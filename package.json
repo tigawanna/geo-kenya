@@ -13,10 +13,13 @@
     "quality:fix": "turbo run //#lint:fix //#format:fix",
     "prepare": "vp config",
     "db:studio": "pnpm --filter web db:studio",
-    "deploy:web": "pnpm --filter web deploy"
+    "deploy:web": "pnpm --filter web deploy",
+    "sync:icons": "tsx ./scripts/sync-expo-icons.ts"
   },
   "devDependencies": {
+    "@types/node": "^25.2.0",
     "@typescript/native-preview": "7.0.0-dev.20260519.1",
+    "tsx": "^4.22.4",
     "turbo": "^2.9.16",
     "typescript": "6.0.3",
     "vite-plus": "latest"

@@ -44,4 +44,6 @@ app-example
 *.apk
 *.aab
 .secrets
+google-services*.json
+GoogleService-Info.plist
 

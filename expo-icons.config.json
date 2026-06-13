@@ -1,0 +1,57 @@
+{
+  "source": "./expo-icons",
+  "expo": {
+    "icon": "./icon.png",
+    "splash": {
+      "image": "./splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#F3EDEB",
+      "imageWidth": 200
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./adaptive-icon.png",
+        "backgroundColor": "#8B685C"
+      }
+    },
+    "web": {
+      "favicon": "./favicon.png"
+    }
+  },
+  "mobile": {
+    "root": "./apps/mobile",
+    "files": {
+      "appIcon": "assets/icons/splash-icon-dark.png",
+      "adaptiveIcon": "assets/icons/adaptive-icon.png",
+      "splashIconLight": "assets/icons/splash-icon-light.png",
+      "splashIconDark": "assets/icons/splash-icon-dark.png",
+      "iosLight": "assets/icons/ios-light.png",
+      "iosDark": "assets/icons/ios-dark.png",
+      "iosTinted": "assets/icons/ios-tinted.png",
+      "favicon": "assets/images/favicon.png"
+    }
+  },
+  "web": {
+    "root": "./apps/web",
+    "files": {
+      "favicon": "public/favicon.png",
+      "appleTouchIcon": "public/apple-touch-icon.png"
+    }
+  },
+  "sync": {
+    "mobile": [
+      { "from": "expo.icon", "to": "appIcon" },
+      { "from": "expo.icon", "to": "iosLight" },
+      { "from": "expo.icon", "to": "iosDark" },
+      { "from": "expo.icon", "to": "iosTinted" },
+      { "from": "expo.android.adaptiveIcon.foregroundImage", "to": "adaptiveIcon" },
+      { "from": "expo.splash.image", "to": "splashIconLight" },
+      { "from": "expo.splash.image", "to": "splashIconDark" },
+      { "from": "expo.web.favicon", "to": "favicon" }
+    ],
+    "web": [
+      { "from": "expo.web.favicon", "to": "favicon" },
+      { "from": "expo.icon", "to": "appleTouchIcon" }
+    ]
+  }
+}
