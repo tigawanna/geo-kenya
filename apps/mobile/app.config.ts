@@ -63,6 +63,7 @@ const getPlugins = (idt: UniqueIDT) => {
 };
 
 export default ({ config }: ConfigContext): ExpoConfig => {
+  console.log("\n\n===== APP_VARIANT =====", process.env.APP_VARIANT,"\n\n");
   const { name, slug } = getAppName();
   const appIdentifier = getUniqueIdentifier();
   const plugins = getPlugins(appIdentifier);

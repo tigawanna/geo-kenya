@@ -19,7 +19,7 @@
     "build:preview:local": "eas build --platform android --profile preview:local --local",
     "build:preview:eas": "eas build --platform android --profile preview:eas",
     "build:production:local": "eas build --platform android --profile production:local --local",
-    "build:store": "eas build --platform android --profile production",
+    "build:production": "eas build --platform android --profile production",
     "submit:store": "eas submit --platform android --profile production",
     "ios": "expo run:ios",
     "web": "expo start --web",

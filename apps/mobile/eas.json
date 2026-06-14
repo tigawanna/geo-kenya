@@ -52,6 +52,7 @@
       "channel": "preview-arm64"
     },
     "production": {
+      "environment": "production",
       "distribution": "store",
       "channel": "production",
       "autoIncrement": true,
@@ -66,13 +67,15 @@
     },
     "production:local": {
       "extends": "production",
+      "environment": "production",
       "distribution": "internal",
       "android": {
         "buildType": "apk"
       },
       "env": {
         "TMPDIR": "/home/dennis/tmp-build",
-        "GRADLE_USER_HOME": "/home/dennis/.gradle-tmp-build"
+        "GRADLE_USER_HOME": "/home/dennis/.gradle-tmp-build",
+        "GOOGLE_SERVICES_FILE": "/home/dennis/Desktop/code/react-native/geo-kenya/apps/mobile/google-services.json"
       }
     }
   },
