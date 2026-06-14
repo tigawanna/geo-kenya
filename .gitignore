@@ -60,7 +60,8 @@ expo-env.d.ts
 # SpatiaLite downloaded libs (pnpm fetch:spatialite)
 apps/mobile/plugins/opsqlite-spatialite/spatialite-libs/
 apps/mobile/.cache/spatialite-downloads/
-apps/mobile/android/app/src/main/jniLibs/
+apps/mobile/android/
+apps/mobile/ios/
 
 # Secrets
 .secrets
