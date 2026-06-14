@@ -2,6 +2,9 @@ import { ConfigContext, ExpoConfig } from "expo/config";
 const IS_DEV = process.env.APP_VARIANT === "development";
 const IS_PREVIEW = process.env.APP_VARIANT === "preview";
 
+console.log("\n\n===== APP_VARIANT =====", process.env.APP_VARIANT, "\n\n");
+
+
 const getUniqueIdentifier = () => {
   if (IS_DEV) {
     return "com.tigawanna.geokenya.dev";
@@ -63,7 +66,7 @@ const getPlugins = (idt: UniqueIDT) => {
 };
 
 export default ({ config }: ConfigContext): ExpoConfig => {
-  console.log("\n\n===== APP_VARIANT =====", process.env.APP_VARIANT,"\n\n");
+
   const { name, slug } = getAppName();
   const appIdentifier = getUniqueIdentifier();
   const plugins = getPlugins(appIdentifier);
