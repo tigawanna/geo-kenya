@@ -1,37 +1,42 @@
 import { ConfigContext, ExpoConfig } from "expo/config";
-const IS_DEV = process.env.APP_VARIANT === "development";
-const IS_PREVIEW = process.env.APP_VARIANT === "preview";
 
-console.log("\n\n===== APP_VARIANT =====", process.env.APP_VARIANT, "\n\n");
+type AppVariant = "development" | "preview" | "production";
 
 
-const getUniqueIdentifier = () => {
-  if (IS_DEV) {
+
+const getUniqueIdentifier = (APP_VARIANT: AppVariant) => {
+  if (APP_VARIANT === "development") {
     return "com.tigawanna.geokenya.dev";
   }
 
-  if (IS_PREVIEW) {
+  if (APP_VARIANT === "preview") {
     return "com.tigawanna.geokenya.preview";
   }
 
   return "com.tigawanna.geokenya";
 };
-type UniqueIDT = ReturnType<typeof getUniqueIdentifier>;
 
-const getAppName = () => {
-  if (IS_DEV) {
+
+const getAppName = (APP_VARIANT: AppVariant) => {
+  if (APP_VARIANT === "development") {
     return { name: "GeoKenya (Dev)", slug: "geo-kenya" };
   }
 
-  if (IS_PREVIEW) {
+  if (APP_VARIANT === "preview") {
     return { name: "GeoKenya (Preview)", slug: "geo-kenya" };
   }
 
   return { name: "GeoKenya", slug: "geo-kenya" };
 };
 
-const getPlugins = (idt: UniqueIDT) => {
-  const is_production = idt === "com.tigawanna.geokenya";
+const isProductionVariant = (APP_VARIANT: AppVariant) => {
+  if (APP_VARIANT === "development" || APP_VARIANT === "preview") {
+    return false
+  }
+  return true
+};
+const getPlugins = (APP_VARIANT: AppVariant) => {
+  const is_production = isProductionVariant(APP_VARIANT);
   const plugins: ConfigContext["config"]["plugins"] = [
     "@react-native-vector-icons/material-icons",
     "@react-native-vector-icons/material-design-icons",
@@ -66,12 +71,13 @@ const getPlugins = (idt: UniqueIDT) => {
 };
 
 export default ({ config }: ConfigContext): ExpoConfig => {
-
-  const { name, slug } = getAppName();
-  const appIdentifier = getUniqueIdentifier();
-  const plugins = getPlugins(appIdentifier);
-  const is_production = appIdentifier === "com.tigawanna.geokenya";
-  const use_firebase = process.env.APP_VARIANT === "production";
+  const APP_VARIANT = process.env.APP_VARIANT as AppVariant;
+  const is_production = isProductionVariant(APP_VARIANT);
+  console.log("\n\n===== APP_VARIANT =====", {APP_VARIANT,is_production}, "\n\n");
+  const { name, slug } = getAppName(APP_VARIANT);
+  const appIdentifier = getUniqueIdentifier(APP_VARIANT);
+  const plugins = getPlugins(APP_VARIANT);
+  const use_firebase = is_production;
   if (use_firebase) {
     plugins.push("@react-native-firebase/app");
     plugins.push("@react-native-firebase/crashlytics");
