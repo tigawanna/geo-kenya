@@ -1,101 +1,55 @@
-import { FLAG_ACCENTS, KenyaShield } from "@/components/ui/kenya-marks";
-import { Squiggle } from "@/components/ui/playful-decor";
+import { FLAG_STEP_ACCENTS, FlagHairline } from "@/components/ui/flag-accents";
 import { Reveal } from "@/components/ui/reveal";
 import { landingCapabilities } from "@/content/landing";
 
 export function LandingFeatures() {
-  const [primary, ...rest] = landingCapabilities.steps;
-  const PrimaryIcon = primary?.icon;
-
   return (
-    <section
-      id="capabilities"
-      data-test="landing-capabilities"
-      className="relative mx-auto max-w-360 scroll-mt-14 overflow-hidden border-x border-border/50 pb-24"
-    >
-      <KenyaShield className="pointer-events-none absolute -top-10 right-6 hidden w-56 opacity-[0.04] lg:block" />
-
-      <Reveal className="px-8 pt-24 pb-12 md:px-16">
-        <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-flag-red-soft px-4 py-1.5">
-          <span className="size-1.5 rounded-full bg-flag-red" />
-          <span className="text-xs font-medium tracking-wide text-flag-red uppercase">
+    <section id="capabilities" data-test="landing-capabilities" className="scroll-mt-20">
+      <FlagHairline className="h-px opacity-80" />
+      <div className="mx-auto max-w-6xl px-6 py-24 md:px-10 md:py-32">
+        <Reveal className="mx-auto max-w-2xl text-center">
+          <p className="mb-5 inline-flex items-center gap-2 text-[12px] font-medium tracking-[0.14em] text-flag-red uppercase">
+            <span className="size-1.5 rounded-full bg-flag-red" />
             How it works
-          </span>
-        </div>
-        <div className="relative max-w-3xl">
-          <h2 className="font-display text-4xl font-bold tracking-tighter text-balance text-base-content md:text-6xl">
+          </p>
+          <h2 className="font-display text-[clamp(2rem,5vw,3.25rem)] leading-[1.05] tracking-[-0.02em] text-balance text-base-content">
             {landingCapabilities.heading}
           </h2>
-          <Squiggle className="mt-3 w-28 text-flag-green/70" />
-        </div>
-        <p className="mt-4 max-w-[52ch] text-pretty text-muted-foreground">
-          {landingCapabilities.description}
-        </p>
-      </Reveal>
+          <p className="mx-auto mt-5 max-w-[36rem] text-pretty text-muted-foreground">
+            {landingCapabilities.description}
+          </p>
+        </Reveal>
 
-      <div className="mx-8 grid grid-cols-1 gap-6 md:mx-16 lg:grid-cols-12">
-        {primary && PrimaryIcon ? (
-          <Reveal className="group relative flex flex-col justify-between overflow-hidden rounded-[1.75rem] border border-border bg-base-100 p-8 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg lg:col-span-7 lg:min-h-[22rem] lg:p-10">
-            <span className={`absolute inset-x-0 top-0 h-1.5 ${FLAG_ACCENTS[0].bar}`} />
-            <span
-              className={`pointer-events-none absolute top-6 right-6 font-display text-7xl font-bold opacity-10 transition-opacity group-hover:opacity-25 ${FLAG_ACCENTS[0].text}`}
-            >
-              {primary.id}
-            </span>
-            <div>
-              <div
-                className={`mb-8 flex size-14 items-center justify-center rounded-2xl border ${FLAG_ACCENTS[0].border} ${FLAG_ACCENTS[0].soft}`}
-              >
-                <PrimaryIcon
-                  className={`size-7 transition-transform group-hover:scale-110 ${FLAG_ACCENTS[0].text}`}
-                />
-              </div>
-              <div
-                className={`mb-3 font-mono text-[11px] tracking-[0.25em] uppercase ${FLAG_ACCENTS[0].text}`}
-              >
-                {primary.label}
-              </div>
-              <h3 className="mb-4 max-w-[18ch] font-display text-3xl font-bold tracking-tight text-balance text-base-content md:text-4xl">
-                {primary.title}
-              </h3>
-              <p className="max-w-[42ch] text-base leading-relaxed text-pretty text-muted-foreground">
-                {primary.description}
-              </p>
-            </div>
-          </Reveal>
-        ) : null}
-
-        <div className="flex flex-col gap-6 lg:col-span-5">
-          {rest.map((step, index) => {
+        <div className="mx-auto mt-20 max-w-3xl divide-y divide-border/40 border-y border-border/40">
+          {landingCapabilities.steps.map((step, index) => {
             const Icon = step.icon;
-            const accent = FLAG_ACCENTS[(index + 1) % FLAG_ACCENTS.length];
+            const accent = FLAG_STEP_ACCENTS[index % FLAG_STEP_ACCENTS.length];
             return (
               <Reveal
                 key={step.id}
-                delay={(index + 1) * 100}
-                className="group relative flex flex-1 flex-col overflow-hidden rounded-[1.75rem] border border-border bg-base-100 p-7 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg"
+                delay={index * 80}
+                className="relative grid gap-4 py-10 md:grid-cols-[4rem_1fr] md:gap-8"
               >
-                <span className={`absolute inset-x-0 top-0 h-1.5 ${accent.bar}`} />
-                <div className="mb-5 flex items-center justify-between gap-4">
-                  <div
-                    className={`flex size-11 items-center justify-center rounded-2xl border ${accent.border} ${accent.soft}`}
-                  >
-                    <Icon
-                      className={`size-5 transition-transform group-hover:scale-110 ${accent.text}`}
-                    />
-                  </div>
-                  <span
-                    className={`font-mono text-[11px] tracking-[0.25em] uppercase ${accent.text}`}
-                  >
-                    {step.label}
-                  </span>
+                <span className={`absolute top-0 left-0 h-full w-0.5 md:w-1 ${accent.bar}`} />
+                <div className="flex items-start gap-3 pl-3 md:block md:pl-4">
+                  <span className={`font-display text-2xl ${accent.text}`}>{step.id}</span>
+                  <Icon className={`mt-1 size-4 md:mt-3 md:hidden ${accent.text}`} />
                 </div>
-                <h3 className="mb-2 font-display text-xl font-bold tracking-tight text-base-content">
-                  {step.title}
-                </h3>
-                <p className="text-sm leading-relaxed text-pretty text-muted-foreground">
-                  {step.description}
-                </p>
+                <div>
+                  <div className="mb-2 flex items-center gap-3">
+                    <span
+                      className={`hidden size-8 items-center justify-center rounded-md md:inline-flex ${accent.soft}`}
+                    >
+                      <Icon className={`size-4 ${accent.text}`} />
+                    </span>
+                    <h3 className="text-lg font-medium tracking-tight text-base-content">
+                      {step.title}
+                    </h3>
+                  </div>
+                  <p className="max-w-[40rem] text-[15px] leading-relaxed text-muted-foreground">
+                    {step.description}
+                  </p>
+                </div>
               </Reveal>
             );
           })}

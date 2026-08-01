@@ -1,4 +1,4 @@
-import { FlagStripe, KenyaShieldBackdrop } from "@/components/ui/kenya-marks";
+import { FlagHairline } from "@/components/ui/flag-accents";
 import { AppConfig } from "@/utils/system";
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
@@ -30,81 +30,67 @@ export function LegalDocumentLayout({
   currentPath,
 }: LegalDocumentLayoutProps) {
   return (
-    <div className="relative min-h-dvh overflow-hidden bg-base-100">
-      <KenyaShieldBackdrop className="fixed inset-0 z-0" />
-      <div className="relative z-10">
-        <header className="border-b border-border/50 bg-base-100/80 backdrop-blur-md">
-          <FlagStripe className="h-0.5 w-full" />
-          <div className="mx-auto flex max-w-3xl items-center justify-between px-6 py-5">
-            <Link
-              to="/"
-              className="font-display text-sm font-semibold tracking-tight text-base-content transition-colors hover:text-primary"
-            >
-              {AppConfig.wordmark}
-              <span className="text-flag-red">.</span>
-              <span className="ml-2 font-sans text-xs font-normal text-muted-foreground">
-                {AppConfig.name}
-              </span>
-            </Link>
-            <span className="font-mono text-[11px] text-muted-foreground">
-              Updated {lastUpdated}
-            </span>
-          </div>
-        </header>
+    <div className="min-h-dvh bg-base-100">
+      <header className="bg-base-100/85 backdrop-blur-md">
+        <FlagHairline className="h-0.5" />
+        <div className="mx-auto flex max-w-3xl items-center justify-between border-b border-border/40 px-6 py-5">
+          <Link
+            to="/"
+            className="text-sm font-medium tracking-tight text-base-content transition-colors hover:text-flag-green"
+          >
+            Geo<span className="text-flag-red">Kenya</span>
+          </Link>
+          <span className="text-[11px] text-muted-foreground">Updated {lastUpdated}</span>
+        </div>
+      </header>
 
-        <nav
-          aria-label="Legal documents"
-          className="border-b border-border/40 bg-base-100/60 backdrop-blur-sm"
-        >
-          <div className="mx-auto flex max-w-3xl gap-1 overflow-x-auto px-6 py-3">
-            {LEGAL_LINKS.map((link) => {
-              const active = link.to === currentPath;
-              return (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  className={
-                    active
-                      ? "rounded-full bg-primary px-4 py-1.5 text-xs font-medium text-primary-content"
-                      : "rounded-full px-4 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-neutral hover:text-base-content"
-                  }
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
-          </div>
-        </nav>
+      <nav aria-label="Legal documents" className="border-b border-border/40">
+        <div className="mx-auto flex max-w-3xl gap-1 overflow-x-auto px-6 py-3">
+          {LEGAL_LINKS.map((link) => {
+            const active = link.to === currentPath;
+            return (
+              <Link
+                key={link.to}
+                to={link.to}
+                className={
+                  active
+                    ? "rounded-md bg-flag-green-solid px-4 py-1.5 text-xs font-medium text-flag-green-content"
+                    : "rounded-md px-4 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-flag-green-soft hover:text-base-content"
+                }
+              >
+                {link.label}
+              </Link>
+            );
+          })}
+        </div>
+      </nav>
 
-        <main className="mx-auto max-w-3xl px-6 py-12 md:py-16">
-          <p className="mb-3 font-mono text-[11px] tracking-[0.2em] text-flag-green uppercase">
-            Compliance
-          </p>
-          <h1 className="mb-4 font-display text-4xl font-bold tracking-tighter text-balance text-base-content md:text-5xl">
-            {title}
-          </h1>
-          <p className="mb-12 max-w-[62ch] text-base leading-relaxed text-pretty text-muted-foreground md:text-lg">
-            {intro}
-          </p>
+      <main className="mx-auto max-w-3xl px-6 py-12 md:py-16">
+        <p className="mb-3 text-[11px] tracking-[0.14em] text-flag-green uppercase">Compliance</p>
+        <h1 className="mb-4 font-display text-4xl font-normal tracking-[-0.02em] text-balance text-base-content md:text-5xl">
+          {title}
+        </h1>
+        <p className="mb-12 max-w-[62ch] text-base leading-relaxed text-pretty text-muted-foreground md:text-lg">
+          {intro}
+        </p>
 
-          <div className="space-y-10">
-            {sections.map((section) => (
-              <LegalSectionBlock key={section.heading} heading={section.heading}>
-                {section.body}
-              </LegalSectionBlock>
-            ))}
-          </div>
+        <div className="space-y-10">
+          {sections.map((section) => (
+            <LegalSectionBlock key={section.heading} heading={section.heading}>
+              {section.body}
+            </LegalSectionBlock>
+          ))}
+        </div>
 
-          <div className="mt-16 border-t border-border/50 pt-8">
-            <Link
-              to="/"
-              className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-base-content"
-            >
-              ← Back to {AppConfig.name}
-            </Link>
-          </div>
-        </main>
-      </div>
+        <div className="mt-16 border-t border-border/50 pt-8">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-flag-green"
+          >
+            ← Back to {AppConfig.name}
+          </Link>
+        </div>
+      </main>
     </div>
   );
 }
@@ -112,7 +98,7 @@ export function LegalDocumentLayout({
 function LegalSectionBlock({ heading, children }: { heading: string; children: ReactNode }) {
   return (
     <section>
-      <h2 className="mb-3 font-display text-xl font-semibold tracking-tight text-base-content">
+      <h2 className="mb-3 font-display text-xl font-normal tracking-tight text-base-content">
         {heading}
       </h2>
       <p className="max-w-[62ch] leading-relaxed text-pretty text-muted-foreground">{children}</p>

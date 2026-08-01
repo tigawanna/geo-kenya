@@ -1,48 +1,38 @@
-import { FlagStripe, KenyaShield } from "@/components/ui/kenya-marks";
+import { FlagHairline, FlagMark } from "@/components/ui/flag-accents";
 import { Reveal } from "@/components/ui/reveal";
 import { landingCta } from "@/content/landing";
-import { Link } from "@tanstack/react-router";
 
 export function LandingCTA() {
   const [before, after] = landingCta.title.split(landingCta.highlight);
 
   return (
-    <section
-      data-test="landing-cta"
-      className="relative mx-auto max-w-360 overflow-hidden border-x border-border/50"
-    >
-      <FlagStripe withSheen className="absolute inset-x-0 top-0 z-10 h-1" />
-
-      <KenyaShield className="pointer-events-none absolute top-1/2 left-1/2 w-72 -translate-x-1/2 -translate-y-1/2 opacity-[0.05] md:w-96" />
-
-      <div className="relative border-t border-border/50 px-8 py-28 md:px-16">
+    <section data-test="landing-cta">
+      <FlagHairline className="h-px opacity-80" />
+      <div className="mx-auto max-w-6xl px-6 py-24 md:px-10 md:py-28">
         <Reveal className="mx-auto max-w-2xl text-center">
-          <h2 className="mb-4 font-display text-5xl font-bold tracking-tighter text-balance text-base-content md:text-8xl">
+          <FlagHairline className="mx-auto mb-10 h-0.5 w-24 rounded-full" />
+          <h2 className="font-display text-[clamp(2.25rem,6vw,3.75rem)] leading-[1.02] tracking-[-0.02em] text-balance text-base-content">
             {before}
-            <span className="bg-linear-to-r from-flag-green to-flag-red bg-clip-text text-transparent">
-              {landingCta.highlight}
-            </span>
+            <em className="text-flag-green not-italic">{landingCta.highlight}</em>
             {after}
           </h2>
-          <p className="mx-auto mb-6 max-w-md text-pretty text-muted-foreground">
+          <p className="mx-auto mt-5 max-w-md text-pretty text-muted-foreground">
             {landingCta.description}
           </p>
-
-          <FlagStripe className="mx-auto mb-10 h-1 w-32 rounded-full" />
-
-          <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <a
               href="#waitlist"
-              className="rounded-full bg-primary px-8 py-3.5 font-medium text-primary-content shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+              className="inline-flex items-center gap-3 rounded-md bg-flag-green-solid px-5 py-3.5 text-[15px] font-semibold text-flag-green-content transition-opacity hover:opacity-90"
             >
-              {landingCta.primaryCta} →
+              {landingCta.primaryCta}
+              <FlagMark className="ring-white/20" />
             </a>
-            <Link
-              to="/dashboard"
-              className="rounded-full border border-flag-red/50 px-8 py-3.5 text-base-content transition-colors hover:bg-flag-red-soft"
+            <a
+              href="#capabilities"
+              className="rounded-md border border-flag-red/45 px-5 py-3.5 text-[15px] text-base-content transition-colors hover:bg-flag-red-soft"
             >
               {landingCta.secondaryCta}
-            </Link>
+            </a>
           </div>
         </Reveal>
       </div>

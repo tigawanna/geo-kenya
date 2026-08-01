@@ -1,5 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400..700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -53,24 +53,48 @@
 
 :root,
 [data-theme="light"] {
-  --flag-red: #c5232b;
-  --flag-red-soft: color-mix(in oklch, #c5232b 12%, transparent);
-  --flag-green: #2f8a4e;
-  --flag-green-soft: color-mix(in oklch, #2f8a4e 12%, transparent);
+  /* Readable accents on light surfaces */
+  --flag-red: #b51e26;
+  --flag-green: #1f6b3a;
+  /* Solid fills (buttons, bars) — darker for contrast */
+  --flag-red-solid: #9a1a21;
+  --flag-green-solid: #185c32;
+  /* Text sitting on solid fills — very light */
+  --flag-red-content: #ffe8ea;
+  --flag-green-content: #e6f7ec;
+  /* Soft tint washes */
+  --flag-red-soft: color-mix(in oklch, #b51e26 12%, transparent);
+  --flag-green-soft: color-mix(in oklch, #1f6b3a 12%, transparent);
+  --flag-black: #0a0a0a;
+  --flag-white: #ffffff;
 }
 
 [data-theme="dark"] {
+  /* Readable accents on dark surfaces */
   --flag-red: #f0584a;
-  --flag-red-soft: color-mix(in oklch, #f0584a 16%, transparent);
   --flag-green: #56bc7d;
+  /* Solid fills stay darker so light content text is readable */
+  --flag-red-solid: #c5232b;
+  --flag-green-solid: #1f6b3a;
+  --flag-red-content: #ffe8ea;
+  --flag-green-content: #e6f7ec;
+  --flag-red-soft: color-mix(in oklch, #f0584a 16%, transparent);
   --flag-green-soft: color-mix(in oklch, #56bc7d 16%, transparent);
+  --flag-black: #0a0a0a;
+  --flag-white: #ffffff;
 }
 
 @theme inline {
   --color-flag-red: var(--flag-red);
+  --color-flag-red-solid: var(--flag-red-solid);
+  --color-flag-red-content: var(--flag-red-content);
   --color-flag-red-soft: var(--flag-red-soft);
   --color-flag-green: var(--flag-green);
+  --color-flag-green-solid: var(--flag-green-solid);
+  --color-flag-green-content: var(--flag-green-content);
   --color-flag-green-soft: var(--flag-green-soft);
+  --color-flag-black: var(--flag-black);
+  --color-flag-white: var(--flag-white);
 }
 
 @layer base {
@@ -129,9 +153,10 @@
 }
 
 @theme inline {
-  --font-display: "Space Grotesk", "DM Sans", system-ui, sans-serif;
+  --font-display: "Instrument Serif", "DM Sans", Georgia, serif;
   --animate-cell-ripple: cell-ripple var(--duration, 200ms) ease-out none 1 var(--delay, 0ms);
-  --animate-fade-in: fade-in 0.6s ease-out both;
+  --animate-fade-in: fade-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-fade-up: fade-up 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
   --animate-radar-ping: radar-ping 4.4s cubic-bezier(0, 0, 0.2, 1) infinite;
   --animate-radar-blip: radar-blip 4.4s ease-out infinite;
   --animate-flag-sheen: flag-sheen 5s ease-in-out infinite;
@@ -154,6 +179,17 @@
     0% {
       opacity: 0;
       transform: translateY(8px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fade-up {
+    0% {
+      opacity: 0;
+      transform: translateY(18px);
     }
     100% {
       opacity: 1;

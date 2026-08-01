@@ -1,4 +1,4 @@
-import { FlagStripe } from "@/components/ui/kenya-marks";
+import { FlagHairline } from "@/components/ui/flag-accents";
 import { landingFooter, landingNav } from "@/content/landing";
 import { AppConfig } from "@/utils/system";
 import { Link } from "@tanstack/react-router";
@@ -7,33 +7,34 @@ export function LandingFooter() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative mx-auto max-w-360 border-x border-t border-border/50">
-      <FlagStripe className="absolute inset-x-0 top-0 h-0.5" />
-      <div className="grid gap-10 px-8 py-14 md:grid-cols-12 md:px-16">
+    <footer>
+      <FlagHairline className="h-0.5" />
+      <div className="mx-auto grid max-w-6xl gap-12 px-6 py-16 md:grid-cols-12 md:px-10">
         <div className="md:col-span-5">
-          <Link to="/" className="font-display text-2xl font-bold tracking-tight text-base-content">
-            {AppConfig.wordmark}
-            <span className="text-flag-red">.</span>
-          </Link>
-          <p className="mt-3 max-w-[36ch] text-sm leading-relaxed text-muted-foreground">
+          <p className="text-[15px] font-medium text-base-content">
+            Geo<span className="text-flag-red">Kenya</span>
+          </p>
+          <p className="mt-3 max-w-[28ch] text-sm leading-relaxed text-muted-foreground">
             {AppConfig.description}
           </p>
-          <p className="mt-4 font-mono text-[11px] text-muted-foreground">
-            {landingFooter.tagline}
-          </p>
+          <div className="mt-5 flex items-center gap-1.5" aria-hidden>
+            <span className="size-2 rounded-full bg-flag-black ring-1 ring-flag-white/40" />
+            <span className="size-1 rounded-full bg-flag-white ring-1 ring-base-content/20" />
+            <span className="size-2 rounded-full bg-flag-red-solid" />
+            <span className="size-1 rounded-full bg-flag-white ring-1 ring-base-content/20" />
+            <span className="size-2 rounded-full bg-flag-green-solid" />
+          </div>
         </div>
 
         <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 md:col-span-7 md:justify-items-end">
           <div>
-            <p className="mb-3 font-mono text-[11px] tracking-[0.2em] text-muted-foreground uppercase">
-              Explore
-            </p>
-            <div className="flex flex-col gap-2 text-sm">
+            <p className="mb-3 text-[11px] tracking-[0.14em] text-flag-green uppercase">Explore</p>
+            <div className="flex flex-col gap-2.5 text-sm">
               {landingNav.links.map((item) => (
                 <a
                   key={item.label}
                   href={item.href}
-                  className="text-muted-foreground transition-colors hover:text-base-content"
+                  className="text-muted-foreground transition-colors hover:text-flag-green"
                 >
                   {item.label}
                 </a>
@@ -41,15 +42,13 @@ export function LandingFooter() {
             </div>
           </div>
           <div>
-            <p className="mb-3 font-mono text-[11px] tracking-[0.2em] text-muted-foreground uppercase">
-              Legal
-            </p>
-            <div className="flex flex-col gap-2 text-sm">
+            <p className="mb-3 text-[11px] tracking-[0.14em] text-flag-red uppercase">Legal</p>
+            <div className="flex flex-col gap-2.5 text-sm">
               {landingFooter.legal.map((item) => (
                 <Link
                   key={item.to}
                   to={item.to}
-                  className="text-muted-foreground transition-colors hover:text-base-content"
+                  className="text-muted-foreground transition-colors hover:text-flag-red"
                 >
                   {item.label}
                 </Link>
@@ -57,16 +56,16 @@ export function LandingFooter() {
             </div>
           </div>
           <div>
-            <p className="mb-3 font-mono text-[11px] tracking-[0.2em] text-muted-foreground uppercase">
+            <p className="mb-3 text-[11px] tracking-[0.14em] text-base-content uppercase">
               Product
             </p>
-            <div className="flex flex-col gap-2 text-sm">
-              <Link
-                to="/dashboard"
-                className="text-muted-foreground transition-colors hover:text-base-content"
+            <div className="flex flex-col gap-2.5 text-sm">
+              <a
+                href="#waitlist"
+                className="text-muted-foreground transition-colors hover:text-flag-green"
               >
-                Dashboard
-              </Link>
+                Waitlist
+              </a>
               <a
                 href={AppConfig.links.github}
                 target="_blank"
@@ -85,8 +84,20 @@ export function LandingFooter() {
           </div>
         </div>
       </div>
-      <div className="border-t border-border/50 px-8 py-4 text-center font-mono text-[11px] text-muted-foreground/60 md:px-16 md:text-left">
-        © {currentYear} {AppConfig.name}
+
+      <div className="border-t border-border/40">
+        <div className="mx-auto flex max-w-6xl flex-col gap-2 px-6 py-5 text-[12px] text-muted-foreground/70 md:flex-row md:items-center md:justify-between md:px-10">
+          <span>
+            © {currentYear} {AppConfig.name}
+          </span>
+          <span>
+            <span className="text-base-content">ward</span>
+            {" · "}
+            <span className="text-flag-red">constituency</span>
+            {" · "}
+            <span className="text-flag-green">county</span>
+          </span>
+        </div>
       </div>
     </footer>
   );
