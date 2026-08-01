@@ -3,9 +3,13 @@ const path = require("path");
 
 const ROOT = path.resolve(__dirname, "..");
 const DEST = path.join(ROOT, "google-services.json");
-const PRODUCTION_PACKAGE = "com.tigawanna.geokenya";
+// Must match production applicationId in app.config.ts (Play listing package).
+// Despite the ".dev" suffix, this IS the store package — not the local development one.
+const PRODUCTION_PACKAGE = "com.tigawanna.geokenya.dev";
 
 function readGoogleServicesSource() {
+  // Local/dev: file may already exist (gitignored). EAS cloud production builds
+  // inject it via the project secret GOOGLE_SERVICES_FILE (type=file) instead.
   if (fs.existsSync(DEST)) {
     return null;
   }
@@ -24,6 +28,7 @@ function readGoogleServicesSource() {
     );
   }
 
+  // Preferred on EAS: production environment secret (file → path on builder).
   const envFile = process.env.GOOGLE_SERVICES_FILE;
   if (envFile) {
     if (!fs.existsSync(envFile)) {

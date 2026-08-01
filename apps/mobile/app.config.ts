@@ -4,16 +4,44 @@ type AppVariant = "development" | "preview" | "production";
 
 
 
+/**
+ * Android / iOS application IDs by APP_VARIANT.
+ *
+ * IMPORTANT — Play Store package is intentionally `com.tigawanna.geokenya.dev`
+ * -------------------------------------------------------------------------
+ * The live Google Play listing was created with package `com.tigawanna.geokenya.dev`.
+ * Play package names are immutable, so store / production releases MUST keep using
+ * that ID. Do NOT "fix" production back to `com.tigawanna.geokenya` without creating
+ * an entirely new Play Console app and re-doing testing / production access.
+ *
+ * How we got here (read before changing these IDs):
+ * - An early store upload used the `.dev` package, so Play enrolled app signing
+ *   against `com.tigawanna.geokenya.dev`.
+ * - EAS later had a different keystore on `.dev` than the upload key Play stored,
+ *   which caused "signing key does not match" rejects.
+ * - We aligned EAS credentials for `.dev` with Play's upload key and made
+ *   APP_VARIANT=production emit `.dev` so store builds match that listing.
+ *
+ * Naming trap for future agents:
+ * - `.dev` looks like a development package, but it IS the production Play package.
+ * - Local / Expo dev-client builds use `.development` so they never share the store
+ *   package (and so a casual "dev" build is not what you submit to Play).
+ * - Only `eas build --profile production` (APP_VARIANT=production) should be
+ *   submitted to Play. Never submit development or preview builds.
+ */
 const getUniqueIdentifier = (APP_VARIANT: AppVariant) => {
   if (APP_VARIANT === "development") {
-    return "com.tigawanna.geokenya.dev";
+    // Dev-client / local only. Not the Play package — safe to install beside store builds.
+    return "com.tigawanna.geokenya.development";
   }
 
   if (APP_VARIANT === "preview") {
+    // Internal preview distribution only. Do not submit to Play.
     return "com.tigawanna.geokenya.preview";
   }
 
-  return "com.tigawanna.geokenya";
+  // Production / Play Store. Misnamed ".dev" but this is the real store applicationId.
+  return "com.tigawanna.geokenya.dev";
 };
 
 

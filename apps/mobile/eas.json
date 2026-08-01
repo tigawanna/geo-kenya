@@ -75,11 +75,16 @@
       "env": {
         "TMPDIR": "/home/dennis/tmp-build",
         "GRADLE_USER_HOME": "/home/dennis/.gradle-tmp-build",
-        "GOOGLE_SERVICES_FILE": "/home/dennis/Desktop/code/react-native/geo-kenya/apps/mobile/google-services.json"
+        "GOOGLE_SERVICES_FILE": "./google-services.json"
       }
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "android": {
+        "serviceAccountKeyPath": "./playstore-service-key.json",
+        "track": "internal"
+      }
+    }
   }
 }

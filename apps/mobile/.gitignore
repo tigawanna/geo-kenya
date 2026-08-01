@@ -7,6 +7,7 @@ plugins/opsqlite-spatialite/spatialite-libs/
 .secrets/
 google-services*.json
 GoogleService-Info.plist
+playstore-service-key.json
 
 *.apk
 *.aab
