@@ -1,10 +1,9 @@
 import { FlagStripe, KenyaShield } from "@/components/ui/kenya-marks";
 import { Reveal } from "@/components/ui/reveal";
 import { landingCta } from "@/content/landing";
-import { Link, useLocation } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 
 export function LandingCTA() {
-  const { pathname } = useLocation();
   const [before, after] = landingCta.title.split(landingCta.highlight);
 
   return (
@@ -32,16 +31,14 @@ export function LandingCTA() {
           <FlagStripe className="mx-auto mb-10 h-1 w-32 rounded-full" />
 
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Link
-              to="/auth"
-              search={{ returnTo: pathname }}
+            <a
+              href="#waitlist"
               className="rounded-full bg-primary px-8 py-3.5 font-medium text-primary-content shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
             >
               {landingCta.primaryCta} →
-            </Link>
+            </a>
             <Link
-              to="/auth/signup"
-              search={{ returnTo: "/dashboard" }}
+              to="/dashboard"
               className="rounded-full border border-flag-red/50 px-8 py-3.5 text-base-content transition-colors hover:bg-flag-red-soft"
             >
               {landingCta.secondaryCta}

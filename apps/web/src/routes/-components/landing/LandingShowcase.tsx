@@ -27,37 +27,41 @@ export function LandingShowcase() {
           </p>
         </Reveal>
 
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="flex flex-col gap-8">
           {landingReasons.items.map((reason, index) => {
             const Icon = reason.icon;
             const accent = FLAG_ACCENTS[index % FLAG_ACCENTS.length];
+            const reverse = index % 2 === 1;
             return (
               <Reveal
                 key={reason.title}
-                delay={index * 120}
-                className="group relative flex flex-col gap-5 overflow-hidden rounded-3xl border border-border bg-base-100/80 p-8 shadow-sm backdrop-blur-sm transition-all hover:-translate-y-1 hover:shadow-lg lg:p-10"
+                delay={index * 90}
+                className={`group grid items-center gap-6 border-y border-border/40 py-8 md:grid-cols-12 md:gap-10 ${
+                  reverse ? "md:[&>*:first-child]:order-2" : ""
+                }`}
               >
-                <span className={`absolute inset-x-0 top-0 h-1.5 ${accent.bar}`} />
-
-                <div className="flex items-center justify-between">
+                <div className="md:col-span-4">
                   <div
-                    className={`flex size-12 items-center justify-center rounded-2xl border ${accent.border} ${accent.soft}`}
+                    className={`inline-flex size-14 items-center justify-center rounded-2xl border ${accent.border} ${accent.soft}`}
                   >
                     <Icon
-                      className={`size-6 transition-transform group-hover:scale-110 ${accent.text}`}
+                      className={`size-7 transition-transform group-hover:scale-110 ${accent.text}`}
                     />
                   </div>
-                  <span className={`font-display text-lg font-bold ${accent.text}`}>
+                  <div
+                    className={`mt-4 font-display text-5xl font-bold tracking-tighter ${accent.text}`}
+                  >
                     0{index + 1}
-                  </span>
+                  </div>
                 </div>
-
-                <h3 className="font-display text-xl font-bold tracking-tight text-base-content">
-                  {reason.title}
-                </h3>
-                <p className="text-sm leading-relaxed text-muted-foreground">
-                  {reason.description}
-                </p>
+                <div className="md:col-span-8">
+                  <h3 className="font-display text-2xl font-bold tracking-tight text-base-content md:text-3xl">
+                    {reason.title}
+                  </h3>
+                  <p className="mt-3 max-w-[52ch] text-base leading-relaxed text-pretty text-muted-foreground">
+                    {reason.description}
+                  </p>
+                </div>
               </Reveal>
             );
           })}

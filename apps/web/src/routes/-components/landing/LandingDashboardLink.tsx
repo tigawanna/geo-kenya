@@ -16,12 +16,11 @@ export default function LandingDashboardLink() {
   }
 
   return (
-    <Link
-      to="/auth"
-      search={{ returnTo: "/dashboard" }}
+    <a
+      href="#waitlist"
       className="m-2 inline-flex items-center rounded-full bg-primary px-5 py-2 text-sm font-medium text-primary-content shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
     >
-      Get Started →
-    </Link>
+      Join waitlist →
+    </a>
   );
 }

@@ -1,21 +1,21 @@
 import { Layers, Map, MapPin, PencilLine, Search, Users, WifiOff, Zap } from "lucide-react";
 
 export const landingNav = {
-  status: "Know your ward, constituency & county",
+  status: "Closed testing · join the waitlist",
   links: [
     { label: "How it works", href: "#capabilities" },
     { label: "Why GeoKenya", href: "#why" },
-    { label: "Privacy", href: "/privacy" },
+    { label: "Waitlist", href: "#waitlist" },
   ],
 } as const;
 
 export const landingHero = {
-  eyebrow: "Get to know your Kenya",
+  eyebrow: "Android testing soon",
   title: "Know your ward, constituency, and county.",
   description:
-    "Most of us know our county, but few can name the ward or constituency we live in — even though they show up on official forms all the time. GeoKenya is a simple, friendly way to look up exactly where you are and understand how your area is put together.",
-  primaryCta: "Get the app",
-  secondaryCta: "Open dashboard",
+    "Most of us know our county, but few can name the ward or constituency we live in — even though they show up on official forms all the time. GeoKenya is a simple, offline-first way to look up exactly where you are.",
+  primaryCta: "Join the waitlist",
+  secondaryCta: "See how it works",
   mapPanel: {
     fileLabel: "kenya.wards",
     pathLabel: "/explore/ward-lookup",
@@ -95,15 +95,33 @@ export const landingReasons = {
   ],
 } as const;
 
+export const landingWaitlist = {
+  eyebrow: "Early access",
+  heading: "Join the testing waitlist",
+  description:
+    "Leave your email and we’ll invite you to internal or open testing rounds on Android Play as slots open. No spam — just GeoKenya invites.",
+  placeholder: "you@email.com",
+  submitLabel: "Request invite",
+  successTitle: "You’re on the list",
+  successBody: "We’ll email you when a testing round opens.",
+  alreadyJoinedBody: "That email is already on the waitlist. We’ll be in touch.",
+  privacyNote: "By joining you agree to our Privacy Policy and Terms. Unsubscribe anytime.",
+} as const;
+
 export const landingCta = {
   title: "Get to know your Kenya",
   highlight: "Kenya",
   description:
-    "Grab the app to look up any ward or constituency, or open the dashboard to review and verify community contributions.",
-  primaryCta: "Open dashboard",
-  secondaryCta: "Create an account",
+    "Join the waitlist for Android testing, or open the dashboard if you already have contributor access.",
+  primaryCta: "Join the waitlist",
+  secondaryCta: "Open dashboard",
 } as const;
 
 export const landingFooter = {
   tagline: "Know your ward · constituency · county",
+  legal: [
+    { label: "Privacy", to: "/privacy" as const },
+    { label: "Terms", to: "/terms" as const },
+    { label: "Data deletion", to: "/data-deletion" as const },
+  ],
 } as const;

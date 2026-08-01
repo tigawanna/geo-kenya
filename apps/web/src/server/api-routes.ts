@@ -1,6 +1,7 @@
 import { getAuth } from "@/lib/auth";
 import { createEvlogFsDrain } from "@/server/evlog-drain";
 import { syncRoutes } from "@/server/sync-routes";
+import { waitlistRoutes } from "@/server/waitlist-routes";
 import { parseError } from "evlog";
 import { createAuthMiddleware } from "evlog/better-auth";
 import { evlog, type EvlogVariables } from "evlog/hono";
@@ -56,6 +57,7 @@ export const apiRoutes = new Hono<ApiBindings>()
     return c.json(readMemoryLogs(parseReadMemoryLogsQuery(c.req.query())));
   })
   .route("/sync", syncRoutes)
+  .route("/waitlist", waitlistRoutes)
   .onError((error, c) => {
     c.get("log").error(error);
     const parsed = parseError(error);

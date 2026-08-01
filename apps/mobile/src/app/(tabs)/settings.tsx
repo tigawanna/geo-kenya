@@ -28,6 +28,12 @@ export default function Settings() {
   const privacyPolicyUrl = process.env.EXPO_PUBLIC_WEB_URL
     ? `${process.env.EXPO_PUBLIC_WEB_URL}/privacy`
     : null;
+  const termsUrl = process.env.EXPO_PUBLIC_WEB_URL
+    ? `${process.env.EXPO_PUBLIC_WEB_URL}/terms`
+    : null;
+  const dataDeletionUrl = process.env.EXPO_PUBLIC_WEB_URL
+    ? `${process.env.EXPO_PUBLIC_WEB_URL}/data-deletion`
+    : null;
 
   return (
     <Surface style={{ flex: 1 }}>
@@ -92,6 +98,20 @@ export default function Settings() {
               title="Privacy Policy"
               left={(props) => <List.Icon {...props} icon="shield-lock" />}
               onPress={() => Linking.openURL(privacyPolicyUrl)}
+            />
+          ) : null}
+          {termsUrl ? (
+            <List.Item
+              title="Terms of Service"
+              left={(props) => <List.Icon {...props} icon="file-document-outline" />}
+              onPress={() => Linking.openURL(termsUrl)}
+            />
+          ) : null}
+          {dataDeletionUrl ? (
+            <List.Item
+              title="Data Deletion"
+              left={(props) => <List.Icon {...props} icon="delete-outline" />}
+              onPress={() => Linking.openURL(dataDeletionUrl)}
             />
           ) : null}
           <List.Item

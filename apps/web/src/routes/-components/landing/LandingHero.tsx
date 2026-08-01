@@ -3,7 +3,6 @@ import { FlagStripe } from "@/components/ui/kenya-marks";
 import { Blob, Dots, Ring, Sparkle, Squiggle } from "@/components/ui/playful-decor";
 import { Reveal } from "@/components/ui/reveal";
 import { landingHero } from "@/content/landing";
-import { Link } from "@tanstack/react-router";
 import { Crosshair, type LucideIcon } from "lucide-react";
 import type { CSSProperties } from "react";
 
@@ -66,19 +65,18 @@ export function LandingHero() {
           </p>
 
           <div className="mt-2 flex animate-fade-in flex-wrap items-center gap-4">
-            <Link
-              to="/auth"
-              search={{ returnTo: "/dashboard" }}
+            <a
+              href="#waitlist"
               className="rounded-full bg-primary px-7 py-3.5 font-medium text-primary-content shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
             >
               {landingHero.primaryCta} →
-            </Link>
-            <Link
-              to="/dashboard"
+            </a>
+            <a
+              href="#capabilities"
               className="rounded-full border border-border bg-base-100/70 px-7 py-3.5 text-base-content backdrop-blur-sm transition-colors hover:bg-neutral"
             >
               {landingHero.secondaryCta}
-            </Link>
+            </a>
           </div>
         </div>
       </div>

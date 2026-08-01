@@ -7,6 +7,7 @@ import {
   LandingHero,
   LandingNavbar,
   LandingShowcase,
+  LandingWaitlist,
 } from "./-components/landing";
 
 export const Route = createFileRoute("/")({ component: LandingPage });
@@ -20,6 +21,7 @@ function LandingPage() {
         <LandingHero />
         <LandingFeatures />
         <LandingShowcase />
+        <LandingWaitlist />
         <LandingCTA />
         <LandingFooter />
       </div>

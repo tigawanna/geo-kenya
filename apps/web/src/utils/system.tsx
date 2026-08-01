@@ -8,7 +8,7 @@ export const AppConfig = {
   themeStorageKey: "geo-kenya.theme",
   links: {
     github: "https://github.com/tigawanna/geo-kenya",
-    mail: "",
+    mail: "mailto:denniskinuthiawaweru@gmail.com",
   },
   icon: SiteIcon,
 };

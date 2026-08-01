@@ -1,7 +1,7 @@
 import { landingNav } from "@/content/landing";
 import { useTheme } from "@/lib/tanstack/router/use-theme";
 import { AppConfig } from "@/utils/system";
-import { Link, useLocation } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
 import { lazy, Suspense, useState } from "react";
 
@@ -9,7 +9,6 @@ const DashboardLink = lazy(() => import("./LandingDashboardLink"));
 
 export function LandingNavbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { pathname } = useLocation();
   const { theme, updateTheme } = useTheme();
   const Icon = AppConfig.icon;
 
@@ -69,13 +68,12 @@ export function LandingNavbar() {
 
           <Suspense
             fallback={
-              <Link
-                to="/auth"
-                search={{ returnTo: "/dashboard" }}
+              <a
+                href="#waitlist"
                 className="m-2 inline-flex items-center rounded-full bg-primary px-5 py-2 text-sm font-medium text-primary-content shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
-                Get Started →
-              </Link>
+                Join waitlist →
+              </a>
             }
           >
             <DashboardLink />
@@ -112,14 +110,13 @@ export function LandingNavbar() {
               {item.label}
             </a>
           ))}
-          <Link
-            to="/auth"
-            search={{ returnTo: pathname }}
+          <a
+            href="#waitlist"
             onClick={() => setMobileOpen(false)}
             className="mt-2 block rounded-full bg-primary px-4 py-2.5 text-center font-medium text-primary-content"
           >
-            Get Started →
-          </Link>
+            Join waitlist →
+          </a>
         </div>
       ) : null}
     </header>
