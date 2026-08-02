@@ -103,6 +103,7 @@ export const landingFooter = {
   legal: [
     { label: "Privacy", to: "/privacy" as const },
     { label: "Terms", to: "/terms" as const },
+    // Shown in footer only in DEV — route is gated until account dashboard ships
     { label: "Data deletion", to: "/data-deletion" as const },
   ],
 } as const;

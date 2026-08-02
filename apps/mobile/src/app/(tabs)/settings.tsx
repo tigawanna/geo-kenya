@@ -35,9 +35,11 @@ export default function Settings() {
   const termsUrl = process.env.EXPO_PUBLIC_WEB_URL
     ? `${process.env.EXPO_PUBLIC_WEB_URL}/terms`
     : null;
-  const dataDeletionUrl = process.env.EXPO_PUBLIC_WEB_URL
-    ? `${process.env.EXPO_PUBLIC_WEB_URL}/data-deletion`
-    : null;
+  // Data deletion page is web DEV-only until account dashboard ships
+  const dataDeletionUrl =
+    __DEV__ && process.env.EXPO_PUBLIC_WEB_URL
+      ? `${process.env.EXPO_PUBLIC_WEB_URL}/data-deletion`
+      : null;
 
   const replayHomeTips = () => {
     void clearHomeTourSeen().then(() => {

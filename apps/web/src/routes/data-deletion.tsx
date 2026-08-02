@@ -1,9 +1,19 @@
 import { LegalDocumentLayout } from "@/components/legal/LegalDocumentLayout";
 import { dataDeletionPolicy } from "@/content/data-deletion";
 import { AppConfig } from "@/utils/system";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 
+/**
+ * Data deletion is DEV-only until account creation + a user dashboard exist.
+ * Planned: signed-in users see waitlist email + synced contributions, can remove
+ * the email, and can withdraw pending-review contributions (merged records stay).
+ */
 export const Route = createFileRoute("/data-deletion")({
+  beforeLoad: () => {
+    if (!import.meta.env.DEV) {
+      throw notFound();
+    }
+  },
   component: DataDeletionPage,
   head: () => ({
     meta: [

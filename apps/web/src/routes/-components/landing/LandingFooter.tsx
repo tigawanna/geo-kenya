@@ -44,15 +44,17 @@ export function LandingFooter() {
           <div>
             <p className="mb-3 text-[11px] tracking-[0.14em] text-flag-red uppercase">Legal</p>
             <div className="flex flex-col gap-2.5 text-sm">
-              {landingFooter.legal.map((item) => (
-                <Link
-                  key={item.to}
-                  to={item.to}
-                  className="text-muted-foreground transition-colors hover:text-flag-red"
-                >
-                  {item.label}
-                </Link>
-              ))}
+              {landingFooter.legal
+                .filter((item) => item.to !== "/data-deletion" || import.meta.env.DEV)
+                .map((item) => (
+                  <Link
+                    key={item.to}
+                    to={item.to}
+                    className="text-muted-foreground transition-colors hover:text-flag-red"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
             </div>
           </div>
           <div>

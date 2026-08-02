@@ -16,10 +16,15 @@ type LegalDocumentLayoutProps = {
   currentPath: "/privacy" | "/terms" | "/data-deletion";
 };
 
-const LEGAL_LINKS = [
-  { label: "Privacy", to: "/privacy" as const },
-  { label: "Terms", to: "/terms" as const },
-  { label: "Data deletion", to: "/data-deletion" as const },
+const LEGAL_LINKS: {
+  label: string;
+  to: "/privacy" | "/terms" | "/data-deletion";
+  devOnly?: boolean;
+}[] = [
+  { label: "Privacy", to: "/privacy" },
+  { label: "Terms", to: "/terms" },
+  // DEV-only until account dashboard supports waitlist/contribution deletion
+  { label: "Data deletion", to: "/data-deletion", devOnly: true },
 ];
 
 export function LegalDocumentLayout({
@@ -29,6 +34,8 @@ export function LegalDocumentLayout({
   sections,
   currentPath,
 }: LegalDocumentLayoutProps) {
+  const legalLinks = LEGAL_LINKS.filter((link) => !link.devOnly || import.meta.env.DEV);
+
   return (
     <div className="min-h-dvh bg-base-100">
       <header className="bg-base-100/85 backdrop-blur-md">
@@ -46,7 +53,7 @@ export function LegalDocumentLayout({
 
       <nav aria-label="Legal documents" className="border-b border-border/40">
         <div className="mx-auto flex max-w-3xl gap-1 overflow-x-auto px-6 py-3">
-          {LEGAL_LINKS.map((link) => {
+          {legalLinks.map((link) => {
             const active = link.to === currentPath;
             return (
               <Link

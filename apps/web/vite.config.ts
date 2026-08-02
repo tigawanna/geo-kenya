@@ -52,7 +52,8 @@ export default defineConfig({
         { path: "/", prerender: { enabled: true } },
         { path: "/privacy", prerender: { enabled: true } },
         { path: "/terms", prerender: { enabled: true } },
-        { path: "/data-deletion", prerender: { enabled: true } },
+        // DEV-only route until account dashboard ships — skip prerender
+        // { path: "/data-deletion", prerender: { enabled: true } },
       ],
     }),
     viteReact(),
