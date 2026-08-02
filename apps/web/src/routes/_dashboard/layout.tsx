@@ -16,7 +16,7 @@ import {
 export const Route = createFileRoute("/_dashboard")({
   pendingComponent: () => <RouterPendingComponent />,
   notFoundComponent: () => <RouterNotFoundComponent />,
-  errorComponent: ({ error }) => <RouterErrorComponent error={error} />,
+  errorComponent: ({ error, reset }) => <RouterErrorComponent error={error} reset={reset} />,
   server: {
     middleware: [viewerMiddleware],
   },

@@ -37,6 +37,23 @@ export default defineConfig({
       router: {
         routeToken: "layout",
       },
+      // Prerender public marketing pages to static HTML at build time
+      // (served as Cloudflare assets). Auth/dashboard stay SSR.
+      prerender: {
+        enabled: true,
+        autoStaticPathsDiscovery: false,
+        crawlLinks: false,
+        failOnError: true,
+        concurrency: 4,
+        retryCount: 2,
+        retryDelay: 1000,
+      },
+      pages: [
+        { path: "/", prerender: { enabled: true } },
+        { path: "/privacy", prerender: { enabled: true } },
+        { path: "/terms", prerender: { enabled: true } },
+        { path: "/data-deletion", prerender: { enabled: true } },
+      ],
     }),
     viteReact(),
   ],

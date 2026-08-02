@@ -1,48 +1,46 @@
-import { SiteIcon } from "@/components/icon/SiteIcon";
-import { BackgroundRippleEffect } from "@/components/ui/background-ripple-effect";
-import { cn } from "@/lib/utils";
+import { FlagMark } from "@/components/ui/flag-accents";
+import { RouteStatusShell } from "@/lib/tanstack/router/RouteStatusShell";
 
 interface MainLoaderProps {
   className?: string;
-  rows?: number;
-  cols?: number;
-  cellSize?: number;
-  pulse?: boolean;
-  pulseInterval?: number;
-  pulseTarget?: "center" | "random";
-  bgClassName?: string;
+  /** Uppercase eyebrow above the headline */
+  eyebrow?: string;
+  description?: string;
   children?: React.ReactNode;
 }
 
+/**
+ * Branded full-page pending state — same atmosphere as router error / 404 shells.
+ */
 export function MainLoader({
   className,
   children,
-  rows = 10,
-  cols = 10,
-  cellSize = 56,
-  pulse = true,
-  pulseInterval = 3000,
-  pulseTarget = "random",
-  bgClassName = "mt-20",
+  eyebrow = "Charting the route",
+  description = "Pulling boundaries and place names — hang tight.",
 }: MainLoaderProps) {
   return (
-    <div
-      className={cn(
-        "relative flex min-h-screen w-full flex-col items-center justify-center gap-2 overflow-hidden",
-        className,
-      )}
-    >
-      <BackgroundRippleEffect
-        rows={rows}
-        cols={cols}
-        cellSize={cellSize}
-        className={bgClassName}
-        pulse={pulse}
-        pulseTarget={pulseTarget}
-        pulseInterval={pulseInterval}
-      />
-
-      {children ? children : <SiteIcon size={250} />}
-    </div>
+    <RouteStatusShell
+      data-test="main-loader"
+      busy
+      className={className}
+      eyebrow={eyebrow}
+      visual={
+        children ?? (
+          <span className="relative inline-flex items-center justify-center">
+            <span
+              aria-hidden
+              className="absolute size-16 animate-pulse rounded-md bg-flag-green-soft"
+            />
+            <FlagMark className="relative h-10 w-10 animate-blob-float rounded-md ring-1 ring-white/20" />
+          </span>
+        )
+      }
+      title={
+        <>
+          Just a <span className="text-flag-green">moment</span>
+        </>
+      }
+      description={description}
+    />
   );
 }
