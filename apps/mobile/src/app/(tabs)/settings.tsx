@@ -1,5 +1,7 @@
 import { customTheme, type CustomThemeKey } from "@/constants/Colors";
+import { clearHomeTourSeen } from "@/lib/coachmark/coachmark-provider";
 import { useSettingsStore, useThemeStore } from "@/store/settings-store";
+import { useRouter } from "expo-router";
 import { startTransition } from "react";
 import { Linking, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Divider, Icon, List, Surface, Switch, useTheme } from "react-native-paper";
@@ -7,11 +9,13 @@ import * as Application from "expo-application";
 
 export default function Settings() {
   const theme = useTheme();
+  const router = useRouter();
   const { isDarkMode, toggleTheme } = useThemeStore();
   const dynamicColors = useSettingsStore((state) => state.dynamicColors);
   const colorScheme = useSettingsStore((state) => state.colorScheme);
   const toggleDynamicColors = useSettingsStore((state) => state.toggleDynamicColors);
   const setColorScheme = useSettingsStore((state) => state.setColorScheme);
+  const requestHomeTourReplay = useSettingsStore((state) => state.requestHomeTourReplay);
   const developerFacingBuildVersion = Application.nativeBuildVersion;
 
   const colorSchemeOptions = Object.entries(customTheme).map(([key, value]) => ({
@@ -34,6 +38,13 @@ export default function Settings() {
   const dataDeletionUrl = process.env.EXPO_PUBLIC_WEB_URL
     ? `${process.env.EXPO_PUBLIC_WEB_URL}/data-deletion`
     : null;
+
+  const replayHomeTips = () => {
+    void clearHomeTourSeen().then(() => {
+      requestHomeTourReplay();
+      router.replace("/(tabs)");
+    });
+  };
 
   return (
     <Surface style={{ flex: 1 }}>
@@ -76,6 +87,17 @@ export default function Settings() {
               </TouchableOpacity>
             ))}
           </View>
+          <Divider />
+        </List.Section>
+
+        <List.Section>
+          <List.Subheader style={[styles.listSubHeader]}>Help</List.Subheader>
+          <List.Item
+            title="Replay home tips"
+            description="Show the short guided tour on Home again"
+            left={(props) => <List.Icon {...props} icon="map-marker-path" />}
+            onPress={replayHomeTips}
+          />
           <Divider />
         </List.Section>
 

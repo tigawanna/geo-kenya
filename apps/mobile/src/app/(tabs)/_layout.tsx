@@ -2,9 +2,11 @@ import { Tabs } from "expo-router";
 import React from "react";
 import { HapticTab } from "@/components/default/haptic-tab";
 import { MaterialCommunityIcon, MaterialIcon } from "@/components/default/ui/icon-symbol";
+import { HOME_TOUR_ANCHORS } from "@/lib/coachmark/home-tour";
+import { useDeviceLocation } from "@/hooks/use-device-location";
+import { CoachmarkAnchor } from "@edwardloopez/react-native-coachmark";
 import { Platform } from "react-native";
 import { useTheme } from "react-native-paper";
-import { useDeviceLocation } from "@/hooks/use-device-location";
 
 export default function TabLayout() {
   const { colors } = useTheme();
@@ -44,7 +46,9 @@ export default function TabLayout() {
         options={{
           title: "Explore",
           tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcon size={28} name="view-list" color={color} />
+            <CoachmarkAnchor id={HOME_TOUR_ANCHORS.explore} shape="circle" padding={8}>
+              <MaterialCommunityIcon size={28} name="view-list" color={color} />
+            </CoachmarkAnchor>
           ),
         }}
       />

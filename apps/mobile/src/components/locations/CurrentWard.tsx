@@ -4,6 +4,7 @@ import {
 } from "@/data-access-layer/wards-query-options";
 import { hasResolvableCoordinates } from "@/data-access-layer/location-query";
 import { useDeviceLocation } from "@/hooks/use-device-location";
+import { CoachmarkAnchor } from "@edwardloopez/react-native-coachmark";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
@@ -23,9 +24,19 @@ interface CurretWardProps {
   actions?: React.ReactNode;
   backButton?: boolean;
   homeButton?: boolean;
+  mapCoachmarkId?: string;
+  basemapCoachmarkId?: string;
 }
 
-export function CurrentWard({ lat, lng, actions, backButton, homeButton }: CurretWardProps) {
+export function CurrentWard({
+  lat,
+  lng,
+  actions,
+  backButton,
+  homeButton,
+  mapCoachmarkId,
+  basemapCoachmarkId,
+}: CurretWardProps) {
   const theme = useTheme();
   const wardSheetRef = useRef<WardInfoSheetRef>(null);
   const [outsideKenyaDismissed, setOutsideKenyaDismissed] = useState(false);
@@ -64,13 +75,32 @@ export function CurrentWard({ lat, lng, actions, backButton, homeButton }: Curre
 
   return (
     <View style={styles.container}>
-      <WardWithNeighborsMap
-        fillHeight
-        wardId={data?.result?.id}
-        locationLoading={locationLoading}
-        homeButton={homeButton}
-        onMapPress={() => collapseWardInfoSheet(wardSheetRef)}
-      />
+      {mapCoachmarkId ? (
+        <CoachmarkAnchor
+          id={mapCoachmarkId}
+          shape="rect"
+          radius={8}
+          padding={0}
+          style={styles.mapAnchor}>
+          <WardWithNeighborsMap
+            fillHeight
+            wardId={data?.result?.id}
+            locationLoading={locationLoading}
+            homeButton={homeButton}
+            basemapCoachmarkId={basemapCoachmarkId}
+            onMapPress={() => collapseWardInfoSheet(wardSheetRef)}
+          />
+        </CoachmarkAnchor>
+      ) : (
+        <WardWithNeighborsMap
+          fillHeight
+          wardId={data?.result?.id}
+          locationLoading={locationLoading}
+          homeButton={homeButton}
+          basemapCoachmarkId={basemapCoachmarkId}
+          onMapPress={() => collapseWardInfoSheet(wardSheetRef)}
+        />
+      )}
 
       {showOutsideKenya ? (
         <NotInKenyaMapBanner onDismiss={() => setOutsideKenyaDismissed(true)} />
@@ -97,6 +127,10 @@ export function CurrentWard({ lat, lng, actions, backButton, homeButton }: Curre
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    width: "100%",
+  },
+  mapAnchor: {
     flex: 1,
     width: "100%",
   },

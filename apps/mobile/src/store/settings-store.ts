@@ -12,7 +12,9 @@ type SettingsStoreType = {
   localBackupPath: string | null;
   dynamicColors: boolean;
   lastBackup: Date | null;
-  
+  /** Ephemeral: Settings asks Home to re-run the coachmark tour. Not persisted. */
+  homeTourReplayRequested: boolean;
+
   // Actions
   toggleDynamicColors: () => void;
   toggleTheme: () => void;
@@ -20,7 +22,9 @@ type SettingsStoreType = {
   setColorScheme: (scheme: CustomThemeKey | null) => void;
   setLocalBackupPath: (path: string | null) => void;
   setLastBackup: (date: Date | null) => void;
-  updateSettings: (settings: Partial<Omit<SettingsStoreType, 'toggleDynamicColors' | 'toggleTheme' | 'setTheme' | 'setColorScheme' | 'setLocalBackupPath' | 'setLastBackup' | 'updateSettings'>>) => void;
+  requestHomeTourReplay: () => void;
+  clearHomeTourReplay: () => void;
+  updateSettings: (settings: Partial<Omit<SettingsStoreType, 'toggleDynamicColors' | 'toggleTheme' | 'setTheme' | 'setColorScheme' | 'setLocalBackupPath' | 'setLastBackup' | 'requestHomeTourReplay' | 'clearHomeTourReplay' | 'updateSettings'>>) => void;
 };
 
 export const useSettingsStore = create<SettingsStoreType>()(
@@ -32,7 +36,8 @@ export const useSettingsStore = create<SettingsStoreType>()(
       localBackupPath: null,
       dynamicColors: true,
       lastBackup: null,
-      
+      homeTourReplayRequested: false,
+
       // Actions
       toggleDynamicColors: () => 
         set((state) => ({ 
@@ -62,6 +67,9 @@ export const useSettingsStore = create<SettingsStoreType>()(
       setLocalBackupPath: (path) => set({ localBackupPath: path }),
       
       setLastBackup: (date) => set({ lastBackup: date }),
+
+      requestHomeTourReplay: () => set({ homeTourReplayRequested: true }),
+      clearHomeTourReplay: () => set({ homeTourReplayRequested: false }),
       
       updateSettings: (settings) => set((state) => ({ ...state, ...settings })),
     }),

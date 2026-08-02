@@ -7,6 +7,8 @@ interface SingleWardByLatLngProps {
   actions?: React.ReactNode;
   backButton?: boolean;
   homeButton?: boolean;
+  mapCoachmarkId?: string;
+  basemapCoachmarkId?: string;
 }
 
 export function SingleWardByLatLng({
@@ -15,6 +17,8 @@ export function SingleWardByLatLng({
   actions,
   backButton,
   homeButton,
+  mapCoachmarkId,
+  basemapCoachmarkId,
 }: SingleWardByLatLngProps) {
   return (
     <View style={styles.container}>
@@ -24,6 +28,8 @@ export function SingleWardByLatLng({
         actions={actions}
         backButton={backButton}
         homeButton={homeButton}
+        mapCoachmarkId={mapCoachmarkId}
+        basemapCoachmarkId={basemapCoachmarkId}
       />
     </View>
   );

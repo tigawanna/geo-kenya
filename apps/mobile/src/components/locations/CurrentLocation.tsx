@@ -1,4 +1,6 @@
 import { useDeviceLocation } from "@/hooks/use-device-location";
+import { HOME_TOUR_ANCHORS } from "@/lib/coachmark/home-tour";
+import { CoachmarkAnchor } from "@edwardloopez/react-native-coachmark";
 import * as Clipboard from "expo-clipboard";
 import { StyleSheet, View } from "react-native";
 import { Card, IconButton } from "react-native-paper";
@@ -13,16 +15,20 @@ export function CurrentLocation() {
 
   return (
     <View style={styles.container}>
-      <Card style={styles.banner} elevation={2}>
-        <Card.Content style={styles.bannerContent}>
-          <LatLongForm initLat={lat} initLng={lng} />
-        </Card.Content>
-      </Card>
+      <CoachmarkAnchor id={HOME_TOUR_ANCHORS.coords} shape="rect" radius={12} padding={4}>
+        <Card style={styles.banner} elevation={2}>
+          <Card.Content style={styles.bannerContent}>
+            <LatLongForm initLat={lat} initLng={lng} />
+          </Card.Content>
+        </Card>
+      </CoachmarkAnchor>
 
       <SingleWardByLatLng
         lat={lat}
         lng={lng}
         backButton={false}
+        mapCoachmarkId={HOME_TOUR_ANCHORS.map}
+        basemapCoachmarkId={HOME_TOUR_ANCHORS.basemap}
         actions={
           <View style={styles.actions}>
             <IconButton

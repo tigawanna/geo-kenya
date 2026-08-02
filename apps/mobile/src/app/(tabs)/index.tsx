@@ -1,4 +1,5 @@
 import { CurrentLocation } from "@/components/locations/CurrentLocation";
+import { HomeCoachmarkTour } from "@/components/onboarding/HomeCoachmarkTour";
 import { wardsQueryOptions } from "@/data-access-layer/wards-query-options";
 import { useQueryClient } from "@tanstack/react-query";
 import { Surface } from "react-native-paper";
@@ -15,6 +16,7 @@ export default function HomeScreen() {
 
   return (
     <Surface style={{ flex: 1, paddingTop: top }}>
+      <HomeCoachmarkTour />
       <CurrentLocation />
     </Surface>
   );

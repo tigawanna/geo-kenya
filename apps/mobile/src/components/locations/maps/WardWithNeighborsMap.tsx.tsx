@@ -28,6 +28,7 @@ interface WardWithNeighborsMapProps {
   fillHeight?: boolean;
   locationLoading?: boolean;
   homeButton?: boolean;
+  basemapCoachmarkId?: string;
 }
 
 function bboxFromWardFields(ward: {
@@ -78,6 +79,7 @@ export function WardWithNeighborsMap({
   fillHeight = false,
   locationLoading = false,
   homeButton = false,
+  basemapCoachmarkId,
 }: WardWithNeighborsMapProps) {
   const theme = useTheme();
   const colorScheme = normalizeMapColorScheme(useColorScheme());
@@ -384,7 +386,11 @@ export function WardWithNeighborsMap({
       ) : null}
 
       <View style={styles.mapToggleContainer} pointerEvents="box-none">
-        <MapBasemapPicker preset={preset} onPresetChange={setPreset} />
+        <MapBasemapPicker
+          preset={preset}
+          onPresetChange={setPreset}
+          coachmarkId={basemapCoachmarkId}
+        />
       </View>
     </View>
   );

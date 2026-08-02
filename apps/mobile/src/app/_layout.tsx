@@ -12,6 +12,7 @@ import {
   useAppState,
   useOnlineManager,
 } from "@/lib/tanstack/query/react-native-setup-hooks";
+import { AppCoachmarkProvider } from "@/lib/coachmark/coachmark-provider";
 import { DarkTheme, DefaultTheme, ThemeProvider } from "expo-router/react-navigation";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
@@ -48,34 +49,36 @@ export default function RootLayout() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <PaperProvider theme={paperTheme}>
-          <GestureHandlerRootView style={{ flex: 1 }}>
-            <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
-            <InitDatabase>
-              <Stack>
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                <Stack.Screen
-                  name="ward-by-id/[ward]/index"
-                  options={{
-                    headerShown: false,
-                  }}
-                />
-                <Stack.Screen
-                  name="ward-by-id/[ward]/edit"
-                  options={{
-                    headerShown: false,
-                  }}
-                />
-                <Stack.Screen
-                  name="ward-by-lat-long/[coords]"
-                  options={{
-                    headerShown: false,
-                  }}
-                />
-                <Stack.Screen name="+not-found" />
-              </Stack>
-            </InitDatabase>
-            <GlobalSnackbar />
-          </GestureHandlerRootView>
+          <AppCoachmarkProvider>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+              <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
+              <InitDatabase>
+                <Stack>
+                  <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                  <Stack.Screen
+                    name="ward-by-id/[ward]/index"
+                    options={{
+                      headerShown: false,
+                    }}
+                  />
+                  <Stack.Screen
+                    name="ward-by-id/[ward]/edit"
+                    options={{
+                      headerShown: false,
+                    }}
+                  />
+                  <Stack.Screen
+                    name="ward-by-lat-long/[coords]"
+                    options={{
+                      headerShown: false,
+                    }}
+                  />
+                  <Stack.Screen name="+not-found" />
+                </Stack>
+              </InitDatabase>
+              <GlobalSnackbar />
+            </GestureHandlerRootView>
+          </AppCoachmarkProvider>
         </PaperProvider>
       </ThemeProvider>
     </QueryClientProvider>
