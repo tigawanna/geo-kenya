@@ -75,7 +75,11 @@ export default function TabLayout() {
         options={{
           title: "Settings",
           headerShown: true,
-          tabBarIcon: ({ color }) => <MaterialIcon size={28} name="settings" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <CoachmarkAnchor id={HOME_TOUR_ANCHORS.settings} shape="circle" padding={8}>
+              <MaterialIcon size={28} name="settings" color={color} />
+            </CoachmarkAnchor>
+          ),
         }}
       />
     </Tabs>

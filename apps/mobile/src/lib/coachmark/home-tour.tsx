@@ -9,6 +9,7 @@ export const HOME_TOUR_ANCHORS = {
   map: "home-map",
   basemap: "home-basemap",
   explore: "home-explore-tab",
+  settings: "home-settings-tab",
 } as const;
 
 export function createHomeTour(options?: { showOnce?: boolean; delay?: number }) {
@@ -47,6 +48,14 @@ export function createHomeTour(options?: { showOnce?: boolean; delay?: number })
         id: HOME_TOUR_ANCHORS.explore,
         title: "Browse all wards",
         description: "Search Kenya’s wards by name, county, or constituency.",
+        placement: "top",
+        shape: "circle",
+        padding: 12,
+      },
+      {
+        id: HOME_TOUR_ANCHORS.settings,
+        title: "Settings",
+        description: "Change appearance, and replay these tips anytime from Help.",
         placement: "top",
         shape: "circle",
         padding: 12,
