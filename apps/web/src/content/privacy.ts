@@ -46,7 +46,7 @@ export const privacyPolicy = {
     },
     {
       heading: "Data retention and deletion",
-      body: "On-device data remains until you clear app storage or uninstall. Waitlist emails are retained until you ask to be removed or the testing program ends. Crash reports follow Firebase retention defaults. To remove a waitlist email or ask about synced contributions, contact denniskinuthiawaweru@gmail.com.",
+      body: "On-device data remains until you clear app storage or uninstall. Waitlist emails are retained until you remove them from Account (when signed in with the same email) or ask to be removed, or until the testing program ends. Crash reports follow Firebase retention defaults. Pending contributions can be withdrawn from Account; verified sync data stays in the shared dataset.",
     },
     {
       heading: "Third-party services",
@@ -58,7 +58,7 @@ export const privacyPolicy = {
     },
     {
       heading: "Your choices",
-      body: "You can use the app fully offline, revoke location permission, decline optional sync, and unsubscribe from the waitlist by emailing denniskinuthiawaweru@gmail.com.",
+      body: "You can use the app fully offline, revoke location permission, decline optional sync, remove your waitlist email from Account when signed in, or email denniskinuthiawaweru@gmail.com for waitlist removal and account deletion requests.",
     },
     {
       heading: "Changes",

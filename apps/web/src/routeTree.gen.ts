@@ -19,6 +19,7 @@ import { Route as AuthIndexRouteImport } from './routes/auth/index'
 import { Route as AuthSignupRouteImport } from './routes/auth/signup'
 import { Route as DashboardSyncIndexRouteImport } from './routes/_dashboard/sync/index'
 import { Route as DashboardDashboardIndexRouteImport } from './routes/_dashboard/dashboard/index'
+import { Route as DashboardAccountIndexRouteImport } from './routes/_dashboard/account/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as DashboardAdminRouteRouteImport } from './routes/_dashboard/admin/route'
 import { Route as DashboardAdminEventsIndexRouteImport } from './routes/_dashboard/admin/events/index'
@@ -72,6 +73,11 @@ const DashboardDashboardIndexRoute = DashboardDashboardIndexRouteImport.update({
   path: '/dashboard/',
   getParentRoute: () => DashboardLayoutRoute,
 } as any)
+const DashboardAccountIndexRoute = DashboardAccountIndexRouteImport.update({
+  id: '/account/',
+  path: '/account/',
+  getParentRoute: () => DashboardLayoutRoute,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -99,6 +105,7 @@ export interface FileRoutesByFullPath {
   '/auth/': typeof AuthIndexRoute
   '/admin/route': typeof DashboardAdminRouteRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/account/': typeof DashboardAccountIndexRoute
   '/dashboard/': typeof DashboardDashboardIndexRoute
   '/sync/': typeof DashboardSyncIndexRoute
   '/admin/events/': typeof DashboardAdminEventsIndexRoute
@@ -112,6 +119,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthIndexRoute
   '/admin/route': typeof DashboardAdminRouteRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/account': typeof DashboardAccountIndexRoute
   '/dashboard': typeof DashboardDashboardIndexRoute
   '/sync': typeof DashboardSyncIndexRoute
   '/admin/events': typeof DashboardAdminEventsIndexRoute
@@ -128,6 +136,7 @@ export interface FileRoutesById {
   '/auth/': typeof AuthIndexRoute
   '/_dashboard/admin/route': typeof DashboardAdminRouteRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/_dashboard/account/': typeof DashboardAccountIndexRoute
   '/_dashboard/dashboard/': typeof DashboardDashboardIndexRoute
   '/_dashboard/sync/': typeof DashboardSyncIndexRoute
   '/_dashboard/admin/events/': typeof DashboardAdminEventsIndexRoute
@@ -144,6 +153,7 @@ export interface FileRouteTypes {
     | '/auth/'
     | '/admin/route'
     | '/api/auth/$'
+    | '/account/'
     | '/dashboard/'
     | '/sync/'
     | '/admin/events/'
@@ -157,6 +167,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/admin/route'
     | '/api/auth/$'
+    | '/account'
     | '/dashboard'
     | '/sync'
     | '/admin/events'
@@ -172,6 +183,7 @@ export interface FileRouteTypes {
     | '/auth/'
     | '/_dashboard/admin/route'
     | '/api/auth/$'
+    | '/_dashboard/account/'
     | '/_dashboard/dashboard/'
     | '/_dashboard/sync/'
     | '/_dashboard/admin/events/'
@@ -259,6 +271,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardDashboardIndexRouteImport
       parentRoute: typeof DashboardLayoutRoute
     }
+    '/_dashboard/account/': {
+      id: '/_dashboard/account/'
+      path: '/account'
+      fullPath: '/account/'
+      preLoaderRoute: typeof DashboardAccountIndexRouteImport
+      parentRoute: typeof DashboardLayoutRoute
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -285,6 +304,7 @@ declare module '@tanstack/react-router' {
 
 interface DashboardLayoutRouteChildren {
   DashboardAdminRouteRoute: typeof DashboardAdminRouteRoute
+  DashboardAccountIndexRoute: typeof DashboardAccountIndexRoute
   DashboardDashboardIndexRoute: typeof DashboardDashboardIndexRoute
   DashboardSyncIndexRoute: typeof DashboardSyncIndexRoute
   DashboardAdminEventsIndexRoute: typeof DashboardAdminEventsIndexRoute
@@ -292,6 +312,7 @@ interface DashboardLayoutRouteChildren {
 
 const DashboardLayoutRouteChildren: DashboardLayoutRouteChildren = {
   DashboardAdminRouteRoute: DashboardAdminRouteRoute,
+  DashboardAccountIndexRoute: DashboardAccountIndexRoute,
   DashboardDashboardIndexRoute: DashboardDashboardIndexRoute,
   DashboardSyncIndexRoute: DashboardSyncIndexRoute,
   DashboardAdminEventsIndexRoute: DashboardAdminEventsIndexRoute,

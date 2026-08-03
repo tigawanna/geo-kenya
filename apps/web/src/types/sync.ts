@@ -46,6 +46,7 @@ export interface SyncEventsListResponse {
 export interface SyncEventRecord {
   id: string;
   deviceId: string;
+  userId: string | null;
   tableName: string;
   rowId: string;
   action: SyncAction;

@@ -64,6 +64,31 @@ export async function verifySyncEvent(eventId: string): Promise<void> {
   }
 }
 
+export async function fetchMySyncEvents(limit = 50): Promise<SyncEventsListResponse> {
+  const params = new URLSearchParams({ limit: String(limit) });
+  const response = await fetch(`/api/sync/events/mine?${params.toString()}`, {
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to load your contributions");
+  }
+
+  return response.json() as Promise<SyncEventsListResponse>;
+}
+
+export async function withdrawMySyncEvent(eventId: string): Promise<void> {
+  const response = await fetch(`/api/sync/events/${eventId}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+    throw new Error(payload?.error ?? "Failed to withdraw contribution");
+  }
+}
+
 export function parseSyncEventPayload(event: SyncEventRecord): Record<string, unknown> {
   return JSON.parse(event.payloadJson) as Record<string, unknown>;
 }

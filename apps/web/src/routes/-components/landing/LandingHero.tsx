@@ -40,10 +40,10 @@ export function LandingHero() {
         <div className="mt-10 animate-fade-up" style={{ animationDelay: "320ms" }}>
           <a
             href="#waitlist"
-            className="inline-flex items-center gap-3 rounded-md bg-flag-green-solid px-5 py-3.5 text-[15px] font-semibold text-flag-green-content shadow-[0_0_0_1px_rgba(255,255,255,0.06)] transition-opacity hover:opacity-90"
+            className="inline-flex items-center gap-3 rounded-md bg-flag-green-solid px-5 py-3.5 text-[15px] font-semibold whitespace-nowrap text-flag-green-content shadow-[0_0_0_1px_rgba(255,255,255,0.06)] transition-opacity hover:opacity-90"
           >
-            {landingHero.primaryCta}
-            <FlagMark className="ring-white/20" />
+            <span>{landingHero.primaryCta}</span>
+            <FlagMark />
           </a>
         </div>
       </div>

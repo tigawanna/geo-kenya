@@ -1,7 +1,9 @@
 import type { SidebarItem } from "@/components/sidebar/types";
-import { ClipboardList, LayoutDashboard, RefreshCw } from "lucide-react";
+import { ClipboardList, LayoutDashboard, RefreshCw, User } from "lucide-react";
 
-export const dashboard_account_routes = [] satisfies SidebarItem[];
+export const dashboard_account_routes = [
+  { title: "Account", href: "/account", icon: User },
+] satisfies SidebarItem[];
 
 export const dashboard_admin_routes = [
   { title: "Review events", href: "/admin/events", icon: ClipboardList },

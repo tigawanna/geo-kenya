@@ -4,9 +4,8 @@ import { AppConfig } from "@/utils/system";
 import { createFileRoute, notFound } from "@tanstack/react-router";
 
 /**
- * Data deletion is DEV-only until account creation + a user dashboard exist.
- * Planned: signed-in users see waitlist email + synced contributions, can remove
- * the email, and can withdraw pending-review contributions (merged records stay).
+ * Data deletion is DEV-only as a standalone legal page.
+ * Signed-in users should use Account for self-serve waitlist + contribution controls.
  */
 export const Route = createFileRoute("/data-deletion")({
   beforeLoad: () => {
@@ -20,7 +19,7 @@ export const Route = createFileRoute("/data-deletion")({
       { title: `Data Deletion · ${AppConfig.name}` },
       {
         name: "description",
-        content: `How to request deletion of ${AppConfig.name} account, waitlist, and personal data.`,
+        content: `How to request deletion of ${AppConfig.name} account, waitlist, and personal data. Prefer Account when signed in.`,
       },
     ],
   }),

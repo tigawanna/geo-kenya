@@ -6,7 +6,8 @@ export function FlagMark({ className }: { className?: string }) {
     <span
       aria-hidden
       className={cn(
-        "inline-flex h-5 w-5 shrink-0 overflow-hidden rounded-[3px] ring-1 ring-base-content/15",
+        // Light plate so black/green stripes stay visible on green CTAs
+        "inline-flex h-5 w-5 shrink-0 overflow-hidden rounded-[3px] bg-flag-white ring-1 ring-black/20 dark:ring-white/40",
         className,
       )}
     >

@@ -23,7 +23,7 @@ const LEGAL_LINKS: {
 }[] = [
   { label: "Privacy", to: "/privacy" },
   { label: "Terms", to: "/terms" },
-  // DEV-only until account dashboard supports waitlist/contribution deletion
+  // DEV-only standalone page; signed-in users use Account for self-serve deletion
   { label: "Data deletion", to: "/data-deletion", devOnly: true },
 ];
 

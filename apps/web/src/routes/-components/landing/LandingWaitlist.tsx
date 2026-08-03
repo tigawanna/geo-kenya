@@ -83,10 +83,10 @@ export function LandingWaitlist() {
                 <button
                   type="submit"
                   disabled={mutation.isPending}
-                  className="inline-flex items-center justify-center gap-2 rounded-md bg-flag-green-solid px-5 py-3.5 text-[15px] font-semibold text-flag-green-content transition-opacity hover:opacity-90 disabled:opacity-60"
+                  className="inline-flex items-center justify-center gap-2 rounded-md bg-flag-green-solid px-5 py-3.5 text-[15px] font-semibold whitespace-nowrap text-flag-green-content transition-opacity hover:opacity-90 disabled:opacity-60"
                 >
-                  {mutation.isPending ? "Submitting…" : landingWaitlist.submitLabel}
-                  <FlagMark className="ring-white/20" />
+                  <span>{mutation.isPending ? "Submitting…" : landingWaitlist.submitLabel}</span>
+                  <FlagMark />
                 </button>
               </form>
             )}

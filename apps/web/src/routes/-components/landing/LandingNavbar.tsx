@@ -59,9 +59,9 @@ export function LandingNavbar() {
           </button>
           <a
             href="#waitlist"
-            className="inline-flex items-center gap-2 rounded-md border border-flag-green/35 bg-flag-green-soft px-3.5 py-2 text-[13px] font-medium text-base-content transition-colors hover:border-flag-green/60"
+            className="inline-flex items-center gap-2 rounded-md border border-flag-green/35 bg-flag-green-soft px-3.5 py-2 text-[13px] font-medium whitespace-nowrap text-base-content transition-colors hover:border-flag-green/60"
           >
-            Join waitlist
+            <span>Join waitlist</span>
             <FlagMark className="h-4 w-4" />
           </a>
           <button

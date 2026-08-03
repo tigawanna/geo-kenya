@@ -8,7 +8,7 @@ export function DashboardSidebarFooter() {
 
   return (
     <>
-      {showLabel ? <p className="px-2 text-xs text-base-content/60">Admin hub</p> : null}
+      {showLabel ? <p className="px-2 text-xs text-base-content/60">Your account</p> : null}
       <DashboardTheme />
       <DashboardSidebarUser />
     </>

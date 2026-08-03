@@ -5,6 +5,8 @@ export const syncEvents = sqliteTable(
   {
     id: text("id").primaryKey(),
     deviceId: text("device_id").notNull(),
+    /** Set when pushed with a signed-in session; null for device/sync-secret pushes */
+    userId: text("user_id"),
     tableName: text("table_name").notNull(),
     rowId: text("row_id").notNull(),
     action: text("action").notNull(),
@@ -14,5 +16,8 @@ export const syncEvents = sqliteTable(
     verifiedAt: text("verified_at"),
     verifiedBy: text("verified_by"),
   },
-  (table) => [index("events_created_at_idx").on(table.id)],
+  (table) => [
+    index("events_created_at_idx").on(table.id),
+    index("events_userId_idx").on(table.userId),
+  ],
 );

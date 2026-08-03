@@ -22,10 +22,10 @@ export function LandingCTA() {
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <a
               href="#waitlist"
-              className="inline-flex items-center gap-3 rounded-md bg-flag-green-solid px-5 py-3.5 text-[15px] font-semibold text-flag-green-content transition-opacity hover:opacity-90"
+              className="inline-flex items-center gap-3 rounded-md bg-flag-green-solid px-5 py-3.5 text-[15px] font-semibold whitespace-nowrap text-flag-green-content transition-opacity hover:opacity-90"
             >
-              {landingCta.primaryCta}
-              <FlagMark className="ring-white/20" />
+              <span>{landingCta.primaryCta}</span>
+              <FlagMark />
             </a>
             <a
               href="#capabilities"

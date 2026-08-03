@@ -19,8 +19,8 @@ export function RouterNotFoundComponent() {
           data-test="router-not-found-home"
           className="inline-flex items-center gap-3 rounded-md bg-flag-green-solid px-5 py-3.5 text-[15px] font-semibold text-flag-green-content shadow-[0_0_0_1px_rgba(255,255,255,0.06)] transition-opacity hover:opacity-90"
         >
-          Back home
-          <FlagMark className="ring-white/20" />
+          <span>Back home</span>
+          <FlagMark />
         </Link>
       }
     />
