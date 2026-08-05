@@ -15,17 +15,14 @@ const parsed = clientEnvSchema.parse({
  * SSR / build falls back to `VITE_API_URL` (local default).
  */
 export function getApiOrigin(): string {
-  console.log(" \n\n  import.meta.env ==>", import.meta.env, "\n");
   if (typeof window !== "undefined") {
     return window.location.origin;
   }
   if (parsed.VITE_API_URL) {
-    console.log(" \n\n  parsed.VITE_API_URL ==>", parsed.VITE_API_URL, "\n");
     return parsed.VITE_API_URL;
   }
-
-  console.log(" \n\n  returning hardcoded localhost:3070", "\n");
-  return "http://localhost:3070";
+  console.warn(" \n\n  returning hardcoded localhost:0000", "\n");
+  return "http://localhost:0000";
 }
 
 export const clientEnv = {
