@@ -1,6 +1,6 @@
 import { FlagMark } from "@/components/ui/flag-accents";
 import { useViewer } from "@/data-access-layer/auth/viewer";
-import { waitListQueryOptions } from "@/data-access-layer/dashboard/waitlist";
+import { type WaitlistEntry, waitListQueryOptions } from "@/data-access-layer/dashboard/waitlist";
 import { formatDate } from "@/utils/date";
 import { AppConfig } from "@/utils/system";
 import { useSuspenseQuery } from "@tanstack/react-query";
@@ -49,16 +49,8 @@ function DashboardPage() {
   );
 }
 
-type WaitlistEntry = {
-  id: string;
-  email: string;
-  createdAt: string;
-  userAgent: string | null;
-  source: string;
-};
-
 type WaitlistResult =
-  | { data: WaitlistEntry | undefined; error: null }
+  | { data: WaitlistEntry | null | undefined; error: null }
   | { data: null; error: { message: string } };
 
 function WaitlistCard({ result }: { result: WaitlistResult }) {

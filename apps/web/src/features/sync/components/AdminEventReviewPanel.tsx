@@ -1,8 +1,8 @@
 import {
-  fetchAdminSyncEvents,
+  adminSyncEventsQueryOptions,
   parseSyncEventPayload,
   verifySyncEvent,
-} from "@/services/sync/sync.api";
+} from "@/data-access-layer/sync/sync.functions";
 import type { SyncEventRecord } from "@/types/sync";
 import { formatDate } from "@/utils/date";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -11,13 +11,10 @@ import { useState } from "react";
 export function AdminEventReviewPanel() {
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["sync", "admin", "events", page],
-    queryFn: () => fetchAdminSyncEvents(null, page, 50),
-  });
+  const { data, isLoading, error } = useQuery(adminSyncEventsQueryOptions(page, 50));
 
   const verifyMutation = useMutation({
-    mutationFn: verifySyncEvent,
+    mutationFn: (eventId: string) => verifySyncEvent({ data: { eventId } }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["sync"] });
     },

@@ -1,6 +1,9 @@
 import { isAdminUser, useViewer } from "@/data-access-layer/auth/viewer";
-import { fetchMySyncEvents, withdrawMySyncEvent } from "@/services/sync/sync.api";
-import { fetchMyWaitlist, removeMyWaitlist } from "@/services/waitlist/waitlist.api";
+import { removeMyWaitlist, waitListQueryOptions } from "@/data-access-layer/dashboard/waitlist";
+import {
+  mySyncEventsQueryOptions,
+  withdrawMySyncEvent,
+} from "@/data-access-layer/sync/sync.functions";
 import { formatDate } from "@/utils/date";
 import { AppConfig } from "@/utils/system";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -19,21 +22,15 @@ function AccountPage() {
   const user = viewer.user;
   const qc = useQueryClient();
 
-  const waitlistQuery = useQuery({
-    queryKey: ["waitlist", "me"],
-    queryFn: fetchMyWaitlist,
-  });
+  const waitlistQuery = useQuery(waitListQueryOptions);
 
-  const contributionsQuery = useQuery({
-    queryKey: ["sync", "mine"],
-    queryFn: () => fetchMySyncEvents(50),
-  });
+  const contributionsQuery = useQuery(mySyncEventsQueryOptions(50));
 
   const removeWaitlistMutation = useMutation({
-    mutationFn: removeMyWaitlist,
+    mutationFn: () => removeMyWaitlist(),
     onSuccess: async () => {
       toast.success("Removed from waitlist");
-      await qc.invalidateQueries({ queryKey: ["waitlist", "me"] });
+      await qc.invalidateQueries({ queryKey: waitListQueryOptions.queryKey });
     },
     onError: (error) => {
       toast.error("Could not remove waitlist email", {
@@ -43,7 +40,7 @@ function AccountPage() {
   });
 
   const withdrawMutation = useMutation({
-    mutationFn: withdrawMySyncEvent,
+    mutationFn: (eventId: string) => withdrawMySyncEvent({ data: { eventId } }),
     onSuccess: async () => {
       toast.success("Contribution withdrawn");
       await qc.invalidateQueries({ queryKey: ["sync", "mine"] });
@@ -59,7 +56,8 @@ function AccountPage() {
     return null;
   }
 
-  const waitlistEntry = waitlistQuery.data?.entry ?? null;
+  const waitlistEntry = waitlistQuery.data?.data ?? null;
+  const waitlistError = waitlistQuery.data?.error;
   const contributions = contributionsQuery.data?.events ?? [];
   const pendingCount = contributions.filter((event) => !event.verified).length;
   const verifiedCount = contributions.filter((event) => event.verified).length;
@@ -140,12 +138,13 @@ function AccountPage() {
 
         {waitlistQuery.isLoading ? (
           <div className="mt-6 h-16 skeleton rounded-xl" />
-        ) : waitlistQuery.isError ? (
+        ) : waitlistQuery.isError || waitlistError ? (
           <div className="mt-6 alert alert-error">
             <span>
-              {waitlistQuery.error instanceof Error
-                ? waitlistQuery.error.message
-                : "Failed to load waitlist"}
+              {waitlistError?.message ??
+                (waitlistQuery.error instanceof Error
+                  ? waitlistQuery.error.message
+                  : "Failed to load waitlist")}
             </span>
           </div>
         ) : waitlistEntry ? (

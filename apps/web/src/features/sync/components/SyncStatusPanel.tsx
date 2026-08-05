@@ -1,13 +1,10 @@
-import { fetchUpstreamSyncEventsPreview } from "@/services/sync/sync.api";
+import { syncStatusQueryOptions } from "@/data-access-layer/sync/sync.functions";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { RefreshCw } from "lucide-react";
 
 export function SyncStatusPanel() {
-  const { data, isLoading, error, refetch, isFetching } = useQuery({
-    queryKey: ["sync", "status"],
-    queryFn: () => fetchUpstreamSyncEventsPreview(null, 1, 25),
-  });
+  const { data, isLoading, error, refetch, isFetching } = useQuery(syncStatusQueryOptions);
 
   const unverifiedCount = data?.events.filter((event) => !event.verified).length ?? 0;
   const verifiedCount = data?.events.filter((event) => event.verified).length ?? 0;

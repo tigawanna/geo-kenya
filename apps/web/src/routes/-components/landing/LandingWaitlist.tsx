@@ -1,7 +1,7 @@
 import { FlagHairline, FlagMark } from "@/components/ui/flag-accents";
 import { Reveal } from "@/components/ui/reveal";
 import { landingWaitlist } from "@/content/landing";
-import { joinWaitlist } from "@/services/waitlist/waitlist.api";
+import { joinWaitlist } from "@/data-access-layer/dashboard/waitlist";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
@@ -22,7 +22,8 @@ export function LandingWaitlist() {
   });
 
   const mutation = useMutation({
-    mutationFn: (values: WaitlistValues) => joinWaitlist(values.email, "landing"),
+    mutationFn: (values: WaitlistValues) =>
+      joinWaitlist({ data: { email: values.email, source: "landing" } }),
     onError: (error: unknown) => {
       toast.error("Could not join waitlist", {
         description: error instanceof Error ? error.message : "Try again in a moment.",
