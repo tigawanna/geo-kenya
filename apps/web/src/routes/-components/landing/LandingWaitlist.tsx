@@ -45,7 +45,7 @@ export function LandingWaitlist() {
           <h2 className="font-display text-[clamp(2rem,5vw,3.25rem)] leading-[1.05] tracking-[-0.02em] text-balance text-base-content">
             Join the testing <span className="text-flag-green">waitlist</span>
           </h2>
-          <p className="mx-auto mt-5 max-w-[30rem] text-pretty text-muted-foreground">
+          <p className="mx-auto mt-5 max-w-120 text-pretty text-muted-foreground">
             {landingWaitlist.description}
           </p>
 

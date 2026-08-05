@@ -15,7 +15,7 @@ export function LandingFeatures() {
           <h2 className="font-display text-[clamp(2rem,5vw,3.25rem)] leading-[1.05] tracking-[-0.02em] text-balance text-base-content">
             {landingCapabilities.heading}
           </h2>
-          <p className="mx-auto mt-5 max-w-[36rem] text-pretty text-muted-foreground">
+          <p className="mx-auto mt-5 max-w-xl text-pretty text-muted-foreground">
             {landingCapabilities.description}
           </p>
         </Reveal>
@@ -46,7 +46,7 @@ export function LandingFeatures() {
                       {step.title}
                     </h3>
                   </div>
-                  <p className="max-w-[40rem] text-[15px] leading-relaxed text-muted-foreground">
+                  <p className="max-w-160 text-[15px] leading-relaxed text-muted-foreground">
                     {step.description}
                   </p>
                 </div>

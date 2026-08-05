@@ -17,4 +17,15 @@
       "migrations_dir": "drizzle",
     },
   ],
+  // Non-secret defaults for local/typegen. Override locally via .dev.vars;
+  // production secrets are set with `wrangler secret put` (same names).
+  "vars": {
+    "BETTER_AUTH_URL": "http://localhost:3070",
+    "CORS_ORIGINS": "http://localhost:3070",
+    "ADMIN_EMAIL": "",
+    "BETTER_AUTH_SECRET": "",
+    "SYNC_API_SECRET": "",
+    "GOOGLE_CLIENT_ID": "",
+    "GOOGLE_CLIENT_SECRET": "",
+  },
 }

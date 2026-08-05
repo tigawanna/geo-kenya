@@ -28,7 +28,7 @@ export function LandingNavbar() {
   return (
     <header className="sticky top-0 z-50 bg-base-100/85 backdrop-blur-md">
       <FlagHairline />
-      <div className="mx-auto flex h-[4.75rem] max-w-6xl items-center justify-between border-b border-border/40 px-6 md:px-10">
+      <div className="mx-auto flex h-19 max-w-6xl items-center justify-between border-b border-border/40 px-6 md:px-10">
         <Link to="/" className="flex items-center gap-2.5">
           <Icon className="size-4 text-flag-green" />
           <span className="text-[15px] font-medium tracking-tight text-base-content">
