@@ -1,4 +1,4 @@
-import { deleteMyAccount } from "@/data-access-layer/auth/auth.functions";
+import { deleteMyAccount } from "@/data-access-layer/auth/account.functions";
 import { isAdminUser, useViewer, viewerqueryOptions } from "@/data-access-layer/auth/viewer";
 import { removeMyWaitlist, waitListQueryOptions } from "@/data-access-layer/dashboard/waitlist";
 import {
