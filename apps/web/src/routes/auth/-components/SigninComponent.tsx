@@ -1,6 +1,5 @@
 import { viewerqueryOptions } from "@/data-access-layer/auth/viewer";
 import { authClient } from "@/lib/better-auth/client";
-import { clientEnv } from "@/lib/client-env";
 import { AppConfig } from "@/utils/system";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -58,7 +57,7 @@ export function SigninComponent() {
     mutationFn: async () => {
       await authClient.signIn.social({
         provider: "google",
-        callbackURL: `${clientEnv.VITE_API_URL}${returnTo || "/dashboard"}`,
+        callbackURL: returnTo || "/dashboard",
       });
     },
     onError: (error: unknown) => {

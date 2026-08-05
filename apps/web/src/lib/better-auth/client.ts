@@ -1,9 +1,10 @@
 import { adminClient } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
-import { clientEnv } from "../client-env";
+import { getApiOrigin } from "../client-env";
 
 export const authClient = createAuthClient({
-  baseURL: clientEnv.VITE_API_URL,
+  // Browser: live origin. SSR/build: VITE_API_URL / local default.
+  baseURL: getApiOrigin(),
   basePath: "/api/auth",
   plugins: [adminClient()],
 });
