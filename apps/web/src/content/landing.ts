@@ -14,7 +14,7 @@ export const landingHero = {
   title: "Know your ward, constituency, and county.",
   description:
     "Most of us know our county, but few can name the ward or constituency we live in. GeoKenya is a simple, offline-first way to look up exactly where you are.",
-  primaryCta: "Join the waitlist",
+  primaryCta: "Get started",
   secondaryCta: "See how it works",
 } as const;
 
