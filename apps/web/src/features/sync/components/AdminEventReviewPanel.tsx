@@ -4,6 +4,7 @@ import {
   verifySyncEvent,
 } from "@/services/sync/sync.api";
 import type { SyncEventRecord } from "@/types/sync";
+import { formatDate } from "@/utils/date";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
@@ -107,7 +108,9 @@ function EventRow({
 
   return (
     <tr>
-      <td className="font-mono text-xs whitespace-nowrap">{formatDate(event.createdAt)}</td>
+      <td className="font-mono text-xs whitespace-nowrap">
+        {formatDate(event.createdAt, "datetime")}
+      </td>
       <td className="max-w-32 truncate font-mono text-xs">{event.deviceId}</td>
       <td className="font-mono text-xs">{event.tableName}</td>
       <td className="font-mono text-xs">{event.action}</td>
@@ -141,10 +144,4 @@ function EventRow({
       </td>
     </tr>
   );
-}
-
-function formatDate(value: string) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-  return date.toLocaleString();
 }

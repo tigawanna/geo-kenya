@@ -1,6 +1,7 @@
 import { isAdminUser, useViewer } from "@/data-access-layer/auth/viewer";
 import { fetchMySyncEvents, withdrawMySyncEvent } from "@/services/sync/sync.api";
 import { fetchMyWaitlist, removeMyWaitlist } from "@/services/waitlist/waitlist.api";
+import { formatDate } from "@/utils/date";
 import { AppConfig } from "@/utils/system";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -12,17 +13,6 @@ export const Route = createFileRoute("/_dashboard/account/")({
     meta: [{ title: `${AppConfig.name} | Account` }],
   }),
 });
-
-function formatDate(value: string | Date | number | null | undefined): string {
-  if (value == null) return "—";
-  const date = value instanceof Date ? value : new Date(value);
-  if (Number.isNaN(date.getTime())) return "—";
-  return date.toLocaleDateString(undefined, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-}
 
 function AccountPage() {
   const { viewer } = useViewer();

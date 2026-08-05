@@ -1,6 +1,7 @@
 import { FlagMark } from "@/components/ui/flag-accents";
 import { useViewer } from "@/data-access-layer/auth/viewer";
 import { waitListQueryOptions } from "@/data-access-layer/dashboard/waitlist";
+import { formatDate } from "@/utils/date";
 import { AppConfig } from "@/utils/system";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -184,15 +185,4 @@ function HubCard({
       </div>
     </div>
   );
-}
-
-function formatDate(value: string | Date | number | null | undefined): string {
-  if (value == null) return "—";
-  const date = value instanceof Date ? value : new Date(value);
-  if (Number.isNaN(date.getTime())) return "—";
-  return date.toLocaleDateString(undefined, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
 }
