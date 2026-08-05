@@ -45,16 +45,23 @@ Set `EXPO_PUBLIC_WEB_URL` and `EXPO_PUBLIC_SYNC_API_URL` in `apps/mobile/.env` t
 ### Deploy web to Cloudflare
 
 ```bash
-cp apps/web/.dev.vars.example apps/web/.dev.vars   # local dev
-wrangler d1 create geo-kenya-db                    # once — update database_id in apps/web/wrangler.jsonc
-pnpm --filter web db:migrate:local                 # local
-pnpm --filter web db:migrate:remote                # production D1
+# once — create D1 and put the database_id into apps/web/wrangler.jsonc
+wrangler d1 create geo-kenya-db
+pnpm --filter web db:migrate:remote
+pnpm --filter web secrets:auth
+pnpm --filter web secrets:sync
+
+# deploy (builds then wrangler deploy with dist/server/wrangler.json)
 pnpm deploy:web
 ```
 
-Set production secrets: `pnpm --filter web secrets:auth` and `pnpm --filter web secrets:sync`.
-Update `BETTER_AUTH_URL` and `CORS_ORIGINS` in Cloudflare to your deployed worker URL.
-   
+For Cloudflare Workers Builds (dashboard), do **not** run `npx wrangler deploy` from the monorepo root. Use:
+
+- **Build command:** `pnpm --filter web build`
+- **Deploy command:** `pnpm --filter web exec wrangler deploy --config dist/server/wrangler.json`
+
+Set production secrets and update `BETTER_AUTH_URL` / `CORS_ORIGINS` (and build-time `VITE_API_URL`) to your worker URL.
+
 ## Building the Application
 
 **Important**: This application requires a native build due to its custom Expo modules and SQLite with Spatialite extensions. The development server alone will not provide full functionality.
