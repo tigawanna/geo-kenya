@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useRouter } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
+import { FaGoogle } from "react-icons/fa";
 import { toast } from "sonner";
 import { z } from "zod";
 import { Route } from "../signup";
@@ -126,6 +127,7 @@ export function SignupComponent() {
               disabled={googleMutation.isPending || mutation.isPending}
               onClick={() => googleMutation.mutate()}
             >
+              <FaGoogle />
               Continue with Google
             </button>
           </>

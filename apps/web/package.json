@@ -10,6 +10,7 @@
     "deploy:remote-db": "wrangler d1 migrations apply geo-kenya-db --remote",
     "check-types": "tsgo --noEmit",
     "cf:typegen": "wrangler types --env-interface CloudflareBindings",
+    "auth:generate": "better-auth generate --config ./better-auth.config.ts --output ./src/lib/drizzle/schema/auth-schema.ts -y",
     "db:generate": "drizzle-kit generate",
     "db:studio": "DATABASE_URL=\"file:$(find .wrangler/state/v3/d1 -name '*.sqlite' ! -name metadata.sqlite 2>/dev/null | head -1)\" drizzle-kit studio --port ${DRIZZLE_STUDIO_PORT:-4983}",
     "db:migrate:local": "wrangler d1 migrations apply geo-kenya-db --local",
@@ -39,12 +40,14 @@
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "react-hook-form": "^7.78.0",
+    "react-icons": "^5.7.0",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.4.0",
     "tailwindcss": "^4.3.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@better-auth/cli": "1.4.20",
     "@cloudflare/workers-types": "^4.20260408.1",
     "@tanstack/devtools-vite": "^0.7.0",
     "@tanstack/react-devtools": "^0.10.5",
