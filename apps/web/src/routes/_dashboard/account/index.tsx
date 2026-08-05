@@ -1,13 +1,15 @@
-import { isAdminUser, useViewer } from "@/data-access-layer/auth/viewer";
+import { deleteMyAccount } from "@/data-access-layer/auth/auth.functions";
+import { isAdminUser, useViewer, viewerqueryOptions } from "@/data-access-layer/auth/viewer";
 import { removeMyWaitlist, waitListQueryOptions } from "@/data-access-layer/dashboard/waitlist";
 import {
   mySyncEventsQueryOptions,
   withdrawMySyncEvent,
 } from "@/data-access-layer/sync/sync.functions";
+import { authClient } from "@/lib/better-auth/client";
 import { formatDate } from "@/utils/date";
 import { AppConfig } from "@/utils/system";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_dashboard/account/")({
@@ -21,6 +23,7 @@ function AccountPage() {
   const { viewer } = useViewer();
   const user = viewer.user;
   const qc = useQueryClient();
+  const router = useRouter();
 
   const waitlistQuery = useQuery(waitListQueryOptions);
 
@@ -47,6 +50,26 @@ function AccountPage() {
     },
     onError: (error) => {
       toast.error("Could not withdraw contribution", {
+        description: error instanceof Error ? error.message : undefined,
+      });
+    },
+  });
+
+  const deleteAccountMutation = useMutation({
+    mutationFn: () => deleteMyAccount(),
+    onSuccess: async () => {
+      toast.success("Account deleted");
+      try {
+        await authClient.signOut();
+      } catch {
+        // Session may already be gone after server-side deletion.
+      }
+      await qc.resetQueries({ queryKey: viewerqueryOptions.queryKey });
+      await router.invalidate();
+      void router.navigate({ to: "/" });
+    },
+    onError: (error) => {
+      toast.error("Could not delete account", {
         description: error instanceof Error ? error.message : undefined,
       });
     },
@@ -248,28 +271,50 @@ function AccountPage() {
       </div>
 
       <div className="rounded-2xl border border-base-content/10 bg-base-100/70 p-6">
-        <p className="font-mono text-xs tracking-wide text-base-content/60 uppercase">
-          Data & privacy
-        </p>
-        <h2 className="mt-2 text-lg font-semibold tracking-tight">How deletion works</h2>
-        <ul className="mt-4 list-disc space-y-2 pl-5 text-sm text-base-content/70">
-          <li>
-            On-device app data is cleared by uninstalling GeoKenya or clearing app storage on your
-            phone.
-          </li>
-          <li>Waitlist email can be removed above when it matches this account.</li>
-          <li>
-            Pending contributions can be withdrawn above. Verified contributions stay in the shared
-            geographic dataset.
-          </li>
-          <li>
-            To delete this web account entirely, email{" "}
-            <a href={AppConfig.links.mail} className="text-flag-green hover:underline">
-              denniskinuthiawaweru@gmail.com
-            </a>{" "}
-            from the same address.
-          </li>
-        </ul>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <p className="font-mono text-xs tracking-wide text-base-content/60 uppercase">
+              Data & privacy
+            </p>
+            <h2 className="mt-2 text-lg font-semibold tracking-tight">How deletion works</h2>
+            <ul className="mt-4 list-disc space-y-2 pl-5 text-sm text-base-content/70">
+              <li>
+                On-device app data is cleared by uninstalling GeoKenya or clearing app storage on
+                your phone.
+              </li>
+              <li>Waitlist email can be removed above when it matches this account.</li>
+              <li>
+                Pending contributions can be withdrawn above. Verified contributions stay in the
+                shared geographic dataset.
+              </li>
+              <li>
+                Deleting this web account removes your profile, sessions, and credentials. Your
+                email is retained only as a record of the deletion and to block re-registration
+                abuse.
+              </li>
+            </ul>
+          </div>
+          <button
+            type="button"
+            className="btn border-flag-red/45 btn-outline btn-sm hover:bg-flag-red-soft"
+            disabled={deleteAccountMutation.isPending}
+            onClick={() => {
+              if (
+                !window.confirm(
+                  "Delete your GeoKenya account? This removes your profile and sign-in. Pending contributions are withdrawn; verified ones stay in the shared dataset. Your email is kept only to prevent re-registration abuse.",
+                )
+              ) {
+                return;
+              }
+              if (!window.confirm(`Permanently delete the account for ${user.email}?`)) {
+                return;
+              }
+              deleteAccountMutation.mutate();
+            }}
+          >
+            {deleteAccountMutation.isPending ? "Deleting…" : "Delete account"}
+          </button>
+        </div>
         <div className="mt-5 flex flex-wrap gap-2">
           <Link to="/privacy" className="btn btn-ghost btn-sm">
             Privacy

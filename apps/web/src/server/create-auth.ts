@@ -1,6 +1,8 @@
 import { createDb } from "@/db/d1";
 import * as authSchema from "@/lib/drizzle/schema/auth-schema";
+import { deletedAccounts } from "@/lib/drizzle/schema/deleted-accounts-schema";
 import { user as userTable } from "@/lib/drizzle/schema/auth-schema";
+import { APIError } from "better-auth/api";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { admin } from "better-auth/plugins/admin";
@@ -33,22 +35,32 @@ export function createAuth(env: CloudflareBindings) {
           },
         }
       : undefined,
-    databaseHooks: env.ADMIN_EMAIL
-      ? {
-          user: {
-            create: {
-              after: async (createdUser) => {
-                if (createdUser.email === env.ADMIN_EMAIL) {
-                  await db
-                    .update(userTable)
-                    .set({ role: "admin" })
-                    .where(eq(userTable.id, createdUser.id));
-                }
-              },
-            },
+    databaseHooks: {
+      user: {
+        create: {
+          before: async (createdUser) => {
+            const email = createdUser.email.trim().toLowerCase();
+            const priorDeletion = await db.query.deletedAccounts.findFirst({
+              where: eq(deletedAccounts.email, email),
+            });
+            if (priorDeletion) {
+              throw new APIError("FORBIDDEN", {
+                message:
+                  "This email was used for an account that was deleted and cannot be registered again.",
+              });
+            }
           },
-        }
-      : undefined,
+          after: async (createdUser) => {
+            if (env.ADMIN_EMAIL && createdUser.email === env.ADMIN_EMAIL) {
+              await db
+                .update(userTable)
+                .set({ role: "admin" })
+                .where(eq(userTable.id, createdUser.id));
+            }
+          },
+        },
+      },
+    },
     plugins: [admin(), tanstackStartCookies()],
   });
 }

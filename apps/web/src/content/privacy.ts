@@ -1,6 +1,6 @@
 export const privacyPolicy = {
   title: "Privacy Policy",
-  lastUpdated: "August 1, 2026",
+  lastUpdated: "August 5, 2026",
   intro:
     "GeoKenya is built offline-first. Most of what you do stays on your phone. This policy explains what little data we process when you use the app, optional sync, crash reporting, or the website waitlist.",
   sections: [
@@ -46,7 +46,7 @@ export const privacyPolicy = {
     },
     {
       heading: "Data retention and deletion",
-      body: "On-device data remains until you clear app storage or uninstall. Waitlist emails are retained until you remove them from Account (when signed in with the same email) or ask to be removed, or until the testing program ends. Crash reports follow Firebase retention defaults. Pending contributions can be withdrawn from Account; verified sync data stays in the shared dataset.",
+      body: "On-device data remains until you clear app storage or uninstall. Waitlist emails are retained until you remove them from Account (when signed in with the same email) or ask to be removed, or until the testing program ends. After you delete a web account, we retain the email only as a deletion record and to block re-registration abuse. Crash reports follow Firebase retention defaults. Pending contributions can be withdrawn from Account; verified sync data stays in the shared dataset.",
     },
     {
       heading: "Third-party services",
@@ -58,7 +58,7 @@ export const privacyPolicy = {
     },
     {
       heading: "Your choices",
-      body: "You can use the app fully offline, revoke location permission, decline optional sync, remove your waitlist email from Account when signed in, or email denniskinuthiawaweru@gmail.com for waitlist removal and account deletion requests.",
+      body: "You can use the app fully offline, revoke location permission, decline optional sync, remove your waitlist email from Account when signed in, delete your web account from Account, or email denniskinuthiawaweru@gmail.com for waitlist removal if you cannot sign in.",
     },
     {
       heading: "Changes",

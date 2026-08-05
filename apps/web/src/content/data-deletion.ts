@@ -1,8 +1,8 @@
 export const dataDeletionPolicy = {
   title: "Data Deletion",
-  lastUpdated: "August 2, 2026",
+  lastUpdated: "August 5, 2026",
   intro:
-    "Google Play and good practice both expect a clear way to request deletion of account and personal data. Here is how GeoKenya handles that.",
+    "Google Play and good practice both expect a clear way to delete account and personal data. Here is how GeoKenya handles that.",
   sections: [
     {
       heading: "On-device app data",
@@ -14,7 +14,7 @@ export const dataDeletionPolicy = {
     },
     {
       heading: "Dashboard account",
-      body: "Sign in and open Account to review your profile and self-serve waitlist/contribution controls. To delete the web account itself, email denniskinuthiawaweru@gmail.com from the same address with subject “GeoKenya account deletion”. We will delete your account record and associated sessions. OAuth tokens stored for sign-in will also be removed.",
+      body: "Sign in and open Account to delete your web account. That removes your profile, sessions, and sign-in credentials. Your email address is retained only as a record that the account was deleted and to prevent re-registration abuse with the same address. OAuth tokens stored for sign-in are removed.",
     },
     {
       heading: "Synced contributions",
@@ -26,7 +26,7 @@ export const dataDeletionPolicy = {
     },
     {
       heading: "What we need from you",
-      body: "For email requests, include the address tied to your waitlist signup or account, and whether you want waitlist removal, account deletion, or both. We aim to complete verified requests within 30 days.",
+      body: "Prefer self-serve controls on Account when you are signed in. For email requests (for example waitlist removal without an account), include the address tied to your waitlist signup and what you want removed. We aim to complete verified email requests within 30 days.",
     },
     {
       heading: "Contact",
