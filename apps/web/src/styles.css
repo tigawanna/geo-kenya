@@ -282,7 +282,13 @@
   --color-sidebar-accent-foreground: var(--color-sidebar-foreground);
   --color-sidebar-border: color-mix(in oklch, var(--color-base-content) 20%, transparent);
   --color-sidebar-ring: var(--color-neutral);
+  --color-muted: var(--color-base-300);
   --color-muted-foreground: color-mix(in oklch, var(--color-base-content) 65%, transparent);
   --color-border: color-mix(in oklch, var(--color-base-content) 15%, transparent);
   --color-card: var(--color-base-200);
+  --color-popover: var(--color-base-100);
+  --color-popover-foreground: var(--color-base-content);
+  --color-accent-foreground: var(--color-accent-content);
+  --color-destructive: var(--color-error);
+  --color-destructive-foreground: var(--color-error-content);
 }

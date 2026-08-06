@@ -114,6 +114,19 @@ function AccountPage() {
                 Member
               </span>
             )}
+            {user.emailVerified ? (
+              <span className="rounded-md bg-flag-green-soft px-2.5 py-1 text-xs font-medium text-flag-green">
+                Email verified
+              </span>
+            ) : (
+              <Link
+                to="/auth/verify-email"
+                search={{ returnTo: "/account" }}
+                className="rounded-md bg-flag-red-soft px-2.5 py-1 text-xs font-medium text-flag-red hover:underline"
+              >
+                Email not verified
+              </Link>
+            )}
           </div>
         </div>
         <dl className="mt-6 grid gap-4 sm:grid-cols-2">
@@ -122,8 +135,23 @@ function AccountPage() {
             <dd className="mt-1 text-sm">{formatDate(user.createdAt)}</dd>
           </div>
           <div>
-            <dt className="text-xs text-base-content/60">Email verified</dt>
-            <dd className="mt-1 text-sm">{user.emailVerified ? "Yes" : "Not yet"}</dd>
+            <dt className="text-xs text-base-content/60">Email status</dt>
+            <dd className="mt-1 text-sm">
+              {user.emailVerified ? (
+                "Verified"
+              ) : (
+                <>
+                  Not verified ·{" "}
+                  <Link
+                    to="/auth/verify-email"
+                    search={{ returnTo: "/account" }}
+                    className="text-flag-green hover:underline"
+                  >
+                    Verify now
+                  </Link>
+                </>
+              )}
+            </dd>
           </div>
         </dl>
       </div>

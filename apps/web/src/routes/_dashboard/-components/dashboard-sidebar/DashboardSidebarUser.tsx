@@ -14,7 +14,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { useViewer } from "@/data-access-layer/auth/viewer";
-import { useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { ChevronsUpDown, LogOut } from "lucide-react";
 
 export function DashboardSidebarUser() {
@@ -44,17 +44,17 @@ export function DashboardSidebarUser() {
               </Avatar>
               {isExpanded ? (
                 <>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
+                  <div className="grid min-w-0 flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-medium">{viewer.user.name}</span>
                     <span className="truncate text-xs">{viewer.user.email}</span>
                   </div>
-                  <ChevronsUpDown className="ml-auto size-4" />
+                  <ChevronsUpDown className="ml-auto size-4 shrink-0" />
                 </>
               ) : null}
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+            className="min-w-56 rounded-lg border border-base-content/10 bg-base-100 text-base-content shadow-lg"
             side={isMobile ? "bottom" : "right"}
             align="end"
             sideOffset={4}
@@ -67,14 +67,31 @@ export function DashboardSidebarUser() {
                     {viewer.user.name?.slice(0, 2) ?? "KT"}
                   </AvatarFallback>
                 </Avatar>
-                <div className="grid flex-1 text-left text-sm leading-tight">
+                <div className="grid min-w-0 flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{viewer.user.name}</span>
-                  <span className="truncate text-xs">{viewer.user.email}</span>
+                  <span className="truncate text-xs text-base-content/60">{viewer.user.email}</span>
+                  <span
+                    className={
+                      viewer.user.emailVerified
+                        ? "mt-0.5 text-[11px] text-flag-green"
+                        : "mt-0.5 text-[11px] text-flag-red"
+                    }
+                  >
+                    {viewer.user.emailVerified ? "Email verified" : "Email not verified"}
+                  </span>
                 </div>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Link to="/privacy">Privacy</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link to="/terms">Terms</Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
             <DropdownMenuItem
+              variant="destructive"
               onClick={() => {
                 logoutMutation.mutate();
                 void navigate({ to: "/auth", search: { returnTo: "/" } });
