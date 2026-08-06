@@ -2,7 +2,7 @@ import { getSession } from "@/data-access-layer/auth/auth.functions";
 import { getAuth } from "@/lib/auth";
 import { authClient, type BetterAuthSession } from "@/lib/better-auth/client";
 import { queryOptions, useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
-import { redirect } from "@tanstack/react-router";
+import { redirect, useRouter } from "@tanstack/react-router";
 import { createMiddleware } from "@tanstack/react-start";
 
 type ViewerUser = BetterAuthSession["user"];
@@ -41,10 +41,12 @@ export const viewerqueryOptions = queryOptions({
 
 export function useViewer() {
   const qc = useQueryClient();
+  const router = useRouter();
   const logoutMutation = useMutation({
     mutationFn: async () => {
       await authClient.signOut();
       void qc.invalidateQueries(viewerqueryOptions);
+      await router.invalidate();
       throw redirect({ to: "/auth", search: { returnTo: "/" } });
     },
   });

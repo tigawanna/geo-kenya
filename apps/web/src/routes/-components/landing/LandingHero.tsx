@@ -1,8 +1,8 @@
 import { DotGridBackground } from "@/components/ui/dot-grid-background";
-import { FlagHairline, FlagMark, FlagPulseDot } from "@/components/ui/flag-accents";
+import { FlagHairline, FlagPulseDot } from "@/components/ui/flag-accents";
 import { SplitKenyaShieldEdges } from "@/components/ui/split-kenya-shield";
 import { landingHero } from "@/content/landing";
-import { Link } from "@tanstack/react-router";
+import { LandingHeroCtas } from "./LandingHeroCtas";
 
 const statsToneClass = {
   green: "text-flag-green",
@@ -55,15 +55,7 @@ export function LandingHero() {
           {landingHero.description}
         </p>
 
-        <div className="mt-10 animate-fade-up" style={{ animationDelay: "340ms" }}>
-          <Link
-            to="/dashboard"
-            className="inline-flex items-center gap-3 rounded-md bg-flag-green-solid px-5 py-3.5 text-[15px] font-semibold whitespace-nowrap text-flag-green-content shadow-[0_0_0_1px_rgba(255,255,255,0.06)] transition-opacity hover:opacity-90"
-          >
-            <span>{landingHero.primaryCta}</span>
-            <FlagMark />
-          </Link>
-        </div>
+        <LandingHeroCtas />
       </div>
     </section>
   );
