@@ -1,9 +1,11 @@
 import { viewerqueryOptions } from "@/data-access-layer/auth/viewer";
 import { authClient } from "@/lib/better-auth/client";
+import { firebaseClientConfigured, getFirebaseClientAuth } from "@/lib/firebase/client";
 import { AppConfig } from "@/utils/system";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useRouter } from "@tanstack/react-router";
+import { GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { useForm } from "react-hook-form";
 import { FaGoogle } from "react-icons/fa";
 import { toast } from "sonner";
@@ -17,7 +19,16 @@ const signinSchema = z.object({
 
 type SigninValues = z.infer<typeof signinSchema>;
 
-const googleEnabled = Boolean(import.meta.env.VITE_GOOGLE_AUTH_ENABLED);
+const googleEnabled = firebaseClientConfigured || Boolean(import.meta.env.VITE_GOOGLE_AUTH_ENABLED);
+
+function getErrorMessage(error: unknown) {
+  if (error && typeof error === "object" && "message" in error) {
+    const message = (error as { message?: unknown }).message;
+    if (typeof message === "string" && message.length > 0) return message;
+  }
+  if (error instanceof Error) return error.message;
+  return "Unknown error";
+}
 
 export function SigninComponent() {
   const qc = useQueryClient();
@@ -34,6 +45,18 @@ export function SigninComponent() {
 
   const mutation = useMutation({
     mutationFn: async (payload: SigninValues) => {
+      if (firebaseClientConfigured) {
+        const credential = await signInWithEmailAndPassword(
+          getFirebaseClientAuth(),
+          payload.email,
+          payload.password,
+        );
+        const idToken = await credential.user.getIdToken();
+        const { data, error } = await authClient.signInWithEmail({ idToken });
+        if (error) throw error;
+        return data;
+      }
+
       const { data, error } = await authClient.signIn.email({
         email: payload.email,
         password: payload.password,
@@ -43,7 +66,7 @@ export function SigninComponent() {
     },
     onError: (error: unknown) => {
       toast.error("Sign in failed", {
-        description: error instanceof Error ? error.message : "Unknown error",
+        description: getErrorMessage(error),
       });
     },
     onSuccess: async () => {
@@ -56,6 +79,14 @@ export function SigninComponent() {
 
   const googleMutation = useMutation({
     mutationFn: async () => {
+      if (firebaseClientConfigured) {
+        const result = await signInWithPopup(getFirebaseClientAuth(), new GoogleAuthProvider());
+        const idToken = await result.user.getIdToken();
+        const { data, error } = await authClient.signInWithGoogle({ idToken });
+        if (error) throw error;
+        return data;
+      }
+
       await authClient.signIn.social({
         provider: "google",
         callbackURL: returnTo || "/dashboard",
@@ -63,8 +94,15 @@ export function SigninComponent() {
     },
     onError: (error: unknown) => {
       toast.error("Google sign-in failed", {
-        description: error instanceof Error ? error.message : "Unknown error",
+        description: getErrorMessage(error),
       });
+    },
+    onSuccess: async () => {
+      if (!firebaseClientConfigured) return;
+      toast.success("Signed in");
+      await router.invalidate();
+      await qc.fetchQuery(viewerqueryOptions);
+      void router.navigate({ to: returnTo || "/dashboard" });
     },
   });
 

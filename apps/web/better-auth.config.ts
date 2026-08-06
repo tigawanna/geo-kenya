@@ -1,9 +1,11 @@
 import type { AppDatabase } from "./src/db/d1";
 import { createAuth } from "./src/lib/better-auth/auth";
+import { createFirebaseAuthPlugin } from "./src/lib/firebase/plugin";
 
 const baseURL = process.env.BETTER_AUTH_URL;
+const firebasePlugin = createFirebaseAuthPlugin(process.env);
 const google =
-  process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+  !firebasePlugin && process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
     ? {
         clientId: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -20,4 +22,5 @@ export const auth = createAuth({
   trustedOrigins: [baseURL],
   google,
   adminEmail: process.env.ADMIN_EMAIL ?? undefined,
+  plugins: firebasePlugin ? [firebasePlugin] : [],
 });

@@ -22,5 +22,7 @@
   "vars": {
     "BETTER_AUTH_URL": "https://geo-kenya.tigawanna.vip",
     "CORS_ORIGINS": "https://geo-kenya.tigawanna.vip",
+    // Optional: set locally via .dev.vars / .env for Firebase Auth bridge
+    // "FIREBASE_PROJECT_ID": "your-firebase-project-id",
   },
 }

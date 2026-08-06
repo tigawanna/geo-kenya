@@ -14,12 +14,23 @@ export default defineConfig({
   },
   ssr: {
     optimizeDeps: {
-      exclude: ["better-auth"],
+      exclude: ["better-auth", "firebase-admin"],
     },
   },
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
+      // Plugin imports firebase-admin, but Workers only need verifyIdToken (jose).
+      // Stub the Admin SDK so it never gets bundled into the worker.
+      "firebase-admin/auth": fileURLToPath(
+        new URL("./src/lib/firebase/firebase-admin-stub.ts", import.meta.url),
+      ),
+      "firebase-admin/app": fileURLToPath(
+        new URL("./src/lib/firebase/firebase-admin-stub.ts", import.meta.url),
+      ),
+      "firebase-admin": fileURLToPath(
+        new URL("./src/lib/firebase/firebase-admin-stub.ts", import.meta.url),
+      ),
     },
     tsconfigPaths: true,
   },
