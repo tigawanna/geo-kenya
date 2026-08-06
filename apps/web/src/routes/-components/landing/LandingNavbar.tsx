@@ -1,10 +1,11 @@
-import { FlagHairline, FlagMark } from "@/components/ui/flag-accents";
+import { FlagHairline } from "@/components/ui/flag-accents";
 import { landingNav } from "@/content/landing";
 import { useTheme } from "@/lib/tanstack/router/use-theme";
 import { AppConfig } from "@/utils/system";
 import { Link } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
+import { LandingNavCta } from "./LandingNavCta";
 
 export function LandingNavbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -57,13 +58,7 @@ export function LandingNavbar() {
           >
             {theme === "light" ? "Dark" : "Light"}
           </button>
-          <a
-            href="#waitlist"
-            className="inline-flex items-center gap-2 rounded-md border border-flag-green/35 bg-flag-green-soft px-3.5 py-2 text-[13px] font-medium whitespace-nowrap text-base-content transition-colors hover:border-flag-green/60"
-          >
-            <span>Join waitlist</span>
-            <FlagMark className="h-4 w-4" />
-          </a>
+          <LandingNavCta />
           <button
             type="button"
             onClick={() => setMobileOpen((v) => !v)}

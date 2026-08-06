@@ -26,6 +26,7 @@ import { Route as DashboardDashboardIndexRouteImport } from './routes/_dashboard
 import { Route as DashboardAccountIndexRouteImport } from './routes/_dashboard/account/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as DashboardAdminRouteRouteImport } from './routes/_dashboard/admin/route'
+import { Route as DashboardAdminReleasesIndexRouteImport } from './routes/_dashboard/admin/releases/index'
 import { Route as DashboardAdminEventsIndexRouteImport } from './routes/_dashboard/admin/events/index'
 
 const TermsRoute = TermsRouteImport.update({
@@ -112,6 +113,12 @@ const DashboardAdminRouteRoute = DashboardAdminRouteRouteImport.update({
   path: '/admin/route',
   getParentRoute: () => DashboardLayoutRoute,
 } as any)
+const DashboardAdminReleasesIndexRoute =
+  DashboardAdminReleasesIndexRouteImport.update({
+    id: '/admin/releases/',
+    path: '/admin/releases/',
+    getParentRoute: () => DashboardLayoutRoute,
+  } as any)
 const DashboardAdminEventsIndexRoute =
   DashboardAdminEventsIndexRouteImport.update({
     id: '/admin/events/',
@@ -137,6 +144,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/': typeof DashboardDashboardIndexRoute
   '/sync/': typeof DashboardSyncIndexRoute
   '/admin/events/': typeof DashboardAdminEventsIndexRoute
+  '/admin/releases/': typeof DashboardAdminReleasesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -155,6 +163,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardDashboardIndexRoute
   '/sync': typeof DashboardSyncIndexRoute
   '/admin/events': typeof DashboardAdminEventsIndexRoute
+  '/admin/releases': typeof DashboardAdminReleasesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -176,6 +185,7 @@ export interface FileRoutesById {
   '/_dashboard/dashboard/': typeof DashboardDashboardIndexRoute
   '/_dashboard/sync/': typeof DashboardSyncIndexRoute
   '/_dashboard/admin/events/': typeof DashboardAdminEventsIndexRoute
+  '/_dashboard/admin/releases/': typeof DashboardAdminReleasesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -197,6 +207,7 @@ export interface FileRouteTypes {
     | '/dashboard/'
     | '/sync/'
     | '/admin/events/'
+    | '/admin/releases/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -215,6 +226,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/sync'
     | '/admin/events'
+    | '/admin/releases'
   id:
     | '__root__'
     | '/'
@@ -235,6 +247,7 @@ export interface FileRouteTypes {
     | '/_dashboard/dashboard/'
     | '/_dashboard/sync/'
     | '/_dashboard/admin/events/'
+    | '/_dashboard/admin/releases/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -368,6 +381,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardAdminRouteRouteImport
       parentRoute: typeof DashboardLayoutRoute
     }
+    '/_dashboard/admin/releases/': {
+      id: '/_dashboard/admin/releases/'
+      path: '/admin/releases'
+      fullPath: '/admin/releases/'
+      preLoaderRoute: typeof DashboardAdminReleasesIndexRouteImport
+      parentRoute: typeof DashboardLayoutRoute
+    }
     '/_dashboard/admin/events/': {
       id: '/_dashboard/admin/events/'
       path: '/admin/events'
@@ -384,6 +404,7 @@ interface DashboardLayoutRouteChildren {
   DashboardDashboardIndexRoute: typeof DashboardDashboardIndexRoute
   DashboardSyncIndexRoute: typeof DashboardSyncIndexRoute
   DashboardAdminEventsIndexRoute: typeof DashboardAdminEventsIndexRoute
+  DashboardAdminReleasesIndexRoute: typeof DashboardAdminReleasesIndexRoute
 }
 
 const DashboardLayoutRouteChildren: DashboardLayoutRouteChildren = {
@@ -392,6 +413,7 @@ const DashboardLayoutRouteChildren: DashboardLayoutRouteChildren = {
   DashboardDashboardIndexRoute: DashboardDashboardIndexRoute,
   DashboardSyncIndexRoute: DashboardSyncIndexRoute,
   DashboardAdminEventsIndexRoute: DashboardAdminEventsIndexRoute,
+  DashboardAdminReleasesIndexRoute: DashboardAdminReleasesIndexRoute,
 }
 
 const DashboardLayoutRouteWithChildren = DashboardLayoutRoute._addFileChildren(

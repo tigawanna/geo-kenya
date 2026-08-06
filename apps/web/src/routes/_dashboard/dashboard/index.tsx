@@ -1,6 +1,12 @@
 import { FlagMark } from "@/components/ui/flag-accents";
 import { useViewer } from "@/data-access-layer/auth/viewer";
+import {
+  getLandingAccessMode,
+  publicReleasesQueryOptions,
+  type PublicReleaseState,
+} from "@/data-access-layer/dashboard/releases";
 import { type WaitlistEntry, waitListQueryOptions } from "@/data-access-layer/dashboard/waitlist";
+import { GetAppCard } from "@/features/releases/components/GetAppCard";
 import { formatDate } from "@/utils/date";
 import { AppConfig } from "@/utils/system";
 import { useSuspenseQuery } from "@tanstack/react-query";
@@ -13,6 +19,7 @@ export const Route = createFileRoute("/_dashboard/dashboard/")({
 function DashboardPage() {
   const { viewer } = useViewer();
   const { data: waitlist } = useSuspenseQuery(waitListQueryOptions);
+  const { data: releases } = useSuspenseQuery(publicReleasesQueryOptions);
   const user = viewer.user;
   const firstName = user?.name?.trim().split(/\s+/)[0] || "there";
 
@@ -23,13 +30,13 @@ function DashboardPage() {
         <h1 className="mt-2 text-2xl font-semibold tracking-tight">Welcome, {firstName}</h1>
         <p className="mt-2 max-w-2xl text-base-content/70">
           {user?.email
-            ? `Manage your ${AppConfig.name} account, waitlist, and contributions from here.`
+            ? `Manage your ${AppConfig.name} account and contributions from here.`
             : `Manage your ${AppConfig.name} account from here.`}
         </p>
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <WaitlistCard result={waitlist} />
+        <AccessHub waitlist={waitlist} releases={releases} />
         <HubCard
           eyebrow="Account"
           title="Profile & data"
@@ -52,6 +59,20 @@ function DashboardPage() {
 type WaitlistResult =
   | { data: WaitlistEntry | null | undefined; error: null }
   | { data: null; error: { message: string } };
+
+function AccessHub({
+  waitlist,
+  releases,
+}: {
+  waitlist: WaitlistResult;
+  releases: PublicReleaseState;
+}) {
+  if (getLandingAccessMode(releases) === "waitlist") {
+    return <WaitlistCard result={waitlist} />;
+  }
+
+  return <GetAppCard state={releases} />;
+}
 
 function WaitlistCard({ result }: { result: WaitlistResult }) {
   if (result.error) {

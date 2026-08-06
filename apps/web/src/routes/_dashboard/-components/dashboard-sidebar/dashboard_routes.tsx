@@ -1,5 +1,5 @@
 import type { SidebarItem } from "@/components/sidebar/types";
-import { ClipboardList, LayoutDashboard, RefreshCw, User } from "lucide-react";
+import { ClipboardList, LayoutDashboard, Package, RefreshCw, User } from "lucide-react";
 
 export const dashboard_account_routes = [
   { title: "Account", href: "/account", icon: User },
@@ -7,8 +7,8 @@ export const dashboard_account_routes = [
 
 export const dashboard_admin_routes = [
   { title: "Review events", href: "/admin/events", icon: ClipboardList },
+  { title: "Releases", href: "/admin/releases", icon: Package },
 ] satisfies SidebarItem[];
-
 export function getDashboardPrimaryRoutes(): SidebarItem[] {
   return [
     { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },

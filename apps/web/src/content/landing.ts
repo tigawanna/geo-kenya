@@ -1,12 +1,35 @@
 import { PencilLine, Search, Map, Users, WifiOff, Zap } from "lucide-react";
 
 export const landingNav = {
-  status: "Closed testing · join the waitlist",
   links: [
     { label: "How it works", href: "#capabilities" },
     { label: "Why GeoKenya", href: "#why" },
-    { label: "Waitlist", href: "#waitlist" },
   ],
+} as const;
+
+export const landingAccess = {
+  openTesting: {
+    eyebrow: "Open testing",
+    heading: "Try GeoKenya on Android",
+    description:
+      "Open testing is live on Google Play. Install the build and help us shake out the newest features.",
+    cta: "Join open testing",
+  },
+  production: {
+    eyebrow: "On Google Play",
+    heading: "Get the app",
+    description:
+      "GeoKenya is available on Google Play. Download the stable release and explore Kenya’s map.",
+    cta: "Download on Google Play",
+  },
+  openAndProduction: {
+    eyebrow: "Available now",
+    heading: "Pick your build",
+    description:
+      "Try the newest features in open testing, or install the stable production release from Google Play.",
+    openCta: "Try open testing",
+    productionCta: "Get production app",
+  },
 } as const;
 
 export const landingHero = {
@@ -101,6 +124,10 @@ export const landingCta = {
     "Join the waitlist for Android testing and be first in line when internal or open rounds open.",
   primaryCta: "Join the waitlist",
   secondaryCta: "See how it works",
+  openTestingCta: "Try open testing",
+  productionCta: "Get the app",
+  dualDescription:
+    "Open testing has the newest builds. Production is the stable release on Google Play.",
 } as const;
 
 export const landingFooter = {

@@ -1,17 +1,22 @@
 import { deleteMyAccount } from "@/data-access-layer/auth/account.functions";
 import { isAdminUser, useViewer, viewerqueryOptions } from "@/data-access-layer/auth/viewer";
+import {
+  getLandingAccessMode,
+  publicReleasesQueryOptions,
+} from "@/data-access-layer/dashboard/releases";
 import { removeMyWaitlist, waitListQueryOptions } from "@/data-access-layer/dashboard/waitlist";
 import {
   mySyncEventsQueryOptions,
   withdrawMySyncEvent,
 } from "@/data-access-layer/sync/sync.functions";
+import { ConfirmAction } from "@/components/ui/confirm-action";
+import { GetAppCard } from "@/features/releases/components/GetAppCard";
 import { authClient } from "@/lib/better-auth/client";
 import { formatDate } from "@/utils/date";
 import { AppConfig } from "@/utils/system";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
-
 export const Route = createFileRoute("/_dashboard/account/")({
   component: AccountPage,
   head: () => ({
@@ -26,6 +31,7 @@ function AccountPage() {
   const router = useRouter();
 
   const waitlistQuery = useQuery(waitListQueryOptions);
+  const releasesQuery = useQuery(publicReleasesQueryOptions);
 
   const contributionsQuery = useQuery(mySyncEventsQueryOptions(50));
 
@@ -81,6 +87,9 @@ function AccountPage() {
 
   const waitlistEntry = waitlistQuery.data?.data ?? null;
   const waitlistError = waitlistQuery.data?.error;
+  const releases = releasesQuery.data;
+  const accessMode = releases ? getLandingAccessMode(releases) : "waitlist";
+  const showWaitlistSection = accessMode === "waitlist" || Boolean(waitlistEntry);
   const contributions = contributionsQuery.data?.events ?? [];
   const pendingCount = contributions.filter((event) => !event.verified).length;
   const verifiedCount = contributions.filter((event) => event.verified).length;
@@ -90,8 +99,8 @@ function AccountPage() {
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Account</h1>
         <p className="mt-2 max-w-2xl text-base-content/70">
-          Your profile, waitlist status, and synced contributions. Pending contributions can be
-          withdrawn before review; verified ones stay in the shared dataset.
+          Your profile, app access, and synced contributions. Pending contributions can be withdrawn
+          before review; verified ones stay in the shared dataset.
         </p>
       </div>
 
@@ -156,73 +165,78 @@ function AccountPage() {
         </dl>
       </div>
 
-      <div className="rounded-2xl border border-base-content/10 bg-base-100/70 p-6">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <p className="font-mono text-xs tracking-wide text-base-content/60 uppercase">
-              Waitlist
-            </p>
-            <h2 className="mt-2 text-lg font-semibold tracking-tight">Testing waitlist</h2>
-            <p className="mt-1 max-w-xl text-sm text-base-content/70">
-              If you joined with this account email, you can remove it here anytime.
-            </p>
-          </div>
-          {waitlistEntry ? (
-            <button
-              type="button"
-              className="btn border-flag-red/45 btn-outline btn-sm hover:bg-flag-red-soft"
-              disabled={removeWaitlistMutation.isPending}
-              onClick={() => {
-                if (
-                  window.confirm(
-                    `Remove ${waitlistEntry.email} from the GeoKenya testing waitlist?`,
-                  )
-                ) {
-                  removeWaitlistMutation.mutate();
-                }
-              }}
-            >
-              {removeWaitlistMutation.isPending ? "Removing…" : "Remove from waitlist"}
-            </button>
-          ) : null}
-        </div>
+      {releases && accessMode !== "waitlist" ? <GetAppCard state={releases} /> : null}
 
-        {waitlistQuery.isLoading ? (
-          <div className="mt-6 h-16 skeleton rounded-xl" />
-        ) : waitlistQuery.isError || waitlistError ? (
-          <div className="mt-6 alert alert-error">
-            <span>
-              {waitlistError?.message ??
-                (waitlistQuery.error instanceof Error
-                  ? waitlistQuery.error.message
-                  : "Failed to load waitlist")}
-            </span>
+      {showWaitlistSection ? (
+        <div className="rounded-2xl border border-base-content/10 bg-base-100/70 p-6">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <p className="font-mono text-xs tracking-wide text-base-content/60 uppercase">
+                Waitlist
+              </p>
+              <h2 className="mt-2 text-lg font-semibold tracking-tight">Testing waitlist</h2>
+              <p className="mt-1 max-w-xl text-sm text-base-content/70">
+                {accessMode === "waitlist"
+                  ? "If you joined with this account email, you can remove it here anytime."
+                  : "You still have a waitlist entry from closed testing. You can remove it if you no longer need it."}
+              </p>
+            </div>
+            {waitlistEntry ? (
+              <ConfirmAction
+                title="Remove from waitlist"
+                description={`Remove ${waitlistEntry.email} from the GeoKenya testing waitlist?`}
+                confirmLabel="Remove"
+                disabled={removeWaitlistMutation.isPending}
+                onConfirm={() => removeWaitlistMutation.mutate()}
+              >
+                <button
+                  type="button"
+                  className="btn border-flag-red/45 btn-outline btn-sm hover:bg-flag-red-soft"
+                  disabled={removeWaitlistMutation.isPending}
+                >
+                  {removeWaitlistMutation.isPending ? "Removing…" : "Remove from waitlist"}
+                </button>
+              </ConfirmAction>
+            ) : null}
           </div>
-        ) : waitlistEntry ? (
-          <dl className="mt-6 grid gap-4 sm:grid-cols-3">
-            <div>
-              <dt className="text-xs text-base-content/60">Email</dt>
-              <dd className="mt-1 text-sm">{waitlistEntry.email}</dd>
+
+          {waitlistQuery.isLoading ? (
+            <div className="mt-6 h-16 skeleton rounded-xl" />
+          ) : waitlistQuery.isError || waitlistError ? (
+            <div className="mt-6 alert alert-error">
+              <span>
+                {waitlistError?.message ??
+                  (waitlistQuery.error instanceof Error
+                    ? waitlistQuery.error.message
+                    : "Failed to load waitlist")}
+              </span>
             </div>
-            <div>
-              <dt className="text-xs text-base-content/60">Joined</dt>
-              <dd className="mt-1 text-sm">{formatDate(waitlistEntry.createdAt)}</dd>
-            </div>
-            <div>
-              <dt className="text-xs text-base-content/60">Source</dt>
-              <dd className="mt-1 text-sm">{waitlistEntry.source}</dd>
-            </div>
-          </dl>
-        ) : (
-          <p className="mt-6 text-sm text-base-content/60">
-            No waitlist entry for {user.email}. Join from the{" "}
-            <a href="/#waitlist" className="text-flag-green hover:underline">
-              landing page
-            </a>{" "}
-            if you want Android testing invites.
-          </p>
-        )}
-      </div>
+          ) : waitlistEntry ? (
+            <dl className="mt-6 grid gap-4 sm:grid-cols-3">
+              <div>
+                <dt className="text-xs text-base-content/60">Email</dt>
+                <dd className="mt-1 text-sm">{waitlistEntry.email}</dd>
+              </div>
+              <div>
+                <dt className="text-xs text-base-content/60">Joined</dt>
+                <dd className="mt-1 text-sm">{formatDate(waitlistEntry.createdAt)}</dd>
+              </div>
+              <div>
+                <dt className="text-xs text-base-content/60">Source</dt>
+                <dd className="mt-1 text-sm">{waitlistEntry.source}</dd>
+              </div>
+            </dl>
+          ) : (
+            <p className="mt-6 text-sm text-base-content/60">
+              No waitlist entry for {user.email}. Join from the{" "}
+              <a href="/#waitlist" className="text-flag-green hover:underline">
+                landing page
+              </a>{" "}
+              if you want Android testing invites.
+            </p>
+          )}
+        </div>
+      ) : null}
 
       <div className="rounded-2xl border border-base-content/10 bg-base-100/70 p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
@@ -279,18 +293,21 @@ function AccountPage() {
                     Merged into shared data
                   </span>
                 ) : (
-                  <button
-                    type="button"
-                    className="btn text-flag-red btn-ghost btn-xs"
+                  <ConfirmAction
+                    title="Withdraw contribution"
+                    description="Withdraw this pending contribution? It will be removed before review."
+                    confirmLabel="Withdraw"
                     disabled={withdrawMutation.isPending}
-                    onClick={() => {
-                      if (window.confirm("Withdraw this pending contribution?")) {
-                        withdrawMutation.mutate(event.id);
-                      }
-                    }}
+                    onConfirm={() => withdrawMutation.mutate(event.id)}
                   >
-                    Withdraw
-                  </button>
+                    <button
+                      type="button"
+                      className="btn text-flag-red btn-ghost btn-xs"
+                      disabled={withdrawMutation.isPending}
+                    >
+                      Withdraw
+                    </button>
+                  </ConfirmAction>
                 )}
               </li>
             ))}
@@ -322,26 +339,21 @@ function AccountPage() {
               </li>
             </ul>
           </div>
-          <button
-            type="button"
-            className="btn border-flag-red/45 btn-outline btn-sm hover:bg-flag-red-soft"
+          <ConfirmAction
+            title="Delete account"
+            description={`Permanently delete the account for ${user.email}? This removes your profile and sign-in. Pending contributions are withdrawn; verified ones stay in the shared dataset. Your email is kept only to prevent re-registration abuse.`}
+            confirmLabel="Delete account"
             disabled={deleteAccountMutation.isPending}
-            onClick={() => {
-              if (
-                !window.confirm(
-                  "Delete your GeoKenya account? This removes your profile and sign-in. Pending contributions are withdrawn; verified ones stay in the shared dataset. Your email is kept only to prevent re-registration abuse.",
-                )
-              ) {
-                return;
-              }
-              if (!window.confirm(`Permanently delete the account for ${user.email}?`)) {
-                return;
-              }
-              deleteAccountMutation.mutate();
-            }}
+            onConfirm={() => deleteAccountMutation.mutate()}
           >
-            {deleteAccountMutation.isPending ? "Deleting…" : "Delete account"}
-          </button>
+            <button
+              type="button"
+              className="btn border-flag-red/45 btn-outline btn-sm hover:bg-flag-red-soft"
+              disabled={deleteAccountMutation.isPending}
+            >
+              {deleteAccountMutation.isPending ? "Deleting…" : "Delete account"}
+            </button>
+          </ConfirmAction>
         </div>
         <div className="mt-5 flex flex-wrap gap-2">
           <Link to="/privacy" className="btn btn-ghost btn-sm">

@@ -1,12 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import {
+  LandingAccess,
   LandingCTA,
   LandingFeatures,
   LandingFooter,
   LandingHero,
   LandingNavbar,
   LandingShowcase,
-  LandingWaitlist,
 } from "./-components/landing";
 
 export const Route = createFileRoute("/")({ component: LandingPage });
@@ -18,7 +18,7 @@ function LandingPage() {
       <LandingHero />
       <LandingFeatures />
       <LandingShowcase />
-      <LandingWaitlist />
+      <LandingAccess />
       <LandingCTA />
       <LandingFooter />
     </div>
