@@ -13,10 +13,6 @@ export type CreateAuthOptions = {
   secret: string;
   baseURL: string;
   trustedOrigins: string[];
-  google?: {
-    clientId: string;
-    clientSecret: string;
-  };
   adminEmail?: string;
   /** Platform-specific plugins (e.g. tanstackStartCookies in the worker). */
   plugins?: BetterAuthPlugin[];
@@ -25,9 +21,13 @@ export type CreateAuthOptions = {
 /**
  * Shared Better Auth factory used by the Cloudflare worker and the CLI config.
  * Pass runtime/env-specific values from the caller; keep plugins/hooks here.
+ *
+ * Google / email identity is handled by Firebase via better-auth-firebase-auth.
+ * Better Auth emailAndPassword stays enabled as a local fallback when Firebase
+ * is not configured.
  */
 export function createAuth(options: CreateAuthOptions) {
-  const { db, secret, baseURL, trustedOrigins, google, adminEmail, plugins = [] } = options;
+  const { db, secret, baseURL, trustedOrigins, adminEmail, plugins = [] } = options;
 
   return betterAuth({
     database: drizzleAdapter(db, { provider: "sqlite", schema: authSchema }),
@@ -38,14 +38,6 @@ export function createAuth(options: CreateAuthOptions) {
     emailAndPassword: {
       enabled: true,
     },
-    socialProviders: google
-      ? {
-          google: {
-            clientId: google.clientId,
-            clientSecret: google.clientSecret,
-          },
-        }
-      : undefined,
     databaseHooks: {
       user: {
         create: {

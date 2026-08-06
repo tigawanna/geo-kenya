@@ -11,9 +11,14 @@ export const landingNav = {
 
 export const landingHero = {
   eyebrow: "Android testing soon",
-  title: "Know your ward, constituency, and county.",
+  stats: [
+    { label: "47 counties", tone: "green" },
+    { label: "290 constituencies", tone: "red" },
+    { label: "1,450 wards", tone: "neutral" },
+  ],
+  title: "But do you know which one is yours?",
   description:
-    "Most of us know our county, but few can name the ward or constituency we live in. GeoKenya is a simple, offline-first way to look up exactly where you are.",
+    "County is easy. Constituency, maybe. Your ward? That's the tricky one. GeoKenya finds it — no stress.",
   primaryCta: "Get started",
   secondaryCta: "See how it works",
 } as const;

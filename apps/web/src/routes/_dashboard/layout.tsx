@@ -1,5 +1,5 @@
 import { MainLoader } from "@/components/wrappers/MainLoader";
-import { viewerMiddleware } from "@/data-access-layer/auth/viewer";
+import { isEmailVerified, viewerMiddleware } from "@/data-access-layer/auth/viewer";
 import { RouterNotFoundComponent } from "@/lib/tanstack/router/RouterNotFoundComponent";
 import { RouterPendingComponent } from "@/lib/tanstack/router/RouterPendingComponent";
 import { RouterErrorComponent } from "@/lib/tanstack/router/routerErrorComponent";
@@ -21,9 +21,15 @@ export const Route = createFileRoute("/_dashboard")({
     middleware: [viewerMiddleware],
   },
   component: DashboardShell,
-  beforeLoad: ({ context }) => {
+  beforeLoad: ({ context, location }) => {
     if (!context.viewer?.user) {
-      throw redirect({ to: "/auth", search: { returnTo: "/dashboard" } });
+      throw redirect({ to: "/auth", search: { returnTo: location.href } });
+    }
+    if (!isEmailVerified(context.viewer.user)) {
+      throw redirect({
+        to: "/auth/verify-email",
+        search: { returnTo: location.href },
+      });
     }
   },
   head: () => ({

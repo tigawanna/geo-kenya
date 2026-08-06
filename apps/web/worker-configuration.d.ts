@@ -8,11 +8,8 @@ interface __BaseEnv_CloudflareBindings {
   ADMIN_EMAIL: "";
   BETTER_AUTH_SECRET: "";
   SYNC_API_SECRET: "";
-  GOOGLE_CLIENT_ID: "";
-  GOOGLE_CLIENT_SECRET: "";
   FIREBASE_PROJECT_ID: "";
   VITE_API_URL: string;
-  VITE_GOOGLE_AUTH_ENABLED: string;
   VITE_FIREBASE_API_KEY: string;
   VITE_FIREBASE_AUTH_DOMAIN: string;
   VITE_FIREBASE_PROJECT_ID: string;
@@ -36,11 +33,8 @@ declare namespace NodeJS {
       | "ADMIN_EMAIL"
       | "BETTER_AUTH_SECRET"
       | "SYNC_API_SECRET"
-      | "GOOGLE_CLIENT_ID"
-      | "GOOGLE_CLIENT_SECRET"
       | "FIREBASE_PROJECT_ID"
       | "VITE_API_URL"
-      | "VITE_GOOGLE_AUTH_ENABLED"
       | "VITE_FIREBASE_API_KEY"
       | "VITE_FIREBASE_AUTH_DOMAIN"
       | "VITE_FIREBASE_PROJECT_ID"

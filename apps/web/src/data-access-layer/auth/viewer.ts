@@ -21,6 +21,10 @@ export function isAdminUser(user: ViewerUser | undefined): boolean {
   return user?.role === ADMIN_ROLE;
 }
 
+export function isEmailVerified(user: ViewerUser | undefined): boolean {
+  return Boolean(user?.emailVerified);
+}
+
 export const viewerqueryOptions = queryOptions({
   queryKey: ["viewer"],
   queryFn: async () => {

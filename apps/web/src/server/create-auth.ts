@@ -10,23 +10,13 @@ export function createAuthFromEnv(env: CloudflareBindings) {
     .map((value) => value.trim())
     .filter(Boolean);
 
-  // Prefer Firebase Google when Firebase is configured; otherwise keep BA OAuth.
   const firebasePlugin = createFirebaseAuthPlugin(env);
-  const googleConfigured =
-    !firebasePlugin && Boolean(env.GOOGLE_CLIENT_ID) && Boolean(env.GOOGLE_CLIENT_SECRET);
-  const google = googleConfigured
-    ? {
-        clientId: env.GOOGLE_CLIENT_ID!,
-        clientSecret: env.GOOGLE_CLIENT_SECRET!,
-      }
-    : undefined;
 
   return createAuth({
     db: createDb(env.DB),
     secret: env.BETTER_AUTH_SECRET,
     baseURL: env.BETTER_AUTH_URL,
     trustedOrigins,
-    google,
     adminEmail: env.ADMIN_EMAIL || undefined,
     plugins: [tanstackStartCookies(), ...(firebasePlugin ? [firebasePlugin] : [])],
   });

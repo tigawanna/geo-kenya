@@ -1,5 +1,6 @@
-import { viewerqueryOptions } from "@/data-access-layer/auth/viewer";
+import { isEmailVerified, viewerqueryOptions } from "@/data-access-layer/auth/viewer";
 import { authClient } from "@/lib/better-auth/client";
+import { getFirebaseErrorMessage } from "@/lib/firebase/email-actions";
 import { firebaseClientConfigured, getFirebaseClientAuth } from "@/lib/firebase/client";
 import { AppConfig } from "@/utils/system";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,17 +20,6 @@ const signinSchema = z.object({
 
 type SigninValues = z.infer<typeof signinSchema>;
 
-const googleEnabled = firebaseClientConfigured || Boolean(import.meta.env.VITE_GOOGLE_AUTH_ENABLED);
-
-function getErrorMessage(error: unknown) {
-  if (error && typeof error === "object" && "message" in error) {
-    const message = (error as { message?: unknown }).message;
-    if (typeof message === "string" && message.length > 0) return message;
-  }
-  if (error instanceof Error) return error.message;
-  return "Unknown error";
-}
-
 export function SigninComponent() {
   const qc = useQueryClient();
   const router = useRouter();
@@ -43,66 +33,62 @@ export function SigninComponent() {
     },
   });
 
+  async function goAfterAuth() {
+    await router.invalidate();
+    const viewer = await qc.fetchQuery(viewerqueryOptions);
+    const user = viewer.data?.user;
+    if (user && !isEmailVerified(user)) {
+      toast.message("Verify your email to continue");
+      void router.navigate({ to: "/auth/verify-email", search: { returnTo } });
+      return;
+    }
+    toast.success("Signed in");
+    void router.navigate({ to: returnTo || "/dashboard" });
+  }
+
   const mutation = useMutation({
     mutationFn: async (payload: SigninValues) => {
-      if (firebaseClientConfigured) {
-        const credential = await signInWithEmailAndPassword(
-          getFirebaseClientAuth(),
-          payload.email,
-          payload.password,
-        );
-        const idToken = await credential.user.getIdToken();
-        const { data, error } = await authClient.signInWithEmail({ idToken });
-        if (error) throw error;
-        return data;
+      if (!firebaseClientConfigured) {
+        throw new Error("Firebase Auth is not configured.");
       }
-
-      const { data, error } = await authClient.signIn.email({
-        email: payload.email,
-        password: payload.password,
-      });
+      const credential = await signInWithEmailAndPassword(
+        getFirebaseClientAuth(),
+        payload.email,
+        payload.password,
+      );
+      const idToken = await credential.user.getIdToken();
+      const { data, error } = await authClient.signInWithEmail({ idToken });
       if (error) throw error;
       return data;
     },
     onError: (error: unknown) => {
       toast.error("Sign in failed", {
-        description: getErrorMessage(error),
+        description: getFirebaseErrorMessage(error),
       });
     },
     onSuccess: async () => {
-      toast.success("Signed in");
-      await router.invalidate();
-      await qc.fetchQuery(viewerqueryOptions);
-      void router.navigate({ to: returnTo || "/dashboard" });
+      await goAfterAuth();
     },
   });
 
   const googleMutation = useMutation({
     mutationFn: async () => {
-      if (firebaseClientConfigured) {
-        const result = await signInWithPopup(getFirebaseClientAuth(), new GoogleAuthProvider());
-        const idToken = await result.user.getIdToken();
-        const { data, error } = await authClient.signInWithGoogle({ idToken });
-        if (error) throw error;
-        return data;
+      if (!firebaseClientConfigured) {
+        throw new Error("Firebase Auth is not configured.");
       }
-
-      await authClient.signIn.social({
-        provider: "google",
-        callbackURL: returnTo || "/dashboard",
-      });
+      const result = await signInWithPopup(getFirebaseClientAuth(), new GoogleAuthProvider());
+      const idToken = await result.user.getIdToken();
+      const { data, error } = await authClient.signInWithGoogle({ idToken });
+      if (error) throw error;
+      return data;
     },
     onError: (error: unknown) => {
       toast.error("Google sign-in failed", {
-        description: getErrorMessage(error),
+        description: getFirebaseErrorMessage(error),
       });
     },
     onSuccess: async () => {
-      if (!firebaseClientConfigured) return;
-      toast.success("Signed in");
-      await router.invalidate();
-      await qc.fetchQuery(viewerqueryOptions);
-      void router.navigate({ to: returnTo || "/dashboard" });
+      await goAfterAuth();
     },
   });
 
@@ -131,7 +117,16 @@ export function SigninComponent() {
         </label>
 
         <label className="flex flex-col gap-1 text-sm">
-          <span>Password</span>
+          <span className="flex items-center justify-between gap-2">
+            Password
+            <Link
+              to="/auth/forgot-password"
+              search={{ returnTo }}
+              className="link text-xs font-normal link-primary"
+            >
+              Forgot password?
+            </Link>
+          </span>
           <input
             type="password"
             className="input-bordered input w-full"
@@ -144,7 +139,7 @@ export function SigninComponent() {
           {mutation.isPending ? "Signing in…" : "Sign in"}
         </button>
 
-        {googleEnabled ? (
+        {firebaseClientConfigured ? (
           <>
             <div className="flex items-center gap-3">
               <div className="h-px flex-1 bg-base-300" />

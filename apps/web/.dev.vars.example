@@ -4,5 +4,5 @@ CORS_ORIGINS=http://localhost:3070
 ADMIN_EMAIL=you@example.com
 SYNC_API_SECRET=local-dev-sync-secret
 
-GOOGLE_CLIENT_ID=
-GOOGLE_CLIENT_SECRET=
+# Same project id as VITE_FIREBASE_PROJECT_ID
+FIREBASE_PROJECT_ID=
