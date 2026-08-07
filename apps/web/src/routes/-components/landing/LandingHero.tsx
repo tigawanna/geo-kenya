@@ -1,5 +1,5 @@
 import { DotGridBackground } from "@/components/ui/dot-grid-background";
-import { FlagHairline, FlagPulseDot } from "@/components/ui/flag-accents";
+import { FlagHairline } from "@/components/ui/flag-accents";
 import { SplitKenyaShieldEdges } from "@/components/ui/split-kenya-shield";
 import { landingHero } from "@/content/landing";
 import { LandingHeroCtas } from "./LandingHeroCtas";
@@ -22,16 +22,8 @@ export function LandingHero() {
 
       <div className="relative z-10 mx-auto flex w-full max-w-2xl flex-col items-center px-6 py-24 text-center md:px-10 md:py-28">
         <p
-          className="mb-5 inline-flex animate-fade-up items-center gap-2.5 text-[12px] font-medium tracking-[0.14em] text-muted-foreground uppercase"
-          style={{ animationDelay: "40ms" }}
-        >
-          <FlagPulseDot />
-          <span className="text-flag-green">{landingHero.eyebrow}</span>
-        </p>
-
-        <p
           className="mb-6 animate-fade-up text-[13px] font-medium tracking-[0.08em] text-balance text-muted-foreground uppercase md:text-sm"
-          style={{ animationDelay: "80ms" }}
+          style={{ animationDelay: "40ms" }}
         >
           {landingHero.stats.map((stat, index) => (
             <span key={stat.label}>

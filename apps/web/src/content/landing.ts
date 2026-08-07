@@ -33,7 +33,6 @@ export const landingAccess = {
 } as const;
 
 export const landingHero = {
-  eyebrow: "Android testing soon",
   stats: [
     { label: "47 counties", tone: "green" },
     { label: "290 constituencies", tone: "red" },
